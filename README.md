@@ -12,7 +12,16 @@ A planned hybrid action HUD for Foundry VTT, combining a configurable graphical 
 - Native D&D5e action execution and live resource indicators, with compatibility-minded Midi-QOL and CPR integration.
 - Persistent GM controls and user-configurable action access.
 - One module with internal RPG adapters: D&D5e first, more systems later when needed.
+- A theme-neutral functional HUD with interchangeable **base, RPG-system, and campaign-specific visual themes**.
+- GM-selectable campaign theme, optional per-player override, and safe fallback to ZFT Default.
+- Initial visual targets: **ZFT Default** (dark fantasy) and one contrasting campaign-specific proof-of-concept.
 - Optional integration with ZFT Tools; ZFT Tools is not required.
+
+## Visual themes
+
+HUD layout, actions, profiles, and positioning belong to the functional core. An internal theme engine changes colors, typography, frames, textures, icons, tooltips, and decorative effects without changing action behavior.
+
+Theme precedence is ZFT Default fallback, RPG-system theme, GM-selected campaign/world theme, and optional player override where allowed. Two contrasting themes will be used to validate the architecture before expanding the theme catalog.
 
 ## Roadmap
 

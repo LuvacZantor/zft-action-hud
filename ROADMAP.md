@@ -28,6 +28,52 @@ These are approved *requirements*, not claims that implementation is complete.
 - [x] Use **one module** with internal RPG-specific adapters rather than one Foundry module per RPG.
 - [x] Build D&D5e support first; consider other RPG systems when needed.
 - [x] Treat **ZFT Tools as an optional shared foundation**, not a mandatory dependency.
+- [x] Use **one stable functional HUD layout** with a pluggable visual theme engine. Themes restyle components without replacing their action logic, structure, or layout state.
+- [x] Support **base, RPG-system, and campaign-specific themes**, with a GM-selected campaign theme and an optional per-player override.
+- [x] Start with **two demonstrator themes**: ZFT Default (neutral dark fantasy) and one visually distinct campaign-specific proof-of-concept (campaign and art direction to be chosen).
+- [x] Keep theme definitions modular, so additional campaign looks and future RPG themes do not require rebuilding the core HUD.
+
+## Visual theming architecture
+
+**Core principle:** Construct the functional HUD once, then apply a replaceable visual skin. Switching themes must not alter which actions exist, how Items/Activities execute, how profiles are stored, or where the user positioned the HUD.
+
+### Separation of responsibilities
+
+| Layer | Owns | Must not own |
+| --- | --- | --- |
+| HUD core | Layout, grids, menus, positioning, dragging, profiles, accessibility, action presentation contracts | Game-specific rules or campaign-specific styling |
+| RPG adapter | System-specific actions, resources, labels, and execution | HUD geometry or campaign visual identity |
+| Theme engine | Theme registration, selection, inheritance, asset resolution, CSS variables/tokens, appearance application | Action execution, targeting, profiles, gameplay state |
+| Theme pack | Colors, fonts, textures, frames, icons, resource meter styles, tooltip styling, optional decorative effects | Changes to controls' functional semantics or stored action data |
+
+The theme engine belongs to **zft-action-hud**, not to **zft-tools** at this stage. Integration with ZFT Tools remains optional.
+
+### Theme precedence and selection
+
+1. **ZFT Default** is the complete built-in fallback theme.
+2. An **RPG-system default** may be supplied by the active internal system adapter (for example, D&D5e, with more adapters later).
+3. A **campaign/world theme** selected by the GM can override the system default.
+4. An **optional per-player theme override** can supersede the world selection if permitted by world settings. Players who do not override inherit the world theme.
+
+Theme selection must be independent from player hotbar profiles, user docking/position settings, and actor selection. A missing, disabled, or incompatible theme must fall back safely to ZFT Default.
+
+### Implementation boundaries
+
+- Use namespaced CSS custom properties/design tokens for palette, typography, border treatments, contrast, textures, and restrained visual effects.
+- Use theme manifests/registry entries to declare theme IDs, labels, assets, styles, optional inheritance, and compatible UI/theme API versions.
+- Apply styles through isolated HUD-scoped selectors, not broad Foundry or D&D5e global overrides.
+- Keep DOM structure, interactive hit targets, grid semantics, docking and sizing logic, menus, and accessibility behavior owned by the core.
+- Themes may replace decorative art (frames, backgrounds, button treatments, resource meters, tooltip chrome), but must not move critical controls or alter action behavior. The theme must work in docked and floating modes.
+- Respect reduced-motion/high-contrast accessibility settings, preserve legibility, and support safe runtime theme switching without full HUD state loss.
+- Do not copy copyrighted third-party imagery, icons, or code without the necessary rights and attribution. Independently authored or appropriately licensed assets only.
+- Future external/community-distributed theme packs are an extensibility goal, **not** a requirement to ship separate theme modules in the first release.
+
+### Initial theme validation
+
+- **ZFT Default:** Neutral, readable dark-fantasy look suitable across D&D campaigns.
+- **Campaign proof-of-concept:** A second, clearly different visual identity selected during design (e.g., gothic horror, arcane fantasy, or science fiction) to prove the same HUD renders correctly with a different skin.
+
+The two themes must share identical functional controls and saved profiles. The contrasting theme is a validation target, not a commitment to a particular campaign's copyrighted artwork.
 
 ## Status legend
 
@@ -41,32 +87,39 @@ These are approved *requirements*, not claims that implementation is complete.
 
 | Phase | Scope | Status |
 | --- | --- | --- |
-| 1 | Foundation and visual design | Planned |
+| 1 | Foundation, theme engine architecture, and visual design | Planned |
 | 2 | Functional hybrid HUD prototype | Planned |
 | 3 | Customization and profiles | Planned |
 | 4 | Combat and automation integration | Planned |
-| 5 | Visual polish and user experience | Planned |
+| 5 | Theme expansion, visual polish, and user experience | Planned |
 | 6 | Compatibility, testing, and first release | Planned |
 
 ## Phase 1: Foundation and visual design
 
-**Goal:** Define a maintainable single-module framework with system-specific adapters.
+**Goal:** Define a maintainable single-module framework with system-specific adapters and a themeable, functionally stable HUD layout.
 
 - [ ] Produce visual mockups for bottom-docked and floating configurations.
 - [ ] Design the hotbar, expandable action menu, named groups, tooltips, profile selector, and GM area.
+- [ ] Define stable HUD component contracts that do not depend on theme-specific HTML or action logic.
+- [ ] Design the theme registry, manifests, CSS design tokens, scoped styles, fallback behavior, and asset loading.
+- [ ] Define theme precedence, GM world selection, per-player overrides, and permission boundaries.
+- [ ] Approve visual directions for ZFT Default and a contrasting campaign-specific proof-of-concept.
 - [ ] Define a game-system adapter contract: enumerate actions, categorize them, expose display data and resources, and execute actions.
 - [ ] Separate UI, settings, actor/token state, profile persistence, adapters, and integrations.
 - [ ] Establish client (per-user), actor, and world setting ownership and permissions.
 - [ ] Identify approved APIs and compatibility boundaries for V13/V14 and D&D5e generations.
 - [ ] Decide storage of profiles and item/activity references so renamed, deleted, and reimported objects behave predictably.
 
-**Acceptance:** A reviewable UI design and documented internal interfaces, with no unexplained coupling to D&D5e or ZFT Tools.
+**Acceptance:** A reviewable theme-neutral UI layout, documented RPG and theme interfaces, clear world/player theme selection rules, and no unexplained coupling to D&D5e or ZFT Tools.
 
 ## Phase 2: Functional hybrid HUD prototype
 
 **Goal:** Make the HUD useful for normal D&D5e actions before extensive customization.
 
 - [ ] Render a bottom-center graphical hotbar and expandable categorized action menu.
+- [ ] Implement the initial theme engine with safe default fallback and scoped appearance tokens.
+- [ ] Apply **ZFT Default** to the working HUD without embedding its visual identity in action/layout logic.
+- [ ] Apply the contrasting **campaign proof-of-concept theme** to the same UI to validate theme interchangeability.
 - [ ] Include Attacks, Spells, Features, Skills, Saves, Inventory/Items, and Macros as applicable.
 - [ ] Follow a selected, controlled token and provide a clear no-selection state.
 - [ ] Resolve relevant D&D5e Items and Activities and execute through native system paths.
@@ -75,7 +128,7 @@ These are approved *requirements*, not claims that implementation is complete.
 - [ ] Open and dismiss the action menu reliably, including Escape and outside-click.
 - [ ] Make the interface work for player-owned characters and permitted GM-controlled actors.
 
-**Acceptance:** In a live Foundry world, an authorized player and GM can select a token, find an action, use it, and move or dismiss the HUD without UI errors.
+**Acceptance:** In a live Foundry world, an authorized player and GM can select a token, find an action, use it, and move or dismiss the HUD without UI errors. Both initial themes must render the same controls without affecting action execution or saved positioning.
 
 ## Phase 3: Customization and profiles
 
@@ -85,6 +138,8 @@ These are approved *requirements*, not claims that implementation is complete.
 - [ ] Support adjustable rows, columns, icon sizes, optional named groups, and visibility controls.
 - [ ] Create, rename, switch, and retain multiple character-specific profiles.
 - [ ] Save positions, scale, docking/collapse options, and visual preferences per user.
+- [ ] Expose authorized world/campaign theme selection and optional independent per-player theme selection.
+- [ ] Persist theme choices separately from saved action profiles.
 - [ ] Support docked, floating, edge-snapped, and collapsed presentation; provide Reset Position.
 - [ ] Keep menus visible by choosing an appropriate opening direction near screen edges.
 - [ ] Implement optional automatic Combat profile selection with a per-player toggle, default off.
@@ -108,11 +163,13 @@ These are approved *requirements*, not claims that implementation is complete.
 
 **Acceptance:** Automated and nonautomated actions produce the same expected Foundry workflows as using the underlying Item/Activity directly, including correct resources and permissions.
 
-## Phase 5: Visual polish and usability
+## Phase 5: Theme expansion, visual polish and usability
 
-**Goal:** Make the combined HUD attractive, readable, and unobtrusive.
+**Goal:** Refine the built-in themes and make the combined HUD attractive, readable, and unobtrusive.
 
-- [ ] Implement a cohesive dark-fantasy visual theme without copying unlicensed third-party assets.
+- [ ] Polish ZFT Default and the initial campaign proof-of-concept, including consistent button, tooltip, resource-meter, and menu styling.
+- [ ] Validate contrast, icon readability, reduced-motion preferences, and theme switching across docked and floating configurations.
+- [ ] Establish a repeatable approach to adding RPG/campaign themes without changing the core UI.
 - [ ] Provide detailed, readable, scrollable tooltips with description, activation, range, targeting, damage, and costs where applicable.
 - [ ] Add responsive scaling, icon sizing, restrained status coloring, and configurable transparency.
 - [ ] Refine menu animation, focus/hover states, placement, collapse behavior, and readability at different resolutions.
@@ -131,6 +188,7 @@ These are approved *requirements*, not claims that implementation is complete.
 - [ ] Test both GM and player clients, owned and unlinked tokens, different actors, and permission failures.
 - [ ] Test with Midi-QOL/CPR enabled and disabled when the integration is optional.
 - [ ] Test profile persistence, automatic combat switching, floating positioning, resource refreshes, and recovery from missing actions.
+- [ ] Test both initial theme skins, runtime theme switching, RPG/world/player precedence, invalid-theme fallback, and user permission boundaries.
 - [ ] Check UI conflicts with BG3 Inspired HUD and Token Action HUD during migration/testing; avoid permanently running competing HUD controls.
 - [ ] Validate module manifest, script syntax, packaging, logging, documentation, and installation instructions.
 - [ ] Preserve a known-good fallback and complete live acceptance testing before promoting a build to stable.
@@ -142,7 +200,7 @@ These are approved *requirements*, not claims that implementation is complete.
 
 - Additional RPG adapters (such as PF2e) inside the same module, added only when needed.
 - Profile import/export and reusable community/world templates.
-- Additional themes and expanded accessibility controls.
+- Additional RPG/campaign themes, optional external theme packs, and expanded accessibility controls.
 - Advanced keyboard shortcuts and optional ZFT Tools integration.
 
 ## Open design and implementation questions
@@ -155,6 +213,9 @@ Track these during the relevant phase rather than guessing:
 - Keyboard controls, touch usability, screen scaling, and small-resolution behavior.
 - The precise supported Foundry/D&D5e version matrix as upstream systems evolve.
 - Third-party license obligations before reusing any implementation or assets.
+- Exact appearance and asset sources for the campaign proof-of-concept theme.
+- Whether campaign theme choice should be advisory or enforceable by GM (default proposal: players may override when permitted).
+- Theme pack registration/versioning details and the scope of runtime theme overrides.
 
 ## Reference implementations
 
