@@ -1,0 +1,9 @@
+<div class="zft-effect-tip">
+  <div class="zft-effect-tip-heading"><strong>{{name}}</strong></div>
+  <div class="zft-effect-tip-tags">
+    <span class="zft-effect-tip-badge"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i> {{durationLabel}}</span>
+    {{#if sourceName}}<span class="zft-effect-tip-badge"><i class="fa-solid fa-link" aria-hidden="true"></i> Source: {{sourceName}}</span>{{/if}}
+  </div>
+  {{#if descriptionHtml}}<div class="zft-effect-tip-description">{{{descriptionHtml}}}</div>{{else}}<div class="zft-effect-tip-no-description">No additional description.</div>{{/if}}
+  <div class="zft-effect-tip-footer">Right-click the effect icon to remove it (confirmation required).</div>
+</div>

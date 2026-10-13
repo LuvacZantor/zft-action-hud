@@ -1,0 +1,1384 @@
+/* ZFT Action HUD v0.1.0-dev.57. Shared geometry, theme-specific color tokens. */
+#zft-action-hud {
+  --zft-scale:1;
+  --zft-hud-opacity:90%;
+  --zft-browser-opacity:90%;
+  --zft-button-width:42px;
+  --zft-button-height:38px;
+  --zft-button-icon-size:17px;
+  --zft-button-label-size:8px;
+  --zft-font:'Signika',system-ui,sans-serif;
+  --zft-accent:#c9aa72;
+  --zft-accent-bright:#f2d8a2;
+  --zft-text:#f0e9d9;
+  --zft-muted:#ada69b;
+  --zft-bg:#17191c;
+  --zft-panel:#24272c;
+  --zft-panel2:#2c3035;
+  --zft-panel3:#343941;
+  --zft-border:rgba(204,175,125,.55);
+  --zft-inset:rgba(255,255,255,.055);
+  --zft-shadow:rgba(0,0,0,.67);
+  --zft-hp:#b84a4a;
+  --zft-emboss:transparent;
+  --zft-surface-texture:none;
+  position:fixed !important;
+  left:70px;top:70px;right:auto;bottom:auto;
+  width:max-content;min-width:0;max-width:calc(100vw - 24px);
+  height:auto !important;min-height:0 !important;max-height:none;
+  margin:0;padding:0;
+  z-index:90;overflow:visible !important;
+  border:0 !important;border-radius:0;
+  background:transparent !important;box-shadow:none !important;
+  transform:none;zoom:var(--zft-scale);
+  font-family:var(--zft-font);color:var(--zft-text);
+  pointer-events:none;isolation:isolate;
+}
+/* Dock coordinates are screen-aware, set through CSS properties by _applyPosition.
+   Keep the dock rule authoritative even when Foundry's ApplicationV2 writes
+   window geometry after rendering; never inherit the former bottom anchor. */
+#zft-action-hud[data-mode='docked'] {
+  position:fixed !important;
+  left:var(--zft-dock-left,70px) !important;
+  top:var(--zft-dock-top,70px) !important;
+  right:auto !important;
+  bottom:auto !important;
+  transform:none !important;
+}
+#zft-action-hud[data-mode='floating'] {cursor:default;}
+#zft-action-hud[data-mode='docked'] [data-drag-handle] {cursor:default;}
+#zft-action-hud[data-button-size='tiny'] {--zft-button-width:34px;--zft-button-height:32px;--zft-button-icon-size:15px;}
+#zft-action-hud[data-button-size='medium'] {--zft-button-width:52px;--zft-button-height:44px;--zft-button-icon-size:21px;}
+#zft-action-hud[data-button-size='large'] {--zft-button-width:64px;--zft-button-height:50px;--zft-button-icon-size:24px;}
+
+/* Shared theme tokens apply consistently to the HUD, the draggable settings window,
+   and the independent hover-preview window. Only the appearance changes, not geometry. */
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview)[data-theme='gothic-arcane'] {
+  --zft-accent:#aa82d6;--zft-accent-bright:#e9cbff;
+  --zft-text:#efdefe;--zft-muted:#ab99bd;--zft-bg:#160f22;
+  --zft-panel:#22172f;--zft-panel2:#34233c;--zft-panel3:#422b4e;
+  --zft-border:rgba(193,137,226,.64);--zft-inset:rgba(226,191,255,.12);
+  --zft-shadow:rgba(7,0,14,.84);--zft-hp:#ad4384;
+  --zft-emboss:rgba(139,69,182,.15);
+  --zft-surface-texture:radial-gradient(circle at 20% 22%, rgba(233,203,255,.06) 0 1px, transparent 1.5px 100%), repeating-linear-gradient(135deg, rgba(233,203,255,.035) 0 2px, transparent 2px 10px);
+}
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview)[data-theme='midnight-steel'] {
+  --zft-accent:#739cae;--zft-accent-bright:#c2ebf5;
+  --zft-text:#e6edf2;--zft-muted:#a4b3be;--zft-bg:#0b131b;
+  --zft-panel:#192733;--zft-panel2:#243744;--zft-panel3:#304956;
+  --zft-border:rgba(118,177,194,.66);--zft-inset:rgba(201,235,245,.10);
+  --zft-shadow:rgba(0,9,17,.84);--zft-hp:#bd5562;
+  --zft-emboss:rgba(62,123,159,.14);
+  --zft-surface-texture:repeating-linear-gradient(108deg, rgba(194,235,245,.03) 0 2px, transparent 2px 8px), repeating-linear-gradient(168deg, rgba(255,255,255,.018) 0 1px, transparent 1px 12px);
+}
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview)[data-theme='emerald-grove'] {
+  --zft-accent:#81bb74;--zft-accent-bright:#d0f4b9;
+  --zft-text:#e9f4e0;--zft-muted:#b4c4a7;--zft-bg:#101c16;
+  --zft-panel:#1d3126;--zft-panel2:#294130;--zft-panel3:#34573a;
+  --zft-border:rgba(133,181,108,.62);--zft-inset:rgba(198,241,173,.11);
+  --zft-shadow:rgba(5,17,8,.82);--zft-hp:#b84e4b;
+  --zft-emboss:rgba(101,154,77,.15);
+  --zft-surface-texture:radial-gradient(circle at 18% 30%, rgba(208,244,185,.045) 0 1px, transparent 1.6px 100%), repeating-linear-gradient(150deg, rgba(160,214,138,.03) 0 3px, transparent 3px 12px);
+}
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview)[data-theme='royal-sapphire'] {
+  --zft-accent:#779de9;--zft-accent-bright:#d2e4ff;
+  --zft-text:#edf1ff;--zft-muted:#aebbd8;--zft-bg:#0a102c;
+  --zft-panel:#182348;--zft-panel2:#233461;--zft-panel3:#304578;
+  --zft-border:rgba(122,158,236,.70);--zft-inset:rgba(187,207,255,.12);
+  --zft-shadow:rgba(3,5,29,.87);--zft-hp:#c94d6f;
+  --zft-emboss:rgba(78,105,208,.17);
+  --zft-surface-texture:repeating-linear-gradient(0deg, rgba(210,228,255,.028) 0 1px, transparent 1px 7px), repeating-linear-gradient(90deg, rgba(210,228,255,.02) 0 1px, transparent 1px 7px);
+}
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview)[data-theme='crimson-ember'] {
+  --zft-accent:#dd8b60;--zft-accent-bright:#ffd1a4;
+  --zft-text:#f6e5db;--zft-muted:#c6a99a;--zft-bg:#211114;
+  --zft-panel:#371c21;--zft-panel2:#48262a;--zft-panel3:#603336;
+  --zft-border:rgba(221,135,101,.63);--zft-inset:rgba(251,203,163,.10);
+  --zft-shadow:rgba(20,4,6,.85);--zft-hp:#d44b4b;
+  --zft-emboss:rgba(172,69,50,.16);
+  --zft-surface-texture:radial-gradient(circle at 24% 24%, rgba(255,209,164,.04) 0 1.5px, transparent 2px 100%), radial-gradient(circle at 72% 68%, rgba(221,139,96,.035) 0 1px, transparent 1.5px 100%), repeating-linear-gradient(140deg, rgba(255,209,164,.018) 0 2px, transparent 2px 9px);
+}
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview)[data-theme='sunlit-parchment'] {
+  --zft-accent:#8a5925;--zft-accent-bright:#724113;
+  --zft-text:#2e241c;--zft-muted:#655546;--zft-bg:#e5d5b5;
+  --zft-panel:#f6ead2;--zft-panel2:#ebd9b8;--zft-panel3:#ddc59d;
+  --zft-border:rgba(111,73,34,.62);--zft-inset:rgba(255,255,255,.33);
+  --zft-shadow:rgba(57,38,19,.38);--zft-hp:#a93d3b;
+  --zft-emboss:rgba(151,108,53,.08);
+  --zft-surface-texture:repeating-linear-gradient(20deg, rgba(111,73,34,.03) 0 2px, transparent 2px 14px), repeating-linear-gradient(110deg, rgba(255,255,255,.06) 0 1px, transparent 1px 11px);
+}
+/* Avoid dark-only translucent overlays obscuring labels on the light theme. */
+#zft-action-hud[data-theme='sunlit-parchment'] .zft-hud-heading {
+  background:rgba(110,73,31,.09);
+}
+#zft-action-hud[data-theme='sunlit-parchment'] .zft-hud-search input {
+  background:rgba(255,255,255,.45);
+}
+#zft-action-hud[data-theme='sunlit-parchment'] .zft-hud-group summary,
+#zft-action-hud[data-theme='sunlit-parchment'] .zft-hud-browser-item {
+  background:rgba(131,92,43,.07);
+}
+#zft-action-hud[data-theme='sunlit-parchment'] .zft-hud-popup-note {
+  background:rgba(131,92,43,.11);
+}
+#zft-action-hud *,#zft-action-hud *::before,#zft-action-hud *::after {box-sizing:border-box;}
+#zft-action-hud [hidden] {display:none !important;}
+#zft-action-hud button {font:inherit;cursor:pointer;box-shadow:none;}
+#zft-action-hud button:focus-visible {outline:2px solid var(--zft-accent-bright);outline-offset:2px;}
+#zft-action-hud .zft-hud-content {
+  --zft-action-area-width:min(calc(var(--zft-primary-count,1) * var(--zft-button-width) + (var(--zft-primary-count,1) - 1) * 3px),560px,max(95px,calc(100vw - 230px)));
+  position:relative;width:100%;pointer-events:none;
+}
+#zft-action-hud .zft-hud-frame {
+  position:relative;
+  width:min(max(380px,calc(150px + 6px + var(--zft-action-area-width) + 16px)),calc(100vw - 24px));
+  border:1px solid var(--zft-border);border-radius:9px;
+  background:var(--zft-surface-texture),linear-gradient(160deg,
+    color-mix(in srgb,var(--zft-panel) var(--zft-hud-opacity),transparent),
+    color-mix(in srgb,var(--zft-bg) var(--zft-hud-opacity),transparent));
+  background-repeat:repeat,no-repeat;
+  box-shadow:0 12px 30px var(--zft-shadow),inset 0 0 0 1px var(--zft-inset),0 0 0 3px rgba(0,0,0,.22);
+  pointer-events:auto;overflow:hidden;
+}
+#zft-action-hud .zft-hud-ornament {position:absolute;top:0;left:15%;right:15%;height:2px;background:linear-gradient(90deg,transparent,var(--zft-accent),transparent);opacity:.65;pointer-events:none;}
+#zft-action-hud .zft-hud-heading {
+  display:flex;align-items:center;gap:6px;height:24px;padding:0 8px;
+  border-bottom:1px solid var(--zft-border);background:rgba(0,0,0,.27);
+  user-select:none;cursor:move;touch-action:none;
+}
+#zft-action-hud .zft-hud-insignia {font-size:15px;color:var(--zft-accent-bright);line-height:1;}
+#zft-action-hud .zft-hud-brand {font-size:10px;font-weight:800;letter-spacing:.9px;white-space:nowrap;color:var(--zft-accent-bright);}
+#zft-action-hud .zft-hud-brand span {font-weight:600;color:var(--zft-text);letter-spacing:1.1px;}
+#zft-action-hud .zft-hud-heading-status {font-size:8px;letter-spacing:.8px;opacity:.6;white-space:nowrap;}
+#zft-action-hud .zft-hud-handle {flex:1;text-align:center;color:var(--zft-accent);opacity:.5;}
+#zft-action-hud .zft-hud-heading-actions {display:flex;gap:2px;}
+#zft-action-hud .zft-hud-heading-actions button {
+  display:grid;place-items:center;width:22px;height:22px;min-width:22px;min-height:22px;padding:0;
+  color:var(--zft-muted);background:transparent;border:1px solid transparent;border-radius:4px;font-size:10px;
+}
+#zft-action-hud .zft-hud-heading-actions button:hover {background:var(--zft-panel3);color:var(--zft-accent-bright);border-color:var(--zft-border);}
+#zft-action-hud .zft-hud-body {display:flex;align-items:center;gap:6px;padding:5px 7px;min-height:0;}
+#zft-action-hud .zft-hud-portrait-area {display:flex;align-items:center;gap:6px;width:140px;min-width:140px;}
+#zft-action-hud .zft-hud-avatar {position:relative;width:38px;height:38px;flex-shrink:0;border:2px solid var(--zft-accent);border-radius:50%;background:var(--zft-panel2);overflow:hidden;box-shadow:0 0 0 3px rgba(0,0,0,.34);}
+#zft-action-hud .zft-hud-avatar img {display:block;width:100%;height:100%;object-fit:cover;}
+#zft-action-hud .zft-hud-character-info {min-width:0;flex:1;}
+#zft-action-hud .zft-hud-name {font-size:12px;font-weight:700;line-height:1.4;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+#zft-action-hud .zft-hud-subtitle {font-size:10px;color:var(--zft-muted);line-height:1.25;margin-top:3px;}
+#zft-action-hud .zft-hud-hp-label {display:flex;justify-content:space-between;gap:4px;font-size:8px;color:var(--zft-muted);margin-top:3px;}
+#zft-action-hud .zft-hud-hp-label strong {color:var(--zft-text);font-weight:600;white-space:nowrap;}
+#zft-action-hud .zft-hud-hp-rail {height:5px;margin-top:3px;border-radius:3px;overflow:hidden;background:#130d12;border:1px solid rgba(255,255,255,.12);}
+#zft-action-hud .zft-hud-hp-fill {height:100%;background:linear-gradient(90deg,var(--zft-hp),#e17169);}
+#zft-action-hud .zft-hud-action-area {min-width:0;flex:0 1 auto;}
+#zft-action-hud .zft-hud-categories {display:flex;align-items:stretch;gap:3px;max-width:min(560px,calc(100vw - 230px));flex-wrap:wrap;}
+#zft-action-hud .zft-hud-category-button {
+  position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  width:var(--zft-button-width);min-width:var(--zft-button-width);height:var(--zft-button-height);min-height:var(--zft-button-height);padding:3px 2px 2px;
+  border:1px solid var(--zft-border);border-radius:6px;
+  background:linear-gradient(145deg,var(--zft-panel3),var(--zft-panel));
+  box-shadow:inset 0 0 0 1px var(--zft-inset);color:var(--zft-text);font-weight:600;
+}
+#zft-action-hud .zft-hud-category-button > i {font-size:var(--zft-button-icon-size);color:var(--zft-accent-bright);line-height:1;}
+
+#zft-action-hud .zft-hud-category-button > small {position:absolute;top:2px;right:3px;font-size:7px;color:var(--zft-muted);font-weight:500;}
+#zft-action-hud .zft-hud-category-button:hover,#zft-action-hud .zft-hud-category-button.is-active {background:var(--zft-panel3);border-color:var(--zft-accent-bright);}
+#zft-action-hud .zft-hud-category-button.is-active {box-shadow:inset 0 -2px 0 var(--zft-accent-bright);}
+#zft-action-hud .zft-hud-category-empty {font-size:11px;color:var(--zft-muted);}
+#zft-action-hud .zft-hud-empty-message {min-width:240px;color:var(--zft-muted);font-size:11px;line-height:1.35;}
+#zft-action-hud .zft-hud-quick-access-buttons {display:flex;gap:3px;align-items:center;flex-shrink:0;}
+#zft-action-hud .zft-hud-favorites-toggle {
+  position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;
+  min-width:var(--zft-button-width);width:var(--zft-button-width);height:var(--zft-button-height);min-height:var(--zft-button-height);margin-left:0;
+  padding:2px;border:1px solid var(--zft-border);border-radius:6px;
+  background:var(--zft-panel2);color:var(--zft-accent-bright);
+}
+#zft-action-hud .zft-hud-favorites-toggle > i:first-child {font-size:var(--zft-button-icon-size);}
+
+#zft-action-hud .zft-hud-favorites-toggle > small {position:absolute;top:2px;right:3px;font-size:7px;color:var(--zft-muted);}
+#zft-action-hud .zft-hud-favorites-toggle > i:last-child {font-size:7px;opacity:.7;}
+#zft-action-hud .zft-hud-favorites-toggle:hover,#zft-action-hud .zft-hud-favorites-toggle.is-active {background:var(--zft-panel3);border-color:var(--zft-accent-bright);}
+#zft-action-hud .zft-hud-favorites-toggle.is-drop-target,#zft-action-hud .zft-hud-favorites-row.is-drop-target,#zft-action-hud .zft-hud-favorite-item.is-drop-target {outline:2px dashed var(--zft-accent-bright);outline-offset:-2px;}
+#zft-action-hud .zft-hud-reorder-handle {display:grid;place-items:center;flex-shrink:0;width:14px;font-size:8px;color:var(--zft-muted);cursor:grab;}
+#zft-action-hud .zft-hud-favorite-item[draggable='true'] {cursor:grab;}
+#zft-action-hud .zft-hud-favorite-item.is-dragging,#zft-action-hud .zft-hud-browser-item.is-dragging {opacity:.6;}
+/* dev.57: Same responsive grid for Favorites and Recent. Three full-width
+   columns at the normal HUD width, two on narrower Actors/screens, one when
+   necessary. Width is inherited from the existing primary-category frame;
+   quick-access content must never determine outer HUD width. */
+#zft-action-hud .zft-hud-favorites-row {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(max(160px,calc((100% - 10px) / 3)),1fr));
+  align-items:stretch;align-self:stretch;gap:5px;padding:7px 12px;
+  border-top:1px solid var(--zft-border);width:100%;max-width:100%;min-width:0;overflow:hidden;
+}
+#zft-action-hud .zft-hud-favorite-item {
+  display:flex;align-items:center;min-width:0;width:100%;max-width:none;
+  border:1px solid var(--zft-border);border-radius:5px;overflow:hidden;background:var(--zft-panel2);
+}
+#zft-action-hud .zft-hud-favorite-action {
+  display:flex;flex:1 1 0;gap:6px;align-items:center;min-width:0;max-width:none;
+  padding:2px 5px 2px 2px;min-height:29px;border:0;
+  background:transparent;color:var(--zft-text);font-size:10px;
+}
+#zft-action-hud .zft-hud-favorite-action img {height:25px;width:25px;min-width:25px;object-fit:cover;border-radius:3px;}
+#zft-action-hud .zft-hud-favorite-action span {flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#zft-action-hud .zft-hud-favorite-remove {min-width:19px;height:27px;padding:0;border:0;border-left:1px solid var(--zft-border);background:transparent;color:var(--zft-muted);font-size:9px;}
+#zft-action-hud .zft-hud-favorite-action:hover,#zft-action-hud .zft-hud-favorite-remove:hover {background:var(--zft-panel3);color:var(--zft-accent-bright);}
+#zft-action-hud .zft-hud-favorite-hint {grid-column:1 / -1;min-width:0;font-size:10px;color:var(--zft-muted);line-height:1.4;}
+#zft-action-hud .zft-hud-frame.is-collapsed .zft-hud-body,#zft-action-hud .zft-hud-frame.is-collapsed .zft-hud-favorites-row {display:none;}
+#zft-action-hud .zft-hud-frame.is-collapsed [data-hud-control='collapse'] i {transform:rotate(180deg);}
+#zft-action-hud .zft-hud-popup {
+  position:absolute;right:0;bottom:calc(100% + 8px);
+  width:min(520px,calc(100vw - 24px));max-height:480px;
+  display:flex;flex-direction:column;overflow:hidden;
+  border:1px solid var(--zft-border);border-radius:8px;
+  background:var(--zft-surface-texture),linear-gradient(155deg,
+    color-mix(in srgb,var(--zft-panel) var(--zft-browser-opacity),transparent),
+    color-mix(in srgb,var(--zft-bg) var(--zft-browser-opacity),transparent));
+  background-repeat:repeat,no-repeat;
+  box-shadow:0 14px 35px var(--zft-shadow),inset 0 0 0 1px var(--zft-inset);
+  pointer-events:auto;
+}
+#zft-action-hud.zft-menu-down .zft-hud-popup {bottom:auto;top:calc(100% + 8px);}
+#zft-action-hud .zft-hud-category-panel {display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+#zft-action-hud .zft-hud-popup-header {display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--zft-border);color:var(--zft-accent-bright);font-size:12px;font-weight:700;}
+#zft-action-hud .zft-hud-popup-header span:first-child i {margin-right:6px;}
+#zft-action-hud .zft-hud-popup-count {margin-left:auto;font-size:10px;color:var(--zft-muted);font-weight:400;}
+#zft-action-hud .zft-hud-close-browser {display:grid;place-items:center;width:21px;height:21px;min-width:21px;padding:0;border:1px solid transparent;border-radius:4px;color:var(--zft-muted);background:transparent;font-size:11px;}
+#zft-action-hud .zft-hud-close-browser:hover {color:var(--zft-accent-bright);background:var(--zft-panel3);}
+#zft-action-hud .zft-hud-search {display:flex;align-items:center;gap:8px;padding:8px 11px;color:var(--zft-muted);border-bottom:1px solid rgba(255,255,255,.07);}
+#zft-action-hud .zft-hud-search input {background:rgba(0,0,0,.23);color:var(--zft-text);border:1px solid var(--zft-border);border-radius:4px;padding:5px 8px;width:100%;font-size:12px;outline:none;box-shadow:none;}
+#zft-action-hud .zft-hud-search input:focus {border-color:var(--zft-accent-bright);}
+#zft-action-hud .zft-hud-groups {overflow-y:auto;flex:1 1 auto;min-height:0;max-height:330px;overscroll-behavior:contain;}
+#zft-action-hud .zft-hud-group {border-bottom:1px solid rgba(255,255,255,.07);}
+#zft-action-hud .zft-hud-group summary {display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 11px;list-style:none;background:rgba(0,0,0,.11);color:var(--zft-accent-bright);font-size:12px;}
+#zft-action-hud .zft-hud-group summary::-webkit-details-marker {display:none;}
+#zft-action-hud .zft-hud-group summary small {margin-left:auto;color:var(--zft-muted);}
+#zft-action-hud .zft-hud-group summary i {color:var(--zft-muted);font-size:9px;}
+#zft-action-hud .zft-hud-group[open] summary i {transform:rotate(180deg);}
+#zft-action-hud .zft-hud-group-items {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:6px;align-items:stretch;}
+#zft-action-hud .zft-hud-browser-item {display:flex;min-width:0;min-height:38px;height:100%;align-items:stretch;cursor:pointer;border:1px solid transparent;border-radius:5px;background:rgba(0,0,0,.15);}
+#zft-action-hud .zft-hud-browser-item:hover {border-color:var(--zft-border);background:var(--zft-panel3);}
+/* The active keyboard selection follows the *complete* item card. Context-click
+   focuses native buttons but must NOT draw a purple outline around only the
+   action-label portion of a row (e.g. Bag of Holding + Favorite controls).
+   Chromium's :focus-visible tracks keyboard intent, unlike :focus-within. */
+#zft-action-hud .zft-hud-browser-item:has(> .zft-hud-group-item:focus-visible) {
+  border-color:var(--zft-context-accent,var(--zft-accent-bright));
+  box-shadow:inset 0 0 0 1px var(--zft-context-accent,var(--zft-accent-bright));
+}
+#zft-action-hud .zft-hud-browser-item > .zft-hud-group-item:is(:focus,:focus-visible,:active) {
+  outline:none !important;outline-offset:0 !important;box-shadow:none !important;
+}
+/* Independent keyboard focus remains visible for Equip/Attune/Favorite. */
+#zft-action-hud .zft-hud-browser-item > :is(.zft-hud-item-state,.zft-hud-pin-button):focus-visible {
+  outline:2px solid var(--zft-context-accent,var(--zft-accent-bright));outline-offset:-2px;
+}
+#zft-action-hud .zft-hud-group-item {display:grid;grid-template-columns:27px minmax(0,1fr);align-items:center;align-self:stretch;gap:6px;min-width:0;min-height:100%;height:auto;flex:1;padding:4px;border:0;text-align:left;background:transparent;color:var(--zft-text);font-size:11px;line-height:1.25;}
+#zft-action-hud .zft-hud-group-item img {height:27px;width:27px;flex-shrink:0;object-fit:cover;border-radius:4px;}
+#zft-action-hud .zft-hud-item-text {display:flex;flex-direction:column;min-width:0;align-items:flex-start;justify-content:center;gap:2px;line-height:1.25;}
+#zft-action-hud .zft-hud-item-name {display:block;min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:normal;line-height:1.25;}
+#zft-action-hud .zft-hud-group-item .zft-hud-item-text small {margin-left:0;line-height:1.15;}
+#zft-action-hud .zft-hud-group-item small {margin-left:auto;white-space:nowrap;color:var(--zft-muted);font-size:9px;}
+#zft-action-hud .zft-hud-pin-button {display:grid;place-items:center;align-self:stretch;width:24px;min-width:24px;min-height:38px;height:auto;padding:0;border:0;border-left:1px solid rgba(255,255,255,.05);background:transparent;color:var(--zft-muted);font-size:11px;}
+#zft-action-hud .zft-hud-pin-button:hover,#zft-action-hud .zft-hud-pin-button.is-pinned {color:var(--zft-accent-bright);}
+#zft-action-hud .zft-hud-empty-filter {padding:15px;color:var(--zft-muted);font-size:11px;}
+#zft-action-hud .zft-hud-popup-note {display:flex;align-items:center;gap:6px;padding:7px 10px;border-top:1px solid var(--zft-border);background:rgba(0,0,0,.22);color:var(--zft-muted);font-size:10px;line-height:1.3;}
+@media(max-width:680px) {
+  #zft-action-hud .zft-hud-group-items {grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:900px) {
+  #zft-action-hud .zft-hud-categories {max-width:440px;}
+  #zft-action-hud .zft-hud-portrait-area {width:137px;min-width:137px;}
+  #zft-action-hud .zft-hud-heading-status {display:none;}
+}
+@media(max-width:570px) {
+  #zft-action-hud .zft-hud-body {gap:6px;padding:7px;}
+  #zft-action-hud .zft-hud-portrait-area {width:112px;min-width:112px;}
+  #zft-action-hud .zft-hud-avatar {height:38px;width:38px;}
+  #zft-action-hud .zft-hud-categories {max-width:225px;gap:3px;}
+  #zft-action-hud .zft-hud-category-button {width:var(--zft-button-width);min-width:var(--zft-button-width);}
+  #zft-action-hud .zft-hud-favorites-toggle {min-width:var(--zft-button-width);width:var(--zft-button-width);}
+  #zft-action-hud .zft-hud-group-items {grid-template-columns:1fr;}
+}
+@media(prefers-reduced-motion:no-preference) {
+  #zft-action-hud .zft-hud-category-button,#zft-action-hud .zft-hud-favorites-toggle {transition:border-color .14s ease,background .14s ease;}
+}
+
+
+/* The settings window is independent of the HUD and remains open while browsing actions. */
+#zft-action-hud-settings {
+  position:fixed !important; left:24px;top:70px;right:auto;bottom:auto;
+  width:min(450px,calc(100vw - 16px));height:auto !important;
+  min-height:0 !important;max-height:calc(100vh - 16px);
+  z-index:95; margin:0;padding:0;overflow:visible !important;
+  background:transparent !important; border:0 !important;box-shadow:none !important;
+  font-family:'Signika',system-ui,sans-serif;color:var(--zft-text);
+  --zft-panel:#24272c;--zft-bg:#17191c;--zft-border:rgba(204,175,125,.55);
+  --zft-panel2:#2c3035;--zft-panel3:#343941;--zft-muted:#ada69b;
+  --zft-text:#f0e9d9;--zft-accent-bright:#f2d8a2;--zft-shadow:rgba(0,0,0,.67);
+}
+#zft-action-hud-settings *,#zft-action-hud-settings *::before,#zft-action-hud-settings *::after {box-sizing:border-box;}
+#zft-action-hud-settings button {font:inherit;cursor:pointer;box-shadow:none;}
+#zft-action-hud-settings button:focus-visible,#zft-action-hud-settings select:focus-visible {outline:2px solid var(--zft-accent-bright);outline-offset:2px;}
+
+#zft-action-hud-settings .zft-hud-settings-panel {
+  position:relative;width:100%;max-height:calc(100vh - 16px);
+  display:flex;flex-direction:column;overflow:hidden;pointer-events:auto;
+  border:1px solid var(--zft-border);border-radius:8px;
+  background:linear-gradient(155deg,var(--zft-panel),var(--zft-bg));
+  color:var(--zft-text);box-shadow:0 14px 40px var(--zft-shadow);
+}
+#zft-action-hud-settings .zft-hud-settings-heading {
+  display:flex;justify-content:space-between;align-items:center;gap:6px;padding:12px 16px;
+  border-bottom:1px solid var(--zft-border);font-size:16px;font-weight:700;color:var(--zft-accent-bright);
+  cursor:move;user-select:none;touch-action:none;
+}
+#zft-action-hud-settings .zft-hud-settings-heading button {width:24px;height:24px;padding:0;border:0;background:transparent;color:var(--zft-muted);}
+#zft-action-hud-settings .zft-hud-settings-heading button:hover {color:var(--zft-accent-bright);}
+#zft-action-hud-settings .zft-hud-settings-content {overflow:auto;min-height:0;padding:13px 16px;overscroll-behavior:contain;}
+#zft-action-hud-settings .zft-hud-settings-group {margin:0 0 12px;padding:12px 13px 14px;border:1px solid var(--zft-border);border-radius:6px;min-width:0;}
+#zft-action-hud-settings .zft-hud-settings-group legend {padding:0 5px;color:var(--zft-accent-bright);font-size:14px;font-weight:700;}
+#zft-action-hud-settings .zft-hud-setting-line {display:flex;align-items:center;justify-content:space-between;gap:8px;margin:9px 0 13px;font-size:14px;}
+#zft-action-hud-settings .zft-hud-setting-line select {min-width:124px;max-width:220px;padding:8px;border:1px solid var(--zft-border);border-radius:4px;background:var(--zft-panel2);color:var(--zft-text);font-size:14px;}
+#zft-action-hud-settings .zft-hud-settings-slider {display:block;margin:13px 0 16px;font-size:14px;}
+#zft-action-hud-settings .zft-hud-settings-slider > span {display:flex;justify-content:space-between;gap:8px;}
+#zft-action-hud-settings .zft-hud-settings-slider output {color:var(--zft-accent-bright);font-variant-numeric:tabular-nums;}
+#zft-action-hud-settings .zft-hud-settings-slider input {width:100%;margin:9px 0 0;min-height:22px;accent-color:var(--zft-accent-bright);cursor:pointer;}
+#zft-action-hud-settings .zft-hud-setting-check {display:flex;align-items:center;gap:11px;margin:9px 0 13px;font-size:14px;}
+#zft-action-hud-settings .zft-hud-setting-check input {width:17px;height:17px;flex:none;accent-color:var(--zft-accent-bright);}
+#zft-action-hud-settings .zft-hud-settings-buttons {display:flex;flex-wrap:wrap;gap:6px;}
+#zft-action-hud-settings .zft-hud-settings-buttons button {padding:8px 12px;min-height:34px;border:1px solid var(--zft-border);border-radius:6px;background:var(--zft-panel2);color:var(--zft-text);font-size:13px;}
+#zft-action-hud-settings .zft-hud-settings-buttons button:hover {background:var(--zft-panel3);color:var(--zft-accent-bright);}
+#zft-action-hud-settings .zft-hud-settings-buttons button.is-active {border-color:var(--zft-accent-bright);color:var(--zft-accent-bright);}
+#zft-action-hud-settings .zft-hud-settings-autosave {margin:8px 16px 8px;display:flex;align-items:center;gap:5px;color:var(--zft-muted);font-size:12px;line-height:1.3;}
+#zft-action-hud-settings .zft-hud-settings-autosave i {color:var(--zft-accent-bright);}
+#zft-action-hud-settings .zft-hud-settings-note {margin:9px 0 0;font-size:12px;line-height:1.45;color:var(--zft-muted);}
+
+/* dev.30: tabbed settings maintain an independent scroll region and readable controls. */
+#zft-action-hud-settings .zft-hud-settings-tabs {
+  display:flex;gap:3px;padding:8px 10px 0;flex-shrink:0;
+  overflow-x:auto;scrollbar-width:thin;border-bottom:1px solid var(--zft-border);
+}
+#zft-action-hud-settings .zft-hud-settings-tabs button {
+  flex:1 0 auto;min-height:37px;padding:8px 9px;border:1px solid transparent;
+  border-radius:6px 6px 0 0;background:transparent;color:var(--zft-muted);
+  font-size:13px;font-weight:600;white-space:nowrap;
+}
+#zft-action-hud-settings .zft-hud-settings-tabs button:hover {color:var(--zft-text);background:var(--zft-panel2);}
+#zft-action-hud-settings .zft-hud-settings-tabs button[aria-selected='true'] {
+  border-color:var(--zft-border);border-bottom-color:var(--zft-panel2);
+  background:var(--zft-panel2);color:var(--zft-accent-bright);
+}
+#zft-action-hud-settings .zft-hud-settings-tab-panel[hidden] {display:none !important;}
+#zft-action-hud-settings .zft-hud-settings-content {font-size:14px;max-height:calc(100vh - 158px);}
+#zft-action-hud-settings .zft-hud-setting-line input[type='number'] {
+  width:72px;min-height:34px;padding:5px 9px;border-radius:5px;
+  border:1px solid var(--zft-border);background:var(--zft-panel2);
+  color:var(--zft-text);font-size:14px;
+}
+#zft-action-hud-settings .zft-hud-setting-check span {line-height:1.4;}
+#zft-action-hud-settings .zft-hud-settings-heading button {width:30px;height:30px;font-size:16px;}
+
+/* Independent, theme-scoped Item hover preview. It is never in the HUD's scaled DOM. */
+#zft-action-hud-preview {
+  --zft-panel:#24272c;--zft-bg:#17191c;--zft-panel2:#2c3035;
+  --zft-border:rgba(204,175,125,.55);--zft-accent-bright:#f2d8a2;
+  --zft-text:#f0e9d9;--zft-muted:#ada69b;--zft-shadow:rgba(0,0,0,.67);
+  position:fixed !important;z-index:110;box-sizing:border-box;
+  width:min(425px,calc(100vw - 20px));max-height:calc(100vh - 20px);
+  overflow:hidden;display:flex;flex-direction:column;
+  background:linear-gradient(155deg,var(--zft-panel),var(--zft-bg));
+  border:1px solid var(--zft-border);border-radius:8px;
+  box-shadow:0 12px 35px var(--zft-shadow);
+  color:var(--zft-text);font:12px/1.45 'Signika',system-ui,sans-serif;
+  pointer-events:none;
+}
+#zft-action-hud-preview[hidden] {display:none !important;}
+#zft-action-hud-preview[data-pinned='true'] {pointer-events:auto;}
+#zft-action-hud-preview * {box-sizing:border-box;}
+#zft-action-hud-preview .zft-preview-heading {display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--zft-border);}
+#zft-action-hud-preview .zft-preview-image {width:48px;height:48px;flex:0 0 48px;object-fit:cover;border-radius:6px;border:1px solid var(--zft-border);}
+#zft-action-hud-preview .zft-preview-titlebox {flex:1;min-width:0;}
+#zft-action-hud-preview .zft-preview-title {font-size:14px;font-weight:700;line-height:1.2;color:var(--zft-accent-bright);overflow-wrap:anywhere;}
+#zft-action-hud-preview .zft-preview-type {font-size:11px;color:var(--zft-muted);margin-top:4px;}
+#zft-action-hud-preview .zft-preview-close {display:none;align-self:flex-start;border:0;background:transparent;color:var(--zft-text);font:inherit;padding:2px 5px;cursor:pointer;}
+#zft-action-hud-preview[data-pinned='true'] .zft-preview-close {display:block;}
+#zft-action-hud-preview .zft-preview-stats {display:flex;gap:6px;flex-wrap:wrap;padding:8px 12px 0;}
+#zft-action-hud-preview .zft-preview-stat {padding:2px 6px;border:1px solid var(--zft-border);background:var(--zft-panel2);border-radius:4px;font-size:10px;}
+/* D&D5e Activity summaries: only actual configured formulas, never guessed roll totals. */
+#zft-action-hud-preview .zft-preview-activities {padding:7px 12px 4px;overflow:auto;flex:0 1 auto;min-height:0;border-bottom:1px solid var(--zft-border);}
+#zft-action-hud-preview .zft-preview-activity {padding:5px 0 7px;}
+#zft-action-hud-preview .zft-preview-activity + .zft-preview-activity {border-top:1px solid var(--zft-border);}
+#zft-action-hud-preview .zft-preview-activity-heading {display:flex;align-items:baseline;justify-content:space-between;gap:6px;font-size:12px;color:var(--zft-accent-bright);margin-bottom:4px;}
+#zft-action-hud-preview .zft-preview-activity-heading strong {min-width:0;overflow-wrap:anywhere;}
+#zft-action-hud-preview .zft-preview-activity-heading small {flex:none;font-size:10px;font-weight:normal;color:var(--zft-muted);}
+#zft-action-hud-preview .zft-preview-activity-metrics {display:flex;flex-wrap:wrap;gap:4px;}
+#zft-action-hud-preview .zft-preview-activity-stat {display:flex;flex-direction:column;gap:2px;max-width:100%;padding:4px 7px;border:1px solid var(--zft-border);border-radius:5px;background:var(--zft-panel2);font-size:11px;}
+#zft-action-hud-preview .zft-preview-activity-stat small {font-size:9px;color:var(--zft-muted);}
+#zft-action-hud-preview .zft-preview-activity-stat span {color:var(--zft-text);overflow-wrap:anywhere;}
+#zft-action-hud-preview .zft-preview-more {font-size:10px;color:var(--zft-muted);padding:3px 0;}
+#zft-action-hud-preview .zft-preview-description {padding:10px 12px;overflow:auto;white-space:normal;overflow-wrap:anywhere;line-height:1.5;min-height:0;overscroll-behavior:contain;}
+/* Rich, sanitized Foundry/D&D5e HTML. Keep compendium tables as real rows/columns. */
+#zft-action-hud-preview .zft-preview-description p {margin:.45em 0;}
+#zft-action-hud-preview .zft-preview-description :is(h1,h2,h3,h4,h5,h6) {font-weight:700;line-height:1.25;color:var(--zft-accent-bright);margin:.75em 0 .35em;}
+#zft-action-hud-preview .zft-preview-description :is(ul,ol) {padding-left:1.6em;margin:.35em 0 .7em;}
+#zft-action-hud-preview .zft-preview-description li {margin:.2em 0;}
+#zft-action-hud-preview .zft-preview-description :is(strong,b) {font-weight:700;}
+#zft-action-hud-preview .zft-preview-description table {display:table;width:100%;min-width:260px;max-width:none;border-collapse:collapse;table-layout:auto;margin:8px 0 12px;font-size:11px;color:var(--zft-text);line-height:1.35;}
+#zft-action-hud-preview .zft-preview-description :is(thead,tbody,tfoot) {display:table-row-group;}
+#zft-action-hud-preview .zft-preview-description thead {display:table-header-group;}
+#zft-action-hud-preview .zft-preview-description tfoot {display:table-footer-group;}
+#zft-action-hud-preview .zft-preview-description tr {display:table-row;}
+#zft-action-hud-preview .zft-preview-description :is(th,td) {display:table-cell;vertical-align:top;text-align:left;white-space:normal;overflow-wrap:normal;word-break:normal;padding:5px 7px;border:1px solid var(--zft-border);}
+#zft-action-hud-preview .zft-preview-description th {background:var(--zft-panel2);font-weight:700;color:var(--zft-accent-bright);}
+#zft-action-hud-preview .zft-preview-description tbody tr:nth-child(even) {background:rgba(128,128,128,.10);}
+#zft-action-hud-preview .zft-preview-description caption {caption-side:top;text-align:center;font-weight:700;color:var(--zft-accent-bright);margin:0 0 4px;}
+#zft-action-hud-preview .zft-preview-description img {max-width:100%;height:auto;}
+#zft-action-hud-preview .zft-preview-description pre {white-space:pre-wrap;overflow-wrap:anywhere;}
+#zft-action-hud-preview .zft-preview-description a {color:var(--zft-accent-bright);text-decoration:underline;}
+#zft-action-hud-preview .zft-preview-instruction {padding:6px 12px;border-top:1px solid var(--zft-border);font-size:10px;color:var(--zft-muted);}
+
+/* Cast Activity source context, without changing the existing grid geometry. */
+.zft-hud-root .zft-hud-item-source {
+  display: block;
+  opacity: .75;
+  font-size: .72em;
+  line-height: 1.15;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Dev.13: inventory controls, action-state hints and a BG3-inspired read-only effects row. */
+#zft-action-hud .zft-hud-filter-check {display:flex;align-items:center;gap:7px;padding:6px 12px;border-bottom:1px solid var(--zft-border);font-size:11px;color:var(--zft-text);cursor:pointer;}
+#zft-action-hud .zft-hud-filter-check input {accent-color:var(--zft-accent-bright);cursor:pointer;}
+#zft-action-hud .zft-hud-active-indicator {font-size:10px;color:#79ce90;margin-left:4px;}
+#zft-action-hud .zft-hud-group-item.is-effect-active {box-shadow:inset 2px 0 0 #79ce90;}
+#zft-action-hud .zft-hud-favorite-action.is-effect-active {box-shadow:inset 0 -2px 0 #79ce90;}
+#zft-action-hud .zft-hud-effects-strip {padding:4px 9px 6px;border-top:1px solid var(--zft-border);}
+#zft-action-hud .zft-hud-effects-bar {display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--zft-muted);font-size:10px;line-height:18px;}
+#zft-action-hud .zft-hud-effects-bar small {color:var(--zft-accent-bright);font-size:9px;margin-left:3px;}
+#zft-action-hud .zft-hud-effects-bar button {width:21px;height:20px;border:0;background:transparent;color:var(--zft-muted);}
+#zft-action-hud .zft-hud-effects-bar button:hover {color:var(--zft-accent-bright);}
+#zft-action-hud .zft-hud-effects-icons {display:flex;align-items:center;flex-wrap:wrap;gap:5px;max-width:100%;padding-top:3px;}
+#zft-action-hud .zft-hud-effect {position:relative;display:block;width:35px;height:35px;border:1px solid var(--zft-border);border-radius:5px;background:var(--zft-panel2);cursor:context-menu;overflow:hidden;}
+#zft-action-hud .zft-hud-effect:focus-visible {outline:2px solid var(--zft-accent-bright);}
+#zft-action-hud .zft-hud-effect img {display:block;width:100%;height:100%;object-fit:cover;}
+#zft-action-hud .zft-hud-effect small {position:absolute;bottom:0;left:0;right:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:2px 1px;font-size:7px;line-height:1.1;text-align:center;color:#fff;background:rgba(0,0,0,.82);}
+#zft-action-hud .zft-hud-effects-empty {color:var(--zft-muted);font-size:10px;}
+#zft-action-hud .zft-hud-frame.is-collapsed .zft-hud-effects-strip {display:none;}
+
+/* Native Foundry rich tooltip for Active Effects. The tooltip is owned by
+   Foundry's TooltipManager, not the HUD, so it needs its own theme palette. */
+#tooltip.zft-hud-effect-tooltip {
+ --zft-accent-bright:#f2d8a2;--zft-text:#f0e9d9;--zft-muted:#ada69b;
+ --zft-panel:#24272c;--zft-panel2:#2c3035;--zft-border:rgba(204,175,125,.55);
+ --zft-shadow:rgba(0,0,0,.67);
+ box-sizing:border-box;min-width:min(310px,calc(100vw - 24px));
+ max-width:min(425px,calc(100vw - 24px));max-height:min(75vh,650px);
+ overflow:auto;padding:0;border:1px solid var(--zft-border);border-radius:8px;
+ background:var(--zft-panel);box-shadow:0 10px 30px var(--zft-shadow);
+ color:var(--zft-text);font:12px/1.45 'Signika',system-ui,sans-serif;
+}
+#tooltip.zft-hud-effect-tooltip.theme-gothic-arcane {
+  --zft-accent:#aa82d6;--zft-accent-bright:#e9cbff;
+  --zft-text:#efdefe;--zft-muted:#ab99bd;--zft-bg:#160f22;
+  --zft-panel:#22172f;--zft-panel2:#34233c;--zft-panel3:#422b4e;
+  --zft-border:rgba(193,137,226,.64);--zft-inset:rgba(226,191,255,.12);
+  --zft-shadow:rgba(7,0,14,.84);--zft-hp:#ad4384;
+  --zft-emboss:rgba(139,69,182,.15);
+}
+#tooltip.zft-hud-effect-tooltip.theme-midnight-steel {
+  --zft-accent:#739cae;--zft-accent-bright:#c2ebf5;
+  --zft-text:#e6edf2;--zft-muted:#a4b3be;--zft-bg:#0b131b;
+  --zft-panel:#192733;--zft-panel2:#243744;--zft-panel3:#304956;
+  --zft-border:rgba(118,177,194,.66);--zft-inset:rgba(201,235,245,.10);
+  --zft-shadow:rgba(0,9,17,.84);--zft-hp:#bd5562;
+  --zft-emboss:rgba(62,123,159,.14);
+}
+#tooltip.zft-hud-effect-tooltip.theme-emerald-grove {
+  --zft-accent:#81bb74;--zft-accent-bright:#d0f4b9;
+  --zft-text:#e9f4e0;--zft-muted:#b4c4a7;--zft-bg:#101c16;
+  --zft-panel:#1d3126;--zft-panel2:#294130;--zft-panel3:#34573a;
+  --zft-border:rgba(133,181,108,.62);--zft-inset:rgba(198,241,173,.11);
+  --zft-shadow:rgba(5,17,8,.82);--zft-hp:#b84e4b;
+  --zft-emboss:rgba(101,154,77,.15);
+}
+#tooltip.zft-hud-effect-tooltip.theme-royal-sapphire {
+  --zft-accent:#779de9;--zft-accent-bright:#d2e4ff;
+  --zft-text:#edf1ff;--zft-muted:#aebbd8;--zft-bg:#0a102c;
+  --zft-panel:#182348;--zft-panel2:#233461;--zft-panel3:#304578;
+  --zft-border:rgba(122,158,236,.70);--zft-inset:rgba(187,207,255,.12);
+  --zft-shadow:rgba(3,5,29,.87);--zft-hp:#c94d6f;
+  --zft-emboss:rgba(78,105,208,.17);
+}
+#tooltip.zft-hud-effect-tooltip.theme-crimson-ember {
+  --zft-accent:#dd8b60;--zft-accent-bright:#ffd1a4;
+  --zft-text:#f6e5db;--zft-muted:#c6a99a;--zft-bg:#211114;
+  --zft-panel:#371c21;--zft-panel2:#48262a;--zft-panel3:#603336;
+  --zft-border:rgba(221,135,101,.63);--zft-inset:rgba(251,203,163,.10);
+  --zft-shadow:rgba(20,4,6,.85);--zft-hp:#d44b4b;
+  --zft-emboss:rgba(172,69,50,.16);
+}
+#tooltip.zft-hud-effect-tooltip.theme-sunlit-parchment {
+  --zft-accent:#8a5925;--zft-accent-bright:#724113;
+  --zft-text:#2e241c;--zft-muted:#655546;--zft-bg:#e5d5b5;
+  --zft-panel:#f6ead2;--zft-panel2:#ebd9b8;--zft-panel3:#ddc59d;
+  --zft-border:rgba(111,73,34,.62);--zft-inset:rgba(255,255,255,.33);
+  --zft-shadow:rgba(57,38,19,.38);--zft-hp:#a93d3b;
+  --zft-emboss:rgba(151,108,53,.08);
+}
+
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip {color:var(--zft-text);text-align:left;min-width:0;}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-heading {padding:10px 12px 7px;color:var(--zft-accent-bright);font-size:14px;border-bottom:1px solid var(--zft-border);overflow-wrap:anywhere;}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-tags {display:flex;flex-wrap:wrap;gap:5px;padding:8px 12px;}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-badge {padding:4px 7px;border:1px solid var(--zft-border);border-radius:5px;background:var(--zft-panel2);font-size:10px;overflow-wrap:anywhere;}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-badge i {margin-right:4px;color:var(--zft-accent-bright);}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description {padding:0 12px 10px;overflow-wrap:anywhere;line-height:1.45;}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-no-description {padding:4px 12px 10px;color:var(--zft-muted);}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-footer {padding:7px 12px;border-top:1px solid var(--zft-border);color:var(--zft-muted);font-size:10px;}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description p {margin:.45em 0;}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description :is(h1,h2,h3,h4,h5,h6) {font-size:inherit;color:var(--zft-accent-bright);font-weight:700;margin:.75em 0 .35em;}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description :is(ul,ol) {margin:.35em 0 .7em;padding-left:1.7em;}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description li {margin:.2em 0;}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description table {display:table;border-collapse:collapse;width:100%;table-layout:auto;margin:8px 0;font-size:11px;}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description tr {display:table-row;}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description :is(td,th) {display:table-cell;border:1px solid var(--zft-border);padding:4px 6px;vertical-align:top;text-align:left;}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description th {background:var(--zft-panel2);color:var(--zft-accent-bright);}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description img {max-width:100%;height:auto;}
+#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description a {color:var(--zft-accent-bright);text-decoration:underline;}
+
+/* dev.17: compact Active Effects dock above the HUD, not an entire row inside it. */
+#zft-action-hud .zft-hud-content[data-collapsed='true'] .zft-hud-effects-strip {display:none;}
+#zft-action-hud .zft-hud-content > .zft-hud-effects-strip {
+  position:absolute;left:0;bottom:calc(100% + 5px);top:auto;z-index:2;
+  display:flex;flex-direction:row-reverse;align-items:center;justify-content:flex-end;
+  gap:5px;max-width:100%;width:max-content;min-width:82px;min-height:0;margin:0;
+  padding:3px 6px;border:1px solid var(--zft-border);border-radius:7px;
+  background:color-mix(in srgb,var(--zft-panel) var(--zft-hud-opacity),transparent);
+  box-shadow:0 5px 18px var(--zft-shadow);pointer-events:auto;
+}
+#zft-action-hud .zft-hud-content > .zft-hud-effects-strip .zft-hud-effects-bar {flex:none;}
+#zft-action-hud .zft-hud-content > .zft-hud-effects-strip .zft-hud-effects-icons {flex:1;min-width:0;padding:0;}
+#zft-action-hud .zft-hud-content > .zft-hud-effects-strip .zft-hud-effects-bar button {width:18px;height:25px;}
+#zft-action-hud .zft-hud-effects-count {white-space:nowrap;}
+#zft-action-hud .zft-hud-effects-empty {padding:3px 0;}
+/* HP bar is an accessible click target without expanding the portrait layout. */
+#zft-action-hud .zft-hud-hp-trigger {
+  display:block;width:100%;min-width:0;margin:0;padding:0;border:0;border-radius:3px;
+  background:transparent;color:inherit;text-align:left;
+}
+#zft-action-hud .zft-hud-hp-trigger:not(:disabled):hover .zft-hud-hp-rail {outline:1px solid var(--zft-accent-bright);}
+#zft-action-hud .zft-hud-hp-trigger:disabled {cursor:default;opacity:1;}
+#zft-action-hud .zft-hud-hp-rail {display:block;width:100%;}
+#zft-action-hud .zft-hud-hp-fill {display:block;}
+#zft-action-hud .zft-hud-hp-panel {
+  position:absolute;left:0;z-index:3;width:min(275px,calc(100vw - 24px));
+  padding:10px;border:1px solid var(--zft-border);border-radius:8px;
+  background:var(--zft-panel);color:var(--zft-text);
+  box-shadow:0 12px 30px var(--zft-shadow);pointer-events:auto;
+}
+#zft-action-hud .zft-hud-hp-panel[data-side='above'] {bottom:calc(100% + 7px);top:auto;}
+#zft-action-hud .zft-hud-hp-panel[data-side='below'] {top:calc(100% + 7px);bottom:auto;}
+#zft-action-hud .zft-hud-hp-panel-header {display:flex;justify-content:space-between;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--zft-border);font-size:12px;}
+#zft-action-hud .zft-hud-hp-panel-input {display:flex;align-items:center;gap:10px;padding:9px 0;}
+#zft-action-hud .zft-hud-hp-panel-input label {font-size:11px;color:var(--zft-muted);}
+#zft-action-hud .zft-hud-hp-panel-input input {width:100%;max-width:120px;min-width:0;flex:1;padding:5px 7px;border-radius:4px;border:1px solid var(--zft-border);background:var(--zft-panel2);color:var(--zft-text);font:inherit;}
+#zft-action-hud .zft-hud-hp-panel-actions {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;}
+#zft-action-hud .zft-hud-hp-panel-actions button {padding:6px 4px;border:1px solid var(--zft-border);border-radius:4px;background:var(--zft-panel2);color:var(--zft-text);font-size:11px;}
+#zft-action-hud .zft-hud-hp-panel-actions button:hover {background:var(--zft-panel3);color:var(--zft-accent-bright);}
+#zft-action-hud .zft-hud-hp-panel-actions button:disabled {opacity:.6;cursor:wait;}
+#zft-action-hud .zft-hud-hp-panel-actions button[data-hp-action='zero'] {grid-column:span 2;}
+#zft-action-hud .zft-hud-hp-panel small {display:block;color:var(--zft-muted);font-size:10px;line-height:1.35;margin-top:9px;}
+
+/* Place floating effect strip below the HUD only when above would clip viewport. */
+#zft-action-hud .zft-hud-content > .zft-hud-effects-strip[data-side='below'] {top:calc(100% + 5px);bottom:auto;}
+#zft-action-hud.zft-menu-down:has(.zft-hud-effects-strip[data-side='below']) .zft-hud-popup {
+  top:calc(100% + 8px + var(--zft-effects-bottom-offset,0px));
+}
+
+/* dev.18: icon-only Active Effects aligned to the top-right of the HUD. */
+#zft-action-hud .zft-hud-content > .zft-hud-effects-strip {
+  left:auto;right:0;bottom:calc(100% + 5px);top:auto;
+  justify-content:flex-end;align-items:flex-end;display:flex;
+  width:max-content;min-width:0;max-width:100%;margin:0;padding:0;
+  background:transparent;border:0;box-shadow:none;border-radius:0;
+}
+#zft-action-hud .zft-hud-content > .zft-hud-effects-strip .zft-hud-effects-icons {
+  display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:flex-end;
+  column-gap:5px;row-gap:5px;width:max-content;max-width:100%;padding:0;margin:0;
+}
+#zft-action-hud .zft-hud-effects-strip .zft-hud-effect {
+  width:33px;height:33px;flex:none;padding:0;border:0;border-radius:4px;
+  background:transparent;overflow:visible;cursor:context-menu;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.9));
+}
+#zft-action-hud .zft-hud-effects-strip .zft-hud-effect img {border-radius:3px;}
+#zft-action-hud .zft-hud-effects-strip .zft-hud-effect:focus-visible {outline:2px solid #69c5ff;outline-offset:2px;}
+
+/* dev.19: unobtrusive remaining-time overlays, with no icon frame or panel. */
+#zft-action-hud .zft-hud-effects-strip .zft-hud-effect .zft-hud-effect-duration {
+  position:absolute;right:0;bottom:0;left:auto;display:block;
+  width:auto;max-width:100%;margin:0;padding:1px 2px;
+  background:transparent;border:0;color:#fff;
+  font-size:9px;font-weight:800;line-height:1.05;letter-spacing:0;
+  text-align:right;white-space:nowrap;overflow:visible;text-overflow:clip;
+  font-variant-numeric:tabular-nums;pointer-events:none;
+  text-shadow:0 1px 2px #000,0 0 3px #000,1px 0 1px #000;
+}
+#zft-action-hud .zft-hud-effects-strip .zft-hud-effect .zft-hud-effect-duration[hidden] {display:none !important;}
+
+/* dev.18: character Inspiration and HP controls. */
+#zft-action-hud .zft-hud-identity-row {display:flex;align-items:center;justify-content:space-between;gap:3px;min-width:0;}
+#zft-action-hud .zft-hud-identity-row .zft-hud-name {min-width:0;flex:1;}
+#zft-action-hud .zft-hud-inspiration {
+  width:16px;height:16px;min-width:16px;flex:none;display:grid;place-items:center;
+  border:0;border-radius:3px;padding:0;margin:0;background:transparent;
+  color:var(--zft-muted);font-size:13px;cursor:pointer;
+}
+#zft-action-hud .zft-hud-inspiration.is-inspired {color:#f5c64c;filter:drop-shadow(0 0 2px rgba(255,194,46,.6));}
+#zft-action-hud .zft-hud-inspiration:not(:disabled):hover {background:var(--zft-panel3);outline:1px solid var(--zft-border);}
+#zft-action-hud .zft-hud-inspiration:disabled {opacity:.72;cursor:default;}
+#zft-action-hud .zft-hud-hp-numbers {display:flex;align-items:center;gap:3px;min-width:0;}
+#zft-action-hud .zft-hud-hp-numbers strong {font-size:8px;}
+#zft-action-hud .zft-hud-hp-temp-badge {
+  display:inline-flex;align-items:center;justify-content:center;gap:2px;
+  min-width:0;flex:none;padding:1px 3px;border-radius:3px;
+  color:var(--zft-hp-temp-color,#65c3ff);background:rgba(35,134,190,.13);
+  box-shadow:inset 0 0 0 1px currentColor;line-height:1.15;
+}
+#zft-action-hud .zft-hud-hp-temp-badge i {font-size:8px;flex:none;}
+#zft-action-hud .zft-hud-hp-temp-badge em {font-size:8px;font-style:normal;font-weight:700;white-space:nowrap;}
+#zft-action-hud .zft-hud-hp-temp-badge[hidden] {display:none !important;}
+#zft-action-hud .zft-hud-hp-fill {background:linear-gradient(90deg,#b93e50,#ea6972);}
+#zft-action-hud {--zft-hp-damage-color:#ee7580;--zft-hp-heal-color:#60dfa0;--zft-hp-temp-color:#65c3ff;}
+#zft-action-hud[data-theme='sunlit-parchment'] {--zft-hp-damage-color:#a7283b;--zft-hp-heal-color:#116d48;--zft-hp-temp-color:#005f9e;}
+#zft-action-hud .zft-hud-hp-panel-actions button[data-hp-action='damage'],
+#zft-action-hud .zft-hud-hp-panel-actions button[data-hp-action='zero'] {color:var(--zft-hp-damage-color);}
+#zft-action-hud .zft-hud-hp-panel-actions button[data-hp-action='heal'],
+#zft-action-hud .zft-hud-hp-panel-actions button[data-hp-action='full'] {color:var(--zft-hp-heal-color);}
+#zft-action-hud .zft-hud-hp-panel-actions button[data-hp-action='temp'] {color:var(--zft-hp-temp-color);}
+#zft-action-hud .zft-hud-hp-panel-actions button:hover {background:var(--zft-panel3);filter:brightness(1.12);}
+#zft-action-hud .zft-hud-hp-panel small [data-hp-panel-temp] {color:var(--zft-hp-temp-color);font-weight:700;}
+
+
+/* dev.20: high contrast duration pills without framing the effect icon. */
+#zft-action-hud .zft-hud-effects-strip .zft-hud-effect .zft-hud-effect-duration {
+  right:-1px;bottom:-1px;padding:1px 3px;max-width:calc(100% + 2px);
+  background:rgba(8,10,16,.9);border:1px solid rgba(255,255,255,.19);
+  border-radius:3px;color:#fff;text-shadow:none;
+  box-shadow:0 1px 3px rgba(0,0,0,.55);line-height:1.1;
+}
+
+/* dev.20: readable character health summary. Keep the HUD compact. */
+#zft-action-hud .zft-hud-portrait-area {width:150px;min-width:150px;gap:7px;}
+#zft-action-hud .zft-hud-avatar {
+  display:block;flex:none;width:38px;height:38px;margin:0;padding:0;
+  cursor:pointer;overflow:hidden;line-height:0;
+}
+#zft-action-hud .zft-hud-avatar:hover:not(:disabled) {border-color:var(--zft-accent-bright);}
+#zft-action-hud .zft-hud-avatar:disabled {cursor:default;opacity:1;}
+#zft-action-hud .zft-hud-avatar:focus-visible {outline:2px solid var(--zft-accent-bright);outline-offset:3px;}
+#zft-action-hud .zft-hud-character-info {display:flex;flex-direction:column;gap:3px;min-width:0;}
+#zft-action-hud .zft-hud-identity-row {gap:3px;min-height:17px;}
+#zft-action-hud .zft-hud-name {font-size:11px;line-height:1.2;}
+#zft-action-hud .zft-hud-hp-trigger {display:flex;flex-direction:column;gap:4px;}
+#zft-action-hud .zft-hud-hp-line {display:flex;align-items:center;justify-content:space-between;gap:3px;width:100%;min-width:0;}
+#zft-action-hud .zft-hud-hp-primary {display:inline-flex;align-items:baseline;gap:3px;min-width:0;white-space:nowrap;}
+#zft-action-hud .zft-hud-hp-caption {font-size:9px;color:var(--zft-muted);font-weight:500;line-height:1.1;}
+#zft-action-hud .zft-hud-hp-primary strong {font-size:9.5px;line-height:1.1;font-weight:700;color:var(--zft-text);font-variant-numeric:tabular-nums;white-space:nowrap;}
+#zft-action-hud .zft-hud-hp-temp-badge {gap:2px;padding:2px 3px;line-height:1;white-space:nowrap;}
+#zft-action-hud .zft-hud-hp-temp-badge :is(i,em) {font-size:8.5px;}
+#zft-action-hud .zft-hud-hp-rail {height:7px;margin:0;border-radius:4px;}
+#zft-action-hud .zft-hud-hp-fill {border-radius:3px;}
+@media(max-width:900px) {
+  #zft-action-hud .zft-hud-portrait-area {width:148px;min-width:148px;}
+}
+@media(max-width:570px) {
+  #zft-action-hud .zft-hud-portrait-area {width:132px;min-width:132px;gap:5px;}
+  #zft-action-hud .zft-hud-avatar {width:34px;height:34px;}
+  #zft-action-hud .zft-hud-hp-primary strong {font-size:8.5px;}
+  #zft-action-hud .zft-hud-hp-temp-badge :is(i,em) {font-size:8px;}
+}
+
+/* dev.20: smaller HP manager with centered amount and a concise footer. */
+#zft-action-hud .zft-hud-hp-panel {
+  width:min(226px,calc(100vw - 24px));padding:9px;
+}
+#zft-action-hud .zft-hud-hp-panel-header {padding-bottom:7px;gap:5px;}
+#zft-action-hud .zft-hud-hp-panel-input {
+  justify-content:center;gap:9px;padding:8px 0;
+}
+#zft-action-hud .zft-hud-hp-panel-input input {
+  flex:none;width:60px;max-width:60px;min-width:0;
+  height:28px;padding:3px 7px;font-size:12px;font-variant-numeric:tabular-nums;
+}
+#zft-action-hud .zft-hud-hp-panel-actions {gap:4px;}
+#zft-action-hud .zft-hud-hp-panel-actions button {
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  min-height:25px;padding:4px 2px;font-size:10px;white-space:nowrap;
+}
+#zft-action-hud .zft-hud-hp-panel-footer {
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  margin-top:8px;font-size:10px;line-height:1.3;color:var(--zft-muted);
+}
+#zft-action-hud .zft-hud-hp-panel-footer i,
+#zft-action-hud .zft-hud-hp-panel-footer [data-hp-panel-temp] {
+  color:var(--zft-hp-temp-color);font-weight:700;
+}
+
+/* dev.22: minimal icon-only HP manager, sized for a quick glance during combat. */
+#zft-action-hud .zft-hud-hp-panel {
+  width:min(278px,calc(100vw - 16px));max-width:calc(100vw - 16px);
+  padding:7px 8px 8px;border-radius:8px;box-sizing:border-box;
+}
+#zft-action-hud .zft-hud-hp-panel[hidden],
+#zft-action-hud .zft-hud-hp-mini-temp[hidden] {display:none !important;}
+#zft-action-hud .zft-hud-hp-mini-status {
+  display:flex;align-items:center;justify-content:space-between;gap:7px;
+  min-height:18px;margin-bottom:5px;font-size:11px;line-height:1.15;
+}
+#zft-action-hud .zft-hud-hp-mini-current,
+#zft-action-hud .zft-hud-hp-mini-temp {display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+#zft-action-hud .zft-hud-hp-mini-current i {color:var(--zft-hp-damage-color);}
+#zft-action-hud .zft-hud-hp-mini-current strong {font-variant-numeric:tabular-nums;color:var(--zft-text);}
+#zft-action-hud .zft-hud-hp-mini-temp {color:var(--zft-hp-temp-color);font-variant-numeric:tabular-nums;}
+#zft-action-hud .zft-hud-hp-mini-rail {
+  width:100%;height:5px;margin:0 0 7px;background:rgba(100,91,102,.57);
+  border-radius:99px;overflow:hidden;
+}
+#zft-action-hud .zft-hud-hp-mini-fill {
+  height:100%;background:linear-gradient(90deg,#b93e50,#ea6972);
+  border-radius:inherit;transition:width .15s ease;
+}
+#zft-action-hud .zft-hud-hp-quick {
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr)) 50px repeat(3,minmax(0,1fr));
+  gap:5px;align-items:stretch;margin:0;
+}
+#zft-action-hud .zft-hud-hp-amount-wrap {display:flex;min-width:0;align-items:center;margin:0;}
+#zft-action-hud .zft-hud-hp-amount-wrap input {
+  box-sizing:border-box;width:100%;min-width:0;height:34px;
+  padding:3px 1px;margin:0;text-align:center;font-family:inherit;
+  font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;
+  color:#171717 !important;background:#fff !important;border:1px solid #a7a7a7;
+  border-radius:5px;box-shadow:none;
+  appearance:textfield;
+}
+#zft-action-hud .zft-hud-hp-amount-wrap input::-webkit-inner-spin-button,
+#zft-action-hud .zft-hud-hp-amount-wrap input::-webkit-outer-spin-button {appearance:none;margin:0;}
+#zft-action-hud .zft-hud-hp-panel button[data-hp-action] {
+  --zft-action-color:var(--zft-text);
+  --zft-action-bg:rgba(135,135,135,.12);
+  --zft-action-line:rgba(135,135,135,.35);
+  --zft-action-glow:rgba(135,135,135,.12);
+  display:inline-flex;justify-content:center;align-items:center;
+  min-width:0;width:100%;height:34px;margin:0;padding:0;
+  font-family:inherit;font-size:15px;line-height:1;
+  color:var(--zft-action-color);background:var(--zft-action-bg);
+  border:1px solid var(--zft-action-line);border-radius:5px;
+  box-shadow:0 0 6px 1px var(--zft-action-glow);
+  cursor:pointer;transition:filter .12s ease,box-shadow .12s ease;
+}
+#zft-action-hud .zft-hud-hp-panel button[data-hp-action='zero'] {
+  --zft-action-color:var(--zft-hp-damage-color);
+  --zft-action-bg:rgba(136,25,42,.19);--zft-action-line:rgba(200,49,66,.48);
+  --zft-action-glow:rgba(171,31,47,.22);
+}
+#zft-action-hud .zft-hud-hp-panel button[data-hp-action='damage'] {
+  --zft-action-color:var(--zft-hp-damage-color);
+  --zft-action-bg:rgba(190,40,58,.13);--zft-action-line:rgba(218,64,86,.42);
+  --zft-action-glow:rgba(200,48,72,.20);
+}
+#zft-action-hud .zft-hud-hp-panel button[data-hp-action='heal'] {
+  --zft-action-color:var(--zft-hp-heal-color);
+  --zft-action-bg:rgba(27,152,94,.13);--zft-action-line:rgba(55,190,127,.41);
+  --zft-action-glow:rgba(43,174,107,.17);
+}
+#zft-action-hud .zft-hud-hp-panel button[data-hp-action='full'] {
+  --zft-action-color:var(--zft-hp-heal-color);
+  --zft-action-bg:rgba(20,142,91,.19);--zft-action-line:rgba(69,212,140,.49);
+  --zft-action-glow:rgba(44,200,126,.22);
+}
+#zft-action-hud .zft-hud-hp-panel button[data-hp-action='temp'] {
+  --zft-action-color:var(--zft-hp-temp-color);
+  --zft-action-bg:rgba(29,125,190,.13);--zft-action-line:rgba(68,169,225,.44);
+  --zft-action-glow:rgba(37,142,213,.20);
+}
+#zft-action-hud .zft-hud-hp-panel button[data-hp-action]:hover:not(:disabled) {
+  filter:brightness(1.16);box-shadow:0 0 10px 2px var(--zft-action-glow);
+}
+#zft-action-hud .zft-hud-hp-panel button[data-hp-action]:focus-visible,
+#zft-action-hud .zft-hud-hp-amount-wrap input:focus-visible {
+  outline:2px solid var(--zft-accent-bright);outline-offset:2px;
+}
+#zft-action-hud .zft-hud-hp-panel button[data-hp-action]:disabled {opacity:.55;cursor:wait;}
+@media(prefers-reduced-motion:reduce) {
+  #zft-action-hud .zft-hud-hp-panel button,
+  #zft-action-hud .zft-hud-hp-mini-fill {transition:none;}
+}
+
+/* dev.25 custom hotbar: inherits theme and exact category-button dimensions. */
+#zft-action-hud-hotbar {
+  --zft-scale:1;--zft-button-width:42px;--zft-button-height:38px;
+  --zft-text:#f0e9d9;--zft-muted:#ada69b;--zft-panel:#24272c;
+  --zft-panel2:#2c3035;--zft-panel3:#343941;--zft-bg:#17191c;
+  --zft-border:rgba(204,175,125,.55);--zft-accent-bright:#f2d8a2;
+  --zft-inset:rgba(255,255,255,.055);--zft-shadow:rgba(0,0,0,.67);
+  --zft-font:'Signika',system-ui,sans-serif;
+  position:fixed !important;z-index:92;left:20px;top:60px;bottom:auto;
+  display:flex;flex-direction:column;gap:4px;width:max-content;height:max-content;
+  max-width:calc(100vw - 16px);max-height:calc(100vh - 16px);
+  margin:0;padding:5px;border:1px solid var(--zft-border);border-radius:7px;
+  background:linear-gradient(145deg,var(--zft-panel),var(--zft-bg));
+  box-shadow:0 7px 22px var(--zft-shadow),inset 0 0 0 1px var(--zft-inset);
+  color:var(--zft-text);font-family:var(--zft-font);zoom:var(--zft-scale);
+  box-sizing:border-box;pointer-events:auto;isolation:isolate;
+}
+#zft-action-hud-hotbar *,#zft-action-hud-hotbar *::before,#zft-action-hud-hotbar *::after {box-sizing:border-box;}
+#zft-action-hud-hotbar button {cursor:pointer;font:inherit;}
+#zft-action-hud-hotbar button:focus-visible {outline:2px solid var(--zft-accent-bright);outline-offset:1px;}
+#zft-action-hud-hotbar .zft-hotbar-header {display:flex;justify-content:space-between;align-items:center;gap:12px;padding:0 2px 2px;min-height:17px;color:var(--zft-muted);font-size:9px;user-select:none;}
+#zft-action-hud-hotbar .zft-hotbar-header {cursor:grab;touch-action:none;}
+#zft-action-hud-hotbar .zft-hotbar-grip {white-space:nowrap;display:inline-flex;gap:4px;align-items:center;pointer-events:none;}
+#zft-action-hud-hotbar .zft-hotbar-controls {display:flex;gap:3px;}
+#zft-action-hud-hotbar .zft-hotbar-controls button {border:1px solid var(--zft-border);border-radius:3px;background:var(--zft-panel2);color:var(--zft-accent-bright);min-width:22px;min-height:20px;padding:1px 5px;font-size:11px;}
+#zft-action-hud-hotbar .zft-hotbar-controls button:hover {filter:brightness(1.3);}
+/* dev.30 scale control lives in document.body, outside the CSS-zoomed hotbar. */
+#zft-action-hud-hotbar-scale {
+  position:fixed !important;z-index:120;width:262px;max-width:calc(100vw - 16px);
+  padding:12px;border:1px solid var(--zft-border);border-radius:8px;
+  background:linear-gradient(150deg,var(--zft-panel2),var(--zft-bg));
+  box-shadow:0 12px 28px var(--zft-shadow),0 0 0 1px var(--zft-inset);
+  color:var(--zft-text);font:13px/1.35 'Signika',system-ui,sans-serif;
+  box-sizing:border-box;zoom:1;pointer-events:auto;
+}
+#zft-action-hud-hotbar-scale * {box-sizing:border-box;}
+#zft-action-hud-hotbar-scale .zft-hotbar-scale-heading {display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;color:var(--zft-accent-bright);}
+#zft-action-hud-hotbar-scale .zft-hotbar-scale-heading button {background:transparent;color:var(--zft-muted);border:0;font-size:14px;cursor:pointer;padding:2px 5px;}
+#zft-action-hud-hotbar-scale .zft-hotbar-scale-heading button:hover {color:var(--zft-text);}
+#zft-action-hud-hotbar-scale .zft-hotbar-scale-controls {display:flex;align-items:center;gap:12px;}
+#zft-action-hud-hotbar-scale input[type='range'] {width:100%;min-width:0;accent-color:var(--zft-accent-bright);cursor:pointer;}
+#zft-action-hud-hotbar-scale .zft-hotbar-scale-value {min-width:42px;text-align:right;color:var(--zft-accent-bright);font-variant-numeric:tabular-nums;font-weight:700;}
+#zft-action-hud-hotbar .zft-hotbar-grid-settings {display:flex;justify-content:flex-end;gap:9px;align-items:center;padding-bottom:2px;color:var(--zft-muted);font-size:9px;}
+#zft-action-hud-hotbar .zft-hotbar-grid-settings label {display:flex;align-items:center;gap:3px;}
+#zft-action-hud-hotbar .zft-hotbar-grid-settings input {width:31px;height:19px;padding:0 2px;border-radius:3px;border:1px solid var(--zft-border);background:var(--zft-panel3);color:var(--zft-text);font:inherit;text-align:center;}
+#zft-action-hud-hotbar {--zft-divider-extra:9px;}
+#zft-action-hud-hotbar .zft-hotbar-grid-wrap {position:relative;max-width:calc(100vw - 28px);}
+#zft-action-hud-hotbar .zft-hotbar-grid {display:grid;gap:3px;max-width:calc(100vw - 28px);}
+#zft-action-hud-hotbar .zft-hotbar-slot.is-after-divider {margin-left:var(--zft-divider-extra);}
+#zft-action-hud-hotbar .zft-hotbar-divider-overlay {position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+#zft-action-hud-hotbar .zft-hotbar-divider-line {position:absolute;top:0;bottom:0;width:2px;background:var(--zft-accent-bright);opacity:.66;border-radius:2px;box-shadow:0 0 4px var(--zft-accent-bright);}
+#zft-action-hud-hotbar .zft-hotbar-divider-toggle {flex-shrink:0;padding:1px 5px;min-height:18px;color:var(--zft-muted);border:1px solid var(--zft-border);border-radius:3px;background:var(--zft-panel2);font-size:9px;}
+#zft-action-hud-hotbar .zft-hotbar-divider-toggle[aria-pressed='true'] {color:var(--zft-accent-bright);}
+#zft-action-hud-hotbar .zft-hotbar-divider-editor {position:relative;min-height:18px;user-select:none;touch-action:none;}
+#zft-action-hud-hotbar .zft-hotbar-divider-marker {position:absolute;transform:translateX(-50%);top:2px;width:15px;height:15px;padding:0;border:1px solid var(--zft-border);border-radius:3px;background:var(--zft-panel2);color:var(--zft-muted);font-size:11px;line-height:10px;z-index:3;touch-action:none;}
+#zft-action-hud-hotbar .zft-hotbar-divider-marker[aria-pressed='true'] {cursor:grab;}
+#zft-action-hud-hotbar .zft-hotbar-divider-marker.is-dragging {cursor:grabbing;z-index:9;outline:1px solid var(--zft-accent-bright);}
+#zft-action-hud-hotbar .zft-hotbar-divider-line {transform:translateX(-50%);}
+#zft-action-hud-hotbar .zft-hotbar-divider-marker[aria-pressed='true'] {background:var(--zft-accent-bright);color:var(--zft-panel);box-shadow:0 0 5px var(--zft-accent-bright);}
+#zft-action-hud-hotbar .zft-hotbar-divider-marker:hover {filter:brightness(1.25);}
+#zft-action-hud-hotbar .zft-hotbar-divider-help {padding:1px 0;color:var(--zft-muted);font-size:9px;}
+#zft-action-hud-hotbar .zft-hotbar-slot {width:var(--zft-button-width);height:var(--zft-button-height);position:relative;min-width:0;min-height:0;overflow:hidden;border:1px solid var(--zft-border);border-radius:5px;background:linear-gradient(145deg,var(--zft-panel3),var(--zft-panel));box-shadow:inset 0 0 0 1px var(--zft-inset);}
+#zft-action-hud-hotbar .zft-hotbar-slot.is-empty {background:color-mix(in srgb,var(--zft-panel) 65%,transparent);border-color:color-mix(in srgb,var(--zft-border) 55%,transparent);}
+#zft-action-hud-hotbar .zft-hotbar-slot.is-missing {display:grid;place-items:center;color:var(--zft-muted);}
+#zft-action-hud-hotbar .zft-hotbar-slot.is-drop-target {outline:2px solid var(--zft-accent-bright);outline-offset:-2px;box-shadow:0 0 10px var(--zft-accent-bright);}
+#zft-action-hud-hotbar .zft-hotbar-action {display:block;position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;background:transparent;overflow:hidden;color:#fff;}
+#zft-action-hud-hotbar .zft-hotbar-action img {display:block;width:100%;height:100%;object-fit:cover;pointer-events:none;}
+#zft-action-hud-hotbar .zft-hotbar-action:hover {filter:brightness(1.14);}
+#zft-action-hud-hotbar .zft-hotbar-name {position:absolute;left:0;right:0;bottom:0;max-width:100%;padding:2px 1px 1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;text-align:center;font-size:8px;line-height:1.1;font-weight:600;color:#fff;background:rgba(0,0,0,.78);text-shadow:0 1px 2px #000;pointer-events:none;}
+#zft-action-hud-hotbar .zft-hotbar-remove {position:absolute;right:0;top:0;width:13px;height:13px;padding:0;border:0;border-radius:0 0 0 3px;background:rgba(0,0,0,.83);color:#fff;font-size:8px;line-height:1;}
+#zft-action-hud-hotbar .zft-hotbar-remove:hover {background:#ad384d;}
+#zft-action-hud-hotbar[data-locked='true'] .zft-hotbar-grid-settings {display:none;}
+#zft-action-hud-hotbar[data-locked='true'] .zft-hotbar-header {min-height:20px;padding-bottom:0;gap:5px;}
+#zft-action-hud-hotbar[data-locked='true'] .zft-hotbar-grip-label {display:none;}
+#zft-action-hud-hotbar[data-locked='true'] {padding:4px;}
+#zft-action-hud-hotbar .zft-hotbar-resize {position:absolute;right:0;bottom:0;width:12px;height:12px;border-radius:4px 0 5px 0;cursor:nwse-resize;background:linear-gradient(135deg,transparent 48%,var(--zft-accent-bright) 52%,transparent 57%,transparent 67%,var(--zft-accent-bright) 72%,transparent 77%);opacity:.7;z-index:2;}
+#zft-action-hud-hotbar .zft-hotbar-resize:hover {opacity:1;}
+#zft-action-hud-hotbar[data-locked='true'] .zft-hotbar-resize {display:none;}
+#zft-action-hud-hotbar .zft-hotbar-grid {overflow:auto;}
+
+/* dev.27: independently lock the hotbar's location without hiding recovery controls. */
+#zft-action-hud-hotbar[data-position-locked='true'] .zft-hotbar-header {cursor:default;}
+#zft-action-hud-hotbar .zft-hotbar-size-indicator {display:none;position:absolute;right:8px;bottom:16px;z-index:5;pointer-events:none;padding:2px 5px;border-radius:4px;border:1px solid var(--zft-border);color:#fff;background:rgba(0,0,0,.86);text-shadow:0 1px 2px #000;font-size:10px;white-space:nowrap;box-shadow:0 2px 7px rgba(0,0,0,.4);}
+#zft-action-hud-hotbar[data-resizing='true'] .zft-hotbar-size-indicator {display:block;}
+#zft-action-hud-hotbar[data-resizing='true'] .zft-hotbar-resize {opacity:1;}
+
+/* dev.31: compact scale tool, independent of both the grid and HUD zoom. */
+#zft-action-hud-hotbar-scale {width:215px;padding:7px 9px;font-size:11px;}
+#zft-action-hud-hotbar-scale .zft-hotbar-scale-heading {margin-bottom:4px;gap:6px;}
+#zft-action-hud-hotbar-scale .zft-hotbar-scale-controls {gap:7px;}
+#zft-action-hud-hotbar-scale input[type='range'] {height:12px;}
+#zft-action-hud-hotbar-scale .zft-hotbar-scale-value {min-width:34px;}
+#zft-action-hud-hotbar .zft-hotbar-header .zft-hotbar-profile-select {
+  flex:0 1 auto;max-width:115px;min-width:65px;height:20px;padding:0 3px;
+  border:1px solid var(--zft-border);border-radius:3px;
+  background:var(--zft-panel2);color:var(--zft-text);font:10px var(--zft-font);
+}
+#zft-action-hud-hotbar .zft-hotbar-header .zft-hotbar-profile-select:disabled {opacity:.65;}
+#zft-action-hud-hotbar .zft-hotbar-grid-settings .zft-hotbar-scale-toggle {min-width:20px;}
+#zft-action-hud-hotbar-profiles, #zft-action-hud-hotbar-profile-edit {
+  position:fixed !important;z-index:121;width:265px;max-width:calc(100vw - 16px);
+  padding:10px;border:1px solid var(--zft-border);border-radius:7px;
+  background:linear-gradient(145deg,var(--zft-panel2),var(--zft-bg));
+  box-shadow:0 10px 25px var(--zft-shadow),0 0 0 1px var(--zft-inset);
+  color:var(--zft-text);font:12px var(--zft-font);zoom:1;pointer-events:auto;
+}
+#zft-action-hud-hotbar-profiles * {box-sizing:border-box;}
+#zft-action-hud-hotbar-profiles .zft-hotbar-profile-heading {display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:9px;color:var(--zft-accent-bright);}
+#zft-action-hud-hotbar-profiles button {cursor:pointer;color:var(--zft-text);background:var(--zft-panel3);border:1px solid var(--zft-border);border-radius:4px;padding:5px;font:inherit;}
+#zft-action-hud-hotbar-profiles .zft-hotbar-profile-heading button {background:transparent;border:0;}
+#zft-action-hud-hotbar-profiles button:disabled {opacity:.45;cursor:default;}
+#zft-action-hud-hotbar-profiles button:not(:disabled):hover {filter:brightness(1.2);}
+#zft-action-hud-hotbar-profiles .zft-hotbar-profile-name {display:flex;flex-direction:column;gap:4px;color:var(--zft-muted);}
+#zft-action-hud-hotbar-profiles .zft-hotbar-profile-name input {width:100%;min-height:28px;padding:5px;border-radius:4px;border:1px solid var(--zft-border);background:var(--zft-panel3);color:var(--zft-text);font:inherit;}
+#zft-action-hud-hotbar-profiles .zft-hotbar-profile-actions {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-top:9px;}
+
+/* dev.31 condensed single-row external slider. */
+#zft-action-hud-hotbar-scale {width:270px;padding:5px 8px;}
+#zft-action-hud-hotbar-scale .zft-hotbar-scale-heading {margin:0;min-height:22px;gap:7px;}
+#zft-action-hud-hotbar-scale .zft-hotbar-scale-heading strong {flex:none;white-space:nowrap;font-size:11px;}
+#zft-action-hud-hotbar-scale .zft-hotbar-scale-controls {flex:1;min-width:60px;gap:6px;}
+#zft-action-hud-hotbar-scale .zft-hotbar-scale-controls input[type='range'] {flex:1;min-width:40px;height:13px;}
+#zft-action-hud-hotbar-scale .zft-hotbar-scale-heading button {flex:none;}
+
+/* dev.32: compact, fixed-button profiles and 20 x 20 viewport-safe grid. */
+#zft-action-hud-hotbar .zft-hotbar-header {gap:5px;min-width:0;max-width:100%;}
+#zft-action-hud-hotbar .zft-hotbar-profile-tabs {
+  display:flex;gap:3px;flex:1 1 auto;min-width:0;max-width:min(290px,calc(100vw - 180px));
+  overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:thin;
+  touch-action:pan-x;align-items:center;cursor:default;
+}
+#zft-action-hud-hotbar .zft-hotbar-profile-tab {
+  flex:0 0 auto;white-space:nowrap;min-height:20px;max-width:120px;
+  padding:2px 7px;border:1px solid var(--zft-border);border-radius:4px;
+  background:var(--zft-panel2);color:var(--zft-muted);font:10px/1.2 var(--zft-font);
+  overflow:hidden;text-overflow:ellipsis;
+}
+#zft-action-hud-hotbar .zft-hotbar-profile-tab[aria-selected='true'] {
+  background:var(--zft-panel3);color:var(--zft-accent-bright);
+  border-color:var(--zft-accent-bright);box-shadow:inset 0 -2px 0 var(--zft-accent);
+}
+#zft-action-hud-hotbar .zft-hotbar-profile-tab:hover {filter:brightness(1.2);}
+#zft-action-hud-hotbar .zft-hotbar-controls {flex:0 0 auto;}
+#zft-action-hud-hotbar .zft-hotbar-collapse[aria-expanded='false'] i {transform:rotate(180deg);}
+#zft-action-hud-hotbar[data-collapsed='true'] {gap:0;}
+#zft-action-hud-hotbar[data-collapsed='true'] .zft-hotbar-grip-label {display:none;}
+#zft-action-hud-hotbar .zft-hotbar-grid-wrap {max-height:calc(100vh - 125px);overflow:auto;min-height:0;}
+#zft-action-hud-hotbar .zft-hotbar-grid {max-height:none;overflow:visible;}
+#zft-action-hud-hotbar .zft-hotbar-grid-settings {flex-wrap:wrap;}
+/* Shared external scale control: neither panel is a child of a zoomed HUD. */
+.zft-external-scale-popover {
+  position:fixed !important;z-index:120;width:225px;max-width:calc(100vw - 16px);
+  padding:7px 9px;border:1px solid var(--zft-border);border-radius:6px;
+  background:linear-gradient(150deg,var(--zft-panel2),var(--zft-bg));
+  box-shadow:0 9px 24px var(--zft-shadow),0 0 0 1px var(--zft-inset);
+  color:var(--zft-text);font:11px/1.3 var(--zft-font,'Signika',system-ui,sans-serif);
+  zoom:1;box-sizing:border-box;pointer-events:auto;
+}
+.zft-external-scale-popover * {box-sizing:border-box;}
+.zft-external-scale-row {display:flex;align-items:center;gap:7px;white-space:nowrap;}
+.zft-external-scale-row strong {font-weight:600;flex:0 0 auto;}
+.zft-external-scale-row input[type='range'] {flex:1 1 auto;min-width:35px;width:70px;height:12px;accent-color:var(--zft-accent-bright);cursor:pointer;}
+.zft-external-scale-row output {min-width:31px;color:var(--zft-accent-bright);font-weight:700;font-variant-numeric:tabular-nums;text-align:right;}
+.zft-external-scale-row button {border:0;padding:2px;background:transparent;color:var(--zft-muted);cursor:pointer;}
+.zft-external-scale-row button:hover {color:var(--zft-text);}
+
+/* dev.33: horizontal row dividers share the same slot-boundary geometry. */
+#zft-action-hud-hotbar .zft-hotbar-grid-wrap.is-editing-rows {padding-left:19px;}
+#zft-action-hud-hotbar .zft-hotbar-slot.is-after-row-divider {margin-top:var(--zft-divider-extra);}
+#zft-action-hud-hotbar .zft-hotbar-row-divider-line {
+  position:absolute;height:2px;background:var(--zft-accent-bright);opacity:.66;
+  transform:translateY(-50%);border-radius:2px;box-shadow:0 0 4px var(--zft-accent-bright);
+}
+#zft-action-hud-hotbar .zft-hotbar-row-divider-editor {
+  position:absolute;left:0;top:0;bottom:0;width:19px;pointer-events:none;overflow:visible;
+}
+#zft-action-hud-hotbar .zft-hotbar-row-divider-marker {
+  position:absolute;left:2px;transform:translateY(-50%);width:15px;height:15px;
+  padding:0;border:1px solid var(--zft-border);border-radius:3px;
+  background:var(--zft-panel2);color:var(--zft-muted);font-size:11px;
+  line-height:10px;z-index:4;pointer-events:auto;touch-action:none;
+}
+#zft-action-hud-hotbar .zft-hotbar-row-divider-marker[aria-pressed='true'] {
+  background:var(--zft-accent-bright);color:var(--zft-panel);
+  box-shadow:0 0 5px var(--zft-accent-bright);cursor:grab;
+}
+#zft-action-hud-hotbar .zft-hotbar-row-divider-marker.is-dragging {cursor:grabbing;outline:1px solid var(--zft-accent-bright);z-index:8;}
+#zft-action-hud-hotbar .zft-hotbar-row-divider-marker:hover {filter:brightness(1.2);}
+/* Tabs left aligned; workbook-style arrows only appear if the tabs overflow. */
+#zft-action-hud-hotbar .zft-hotbar-profile-strip {display:flex;align-items:center;min-width:0;flex:1 1 auto;max-width:min(315px,calc(100vw - 160px));gap:2px;}
+#zft-action-hud-hotbar .zft-hotbar-profile-tabs {
+  justify-content:flex-start;flex:1 1 auto;min-width:0;max-width:none;
+  scrollbar-width:none;
+}
+#zft-action-hud-hotbar .zft-hotbar-profile-tabs::-webkit-scrollbar {display:none;}
+#zft-action-hud-hotbar .zft-hotbar-profile-nav {
+  display:none;flex:0 0 auto;width:17px;height:19px;padding:0;
+  align-items:center;justify-content:center;border:1px solid var(--zft-border);
+  background:var(--zft-panel2);color:var(--zft-accent-bright);border-radius:3px;font-size:9px;
+}
+#zft-action-hud-hotbar .zft-hotbar-profile-strip.is-overflowing .zft-hotbar-profile-nav {display:inline-flex;}
+#zft-action-hud-hotbar .zft-hotbar-profile-nav:disabled {opacity:.35;cursor:default;}
+#zft-action-hud-hotbar .zft-hotbar-profile-rename {
+  min-width:70px;width:100px;max-width:120px;color:var(--zft-text);
+  outline:1px solid var(--zft-accent-bright);cursor:text;
+}
+
+#zft-action-hud-hotbar[data-multiple-profiles='true'] .zft-hotbar-grip-label {display:none;}
+
+/* dev.34: group profile tabs against the drag grip, not in the header center. */
+#zft-action-hud-hotbar .zft-hotbar-header {justify-content:flex-start;}
+#zft-action-hud-hotbar .zft-hotbar-profile-strip {
+  flex:0 1 auto;width:max-content;min-width:0;margin:0 auto 0 0;
+  max-width:min(315px,calc(100vw - 160px));
+}
+#zft-action-hud-hotbar .zft-hotbar-profile-tabs {flex:0 1 auto;max-width:100%;justify-content:flex-start;}
+#zft-action-hud-hotbar .zft-hotbar-controls {margin-left:auto;}
+
+/* dev.35: unobtrusive Expand All / Collapse All controls in each action browser. */
+#zft-action-hud .zft-hud-group-toggle-all {display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;min-width:25px;padding:2px;border:1px solid var(--zft-border);border-radius:5px;background:var(--zft-panel2);color:var(--zft-accent-bright);font-size:11px;cursor:pointer;}
+#zft-action-hud .zft-hud-group-toggle-all:hover {filter:brightness(1.2);}
+#zft-action-hud .zft-hud-popup-count {margin-left:auto;}
+/* Right-click tab menu lives outside the zoomed hotbar DOM for consistent hit targets. */
+.zft-hotbar-profile-context {position:fixed;z-index:1005;min-width:136px;padding:4px;border:1px solid var(--zft-border, #806594);border-radius:6px;background:var(--zft-panel,#252034);box-shadow:0 7px 24px rgba(0,0,0,.55);font-family:var(--zft-font,Signika,sans-serif);}
+.zft-hotbar-profile-context button {display:flex;align-items:center;gap:8px;min-height:29px;width:100%;padding:5px 9px;text-align:left;background:transparent;border:0;border-radius:4px;color:var(--zft-text,#fff);cursor:pointer;font:inherit;}
+.zft-hotbar-profile-context button:hover,.zft-hotbar-profile-context button:focus-visible {background:var(--zft-panel3,#463454);outline:none;}
+
+/* dev.36: Optional per-button overrides. Absence of the class means the active
+   theme controls the appearance. Never tint the Item artwork itself. */
+#zft-action-hud .zft-hud-category-button.zft-custom-button-color,
+#zft-action-hud .zft-hud-category-button.zft-custom-button-color:hover,
+#zft-action-hud .zft-hud-category-button.zft-custom-button-color.is-active {
+  border-color:var(--zft-button-override);
+  background:linear-gradient(145deg,color-mix(in srgb,var(--zft-button-override) 24%,var(--zft-panel3)),color-mix(in srgb,var(--zft-button-override) 15%,var(--zft-panel)));
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--zft-button-override) 45%,transparent),0 0 7px color-mix(in srgb,var(--zft-button-override) 35%,transparent);
+}
+#zft-action-hud .zft-hud-category-button.zft-custom-button-color > i {color:var(--zft-button-override);filter:drop-shadow(0 1px 1px rgba(0,0,0,.6));}
+#zft-action-hud-hotbar .zft-hotbar-slot.zft-custom-button-color,
+#zft-action-hud-hotbar .zft-hotbar-slot.zft-custom-button-color:hover {
+  border-color:var(--zft-button-override);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--zft-button-override) 45%,transparent),0 0 8px color-mix(in srgb,var(--zft-button-override) 40%,transparent);
+}
+.zft-button-color-menu,.zft-button-color-picker {
+  position:fixed;z-index:1100;box-sizing:border-box;
+  background:var(--zft-panel,#292237);border:1px solid var(--zft-border,#76578e);
+  color:var(--zft-text,#f8f0ff);border-radius:8px;box-shadow:0 8px 25px rgba(0,0,0,.6);
+  font:13px var(--zft-font,Signika,sans-serif);
+}
+.zft-button-color-menu {min-width:180px;padding:6px;}
+.zft-button-color-menu-title {font-weight:600;max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:5px 8px;border-bottom:1px solid var(--zft-border,#76578e);margin-bottom:4px;}
+.zft-button-color-menu button {display:flex;align-items:center;gap:9px;width:100%;background:transparent;color:inherit;border:0;border-radius:4px;padding:7px 9px;text-align:left;cursor:pointer;font:inherit;}
+.zft-button-color-menu button:hover,.zft-button-color-menu button:focus-visible {background:var(--zft-panel3,#453454);}
+.zft-button-color-picker {width:265px;padding:12px;display:flex;flex-direction:column;gap:10px;}
+.zft-button-color-heading {display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;}
+.zft-button-color-heading strong {white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.zft-button-color-heading span {color:var(--zft-muted,#bdaecb);font-size:11px;}
+.zft-button-color-wheel-layout {display:flex;gap:14px;align-items:center;justify-content:center;}
+.zft-button-color-wheel {width:112px;height:112px;position:relative;flex-shrink:0;border-radius:50%;cursor:crosshair;touch-action:none;
+  background:conic-gradient(red 0deg,yellow 60deg,lime 120deg,cyan 180deg,blue 240deg,magenta 300deg,red 360deg);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.25);}
+.zft-button-color-wheel::after {content:"";position:absolute;inset:22px;background:var(--zft-panel,#292237);border-radius:50%;pointer-events:none;}
+.zft-button-color-wheel-point {position:absolute;z-index:1;width:12px;height:12px;border:2px solid white;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 2px #000,0 0 5px #000;pointer-events:none;}
+.zft-button-color-preview {width:95px;min-height:55px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.45);border-radius:6px;color:#fff;text-shadow:0 1px 2px #000,0 0 4px #000;font-weight:700;}
+.zft-button-color-range {display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;}
+.zft-button-color-range input {width:128px;min-width:0;accent-color:var(--zft-accent-bright,#ac84d2);}
+.zft-button-color-field {display:flex;align-items:center;gap:10px;font-weight:600;}
+.zft-button-color-hex {flex:1;min-width:0;max-width:125px;height:29px;background:#fff!important;color:#161616!important;border:1px solid #9e9e9e;border-radius:4px;padding:4px 7px;font:13px monospace;}
+.zft-button-color-hex.is-invalid {outline:2px solid #ff6570;}
+.zft-button-color-native {width:34px;height:29px;border:0;padding:0;background:transparent;cursor:pointer;}
+.zft-button-color-actions {display:flex;gap:5px;justify-content:space-between;}
+.zft-button-color-actions button {border:1px solid var(--zft-border,#76578e);background:var(--zft-panel3,#453454);color:var(--zft-text,#fff);font:inherit;font-size:11px;padding:6px;border-radius:4px;cursor:pointer;}
+.zft-button-color-actions button.is-primary {border-color:var(--zft-accent-bright,#b990e3);font-weight:700;}
+.zft-button-color-actions button:hover {filter:brightness(1.18);}
+
+/* dev.37: pinned built-in profiles, reorderable custom tabs and per-profile accents. */
+#zft-action-hud-hotbar .zft-hotbar-profile-pinned {display:flex;gap:3px;align-items:center;flex:0 0 auto;white-space:nowrap;}
+#zft-action-hud-hotbar .zft-hotbar-profile-strip {max-width:min(490px,calc(100vw - 160px));}
+#zft-action-hud-hotbar .zft-hotbar-profile-tabs {flex:1 1 auto;max-width:none;}
+#zft-action-hud-hotbar .zft-hotbar-profile-tab {border-bottom:2px solid var(--zft-profile-accent,var(--zft-accent-bright));}
+#zft-action-hud-hotbar .zft-hotbar-profile-tab[aria-selected='true'] {
+  border-color:var(--zft-profile-accent,var(--zft-accent-bright));
+  color:var(--zft-text);
+  box-shadow:inset 0 -2px 0 var(--zft-profile-accent,var(--zft-accent-bright)),0 0 6px color-mix(in srgb,var(--zft-profile-accent,var(--zft-accent-bright)) 45%,transparent);
+}
+#zft-action-hud-hotbar .zft-hotbar-profile-tab[draggable='true'] {cursor:grab;}
+#zft-action-hud-hotbar .zft-hotbar-profile-tab.is-dragging {opacity:.45;cursor:grabbing;}
+.zft-hotbar-profile-context button:disabled {opacity:.4;cursor:default;}
+#zft-action-hud-hotbar-profile-edit {position:fixed;z-index:1050;box-sizing:border-box;min-width:238px;max-width:calc(100vw - 16px);}
+#zft-action-hud-hotbar-profile-edit .zft-hotbar-profile-heading {display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+#zft-action-hud-hotbar-profile-edit .zft-hotbar-profile-heading button {background:none;border:none;color:var(--zft-text);cursor:pointer;}
+#zft-action-hud-hotbar-profile-edit .zft-hotbar-profile-name {display:flex;flex-direction:column;gap:3px;margin-bottom:9px;}
+#zft-action-hud-hotbar-profile-edit .zft-hotbar-profile-name input {width:100%;background:var(--zft-panel3);color:var(--zft-text);border:1px solid var(--zft-border);padding:6px;border-radius:4px;}
+#zft-action-hud-hotbar-profile-edit .zft-hotbar-profile-name input:read-only {opacity:.7;}
+#zft-action-hud-hotbar-profile-edit .zft-profile-editor-color-row {display:flex;gap:5px;margin-bottom:9px;}
+#zft-action-hud-hotbar-profile-edit .zft-profile-editor-color-row button {cursor:pointer;padding:5px 7px;border:1px solid var(--zft-border);border-radius:4px;background:var(--zft-panel3);color:var(--zft-text);font:inherit;}
+#zft-action-hud-hotbar-profile-edit .zft-profile-editor-sample {display:inline-block;width:12px;height:12px;border:1px solid #aaa;border-radius:3px;vertical-align:middle;margin-right:5px;}
+#zft-action-hud-hotbar-profile-edit .zft-hotbar-profile-actions {display:flex;gap:5px;}
+/* The same Photoshop-like HSV square is shared by every color editor. */
+.zft-button-color-picker {width:254px;max-width:calc(100vw - 16px);}
+.zft-button-color-wheel-layout {display:flex;gap:8px;align-items:stretch;justify-content:center;}
+.zft-button-color-field-square {position:relative;width:190px;height:170px;border:1px solid rgba(255,255,255,.38);border-radius:4px;cursor:crosshair;touch-action:none;
+  background:linear-gradient(to top,#000,transparent),linear-gradient(to right,#fff,var(--zft-picker-hue,#f00));}
+.zft-button-color-point {position:absolute;width:13px;height:13px;transform:translate(-50%,-50%);pointer-events:none;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px #222,0 0 4px #000;}
+/* The native range track previously covered the rainbow in Chromium/Foundry.
+   Paint the hue spectrum on a dedicated rail and make the input track transparent. */
+.zft-button-color-hue-rail {width:22px;height:170px;flex:none;position:relative;border-radius:4px;
+  border:1px solid rgba(255,255,255,.4);box-sizing:border-box;
+  background:linear-gradient(to top,#ff0000 0%,#ffff00 16.666%,#00ff00 33.333%,#00ffff 50%,#0000ff 66.666%,#ff00ff 83.333%,#ff0000 100%);}
+.zft-button-color-hue {display:block;width:100%;height:100%;margin:0;padding:0;cursor:pointer;
+  -webkit-appearance:none;appearance:none;writing-mode:vertical-lr;direction:rtl;background:transparent;accent-color:transparent;}
+.zft-button-color-hue::-webkit-slider-runnable-track {width:100%;height:100%;background:transparent;border:0;}
+.zft-button-color-hue::-moz-range-track {width:100%;height:100%;background:transparent;border:0;}
+.zft-button-color-hue::-webkit-slider-thumb {-webkit-appearance:none;appearance:none;width:25px;height:12px;border:2px solid #fff;
+  border-radius:5px;background:rgba(32,34,42,.68);box-shadow:0 1px 4px #000;}
+.zft-button-color-hue::-moz-range-thumb {width:23px;height:10px;border:2px solid #fff;
+  border-radius:5px;background:rgba(32,34,42,.68);box-shadow:0 1px 4px #000;}
+.zft-button-color-hue:focus-visible {outline:2px solid #fff;outline-offset:3px;border-radius:4px;}
+.zft-button-color-preview {width:100%;min-height:30px;}
+#zft-action-hud .zft-hud-favorites-toggle.zft-custom-button-color,
+#zft-action-hud .zft-hud-favorites-toggle.zft-custom-button-color:hover,
+#zft-action-hud .zft-hud-favorites-toggle.zft-custom-button-color.is-active {
+  border-color:var(--zft-button-override);
+  background:linear-gradient(145deg,color-mix(in srgb,var(--zft-button-override) 24%,var(--zft-panel3)),color-mix(in srgb,var(--zft-button-override) 15%,var(--zft-panel)));
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--zft-button-override) 45%,transparent),0 0 7px color-mix(in srgb,var(--zft-button-override) 35%,transparent);
+}
+#zft-action-hud .zft-hud-favorites-toggle.zft-custom-button-color > i:first-child {color:var(--zft-button-override);}
+
+#zft-action-hud-hotbar-profile-edit button:disabled {opacity:.45;cursor:default;}
+#zft-action-hud-hotbar-profile-edit .zft-hotbar-profile-actions button {background:var(--zft-panel3);color:var(--zft-text);border:1px solid var(--zft-border);border-radius:4px;padding:5px;font:inherit;cursor:pointer;}
+
+/* dev.38: Colors follow the category control that opened the panel, not the active theme's generic accent. */
+#zft-action-hud [data-hud-browser] {
+  border-color:color-mix(in srgb,var(--zft-context-accent,var(--zft-border)) 60%,var(--zft-border));
+  box-shadow:0 14px 35px var(--zft-shadow),inset 0 0 0 1px color-mix(in srgb,var(--zft-context-accent,var(--zft-border)) 25%,transparent);
+}
+#zft-action-hud [data-hud-browser] .zft-hud-popup-header {
+  color:var(--zft-context-accent,var(--zft-accent-bright));
+  border-bottom-color:color-mix(in srgb,var(--zft-context-accent,var(--zft-border)) 50%,var(--zft-border));
+  box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--zft-context-accent,var(--zft-border)) 38%,transparent);
+}
+#zft-action-hud [data-hud-browser] .zft-hud-group summary,
+#zft-action-hud [data-hud-browser] .zft-hud-group-toggle-all,
+#zft-action-hud [data-hud-browser] .zft-hud-pin-button.is-pinned {
+  color:var(--zft-context-accent,var(--zft-accent-bright));
+}
+#zft-action-hud [data-hud-browser] .zft-hud-group summary:hover,
+#zft-action-hud [data-hud-browser] .zft-hud-browser-item:hover {
+  background:color-mix(in srgb,var(--zft-context-accent,var(--zft-accent-bright)) 12%,var(--zft-panel3));
+  border-color:color-mix(in srgb,var(--zft-context-accent,var(--zft-accent-bright)) 40%,var(--zft-border));
+}
+#zft-action-hud [data-hud-browser] .zft-hud-search input:focus-visible {border-color:var(--zft-context-accent,var(--zft-accent-bright));}
+#zft-action-hud [data-quick-access-dropzone] {
+  border-top-color:color-mix(in srgb,var(--zft-context-accent,var(--zft-border)) 70%,var(--zft-border));
+  box-shadow:inset 0 2px 0 color-mix(in srgb,var(--zft-context-accent,var(--zft-border)) 22%,transparent);
+}
+#zft-action-hud [data-quick-access-dropzone] .zft-hud-favorite-item:hover {
+  border-color:color-mix(in srgb,var(--zft-context-accent,var(--zft-border)) 62%,var(--zft-border));
+}
+
+/* dev.38: one profile tint for hotbar chrome, never for Item art or per-slot overrides. */
+#zft-action-hud-hotbar {
+  border-color:color-mix(in srgb,var(--zft-hotbar-accent,var(--zft-accent-bright)) 60%,var(--zft-border));
+  box-shadow:0 7px 22px var(--zft-shadow),inset 0 0 0 1px color-mix(in srgb,var(--zft-hotbar-accent,var(--zft-accent-bright)) 20%,transparent);
+}
+#zft-action-hud-hotbar .zft-hotbar-header {
+  color:color-mix(in srgb,var(--zft-hotbar-accent,var(--zft-accent-bright)) 55%,var(--zft-text));
+  border-bottom:1px solid color-mix(in srgb,var(--zft-hotbar-accent,var(--zft-accent-bright)) 52%,transparent);
+}
+#zft-action-hud-hotbar .zft-hotbar-grip > i,
+#zft-action-hud-hotbar .zft-hotbar-divider-toggle[aria-pressed='true'] {color:var(--zft-hotbar-accent,var(--zft-accent-bright));}
+#zft-action-hud-hotbar .zft-hotbar-divider-line,
+#zft-action-hud-hotbar .zft-hotbar-row-divider-line {
+  background:var(--zft-hotbar-accent,var(--zft-accent-bright));
+  box-shadow:0 0 4px var(--zft-hotbar-accent,var(--zft-accent-bright));
+}
+#zft-action-hud-hotbar .zft-hotbar-slot.is-drop-target {
+  outline-color:var(--zft-hotbar-accent,var(--zft-accent-bright));
+  box-shadow:0 0 10px var(--zft-hotbar-accent,var(--zft-accent-bright));
+}
+#zft-action-hud-hotbar {--zft-divider-label-extra:21px;}
+#zft-action-hud-hotbar .zft-hotbar-slot.is-labeled-row-divider {margin-top:var(--zft-divider-label-extra);}
+#zft-action-hud-hotbar .zft-hotbar-divider-label-rail {
+  height:18px;position:relative;width:100%;pointer-events:none;overflow:hidden;
+}
+#zft-action-hud-hotbar .zft-hotbar-divider-name {
+  position:absolute;top:1px;transform:translateX(-50%);max-width:105px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  padding:1px 4px;border-radius:3px;background:var(--zft-panel2);
+  color:var(--zft-hotbar-accent,var(--zft-accent-bright));font-size:9px;font-weight:600;
+  border:1px solid color-mix(in srgb,var(--zft-hotbar-accent,var(--zft-accent-bright)) 40%,var(--zft-border));
+}
+#zft-action-hud-hotbar .zft-hotbar-row-divider-name {
+  position:absolute;transform:translateY(-50%);max-width:180px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  padding:1px 5px;border-radius:3px;background:var(--zft-panel2);
+  color:var(--zft-hotbar-accent,var(--zft-accent-bright));font-size:9px;font-weight:600;
+  border:1px solid color-mix(in srgb,var(--zft-hotbar-accent,var(--zft-accent-bright)) 50%,var(--zft-border));
+}
+.zft-hotbar-divider-label-editor {
+  position:fixed;z-index:1150;min-width:225px;max-width:calc(100vw - 16px);
+  padding:10px;display:flex;flex-direction:column;gap:8px;
+  border:1px solid var(--zft-border,#806594);border-radius:7px;
+  background:var(--zft-panel,#252034);box-shadow:0 8px 22px rgba(0,0,0,.65);
+  color:var(--zft-text,#fff);font:12px var(--zft-font,Signika,sans-serif);
+}
+.zft-hotbar-divider-label-editor label {display:flex;flex-direction:column;gap:5px;}
+.zft-hotbar-divider-label-editor input {
+  width:100%;height:29px;padding:3px 7px;border:1px solid var(--zft-border,#806594);
+  border-radius:4px;background:var(--zft-panel3,#463454);color:var(--zft-text,#fff);font:inherit;
+}
+.zft-hotbar-divider-label-commands {display:flex;justify-content:flex-end;gap:5px;}
+.zft-hotbar-divider-label-commands button {
+  padding:4px 8px;border:1px solid var(--zft-border,#806594);border-radius:4px;
+  background:var(--zft-panel3,#463454);color:var(--zft-text,#fff);font:inherit;cursor:pointer;
+}
+.zft-hotbar-divider-label-commands button:hover {filter:brightness(1.2);}
+
+/* dev.39: make the requested category control order explicit. */
+#zft-action-hud [data-hud-browser] .zft-hud-group-toggle-all[data-hud-expand="all"] {order:1;}
+#zft-action-hud [data-hud-browser] .zft-hud-group-toggle-all[data-hud-expand="none"] {order:2;}
+#zft-action-hud [data-hud-browser] .zft-hud-close-browser {order:3;}
+
+/* dev.40: compact browser visibility controls and RPG-agnostic resource presentation. */
+#zft-action-hud .zft-hud-browser-filters {display:flex;flex-wrap:wrap;align-items:center;gap:0 6px;border-bottom:1px solid var(--zft-border);padding:0 5px;}
+#zft-action-hud .zft-hud-browser-filters .zft-hud-filter-check {border-bottom:0;padding:6px 7px;white-space:nowrap;}
+#zft-action-hud .zft-hud-resources {flex:none;padding:6px 9px 8px;border-bottom:1px solid var(--zft-border);background:rgba(0,0,0,.12);}
+#zft-action-hud .zft-hud-resources-title {display:flex;align-items:center;gap:6px;margin-bottom:5px;color:var(--zft-accent-bright);font-size:10px;font-weight:700;}
+#zft-action-hud .zft-hud-resource-list {display:flex;flex-wrap:wrap;gap:5px;max-height:98px;overflow-y:auto;}
+#zft-action-hud .zft-hud-resource {display:inline-flex;align-items:center;gap:3px;border:1px solid var(--zft-border);border-radius:5px;background:var(--zft-panel2);padding:2px 4px;font-size:10px;color:var(--zft-text);}
+#zft-action-hud .zft-hud-resource-name {white-space:nowrap;font-weight:600;margin-right:3px;}
+#zft-action-hud .zft-hud-resource-value {white-space:nowrap;font-variant-numeric:tabular-nums;text-align:center;min-width:27px;}
+#zft-action-hud .zft-hud-resource button {width:19px;height:20px;border:1px solid var(--zft-border);border-radius:4px;background:var(--zft-panel3);color:var(--zft-accent-bright);font-size:9px;padding:0;cursor:pointer;}
+#zft-action-hud .zft-hud-resource button:disabled {opacity:.32;cursor:default;}
+#zft-action-hud .zft-hud-resource button:not(:disabled):hover {filter:brightness(1.25);}
+#zft-action-hud .zft-hud-resource button:focus-visible {outline:2px solid var(--zft-accent-bright);outline-offset:1px;}
+
+
+/* dev.41: Native sheet-style spell-slot shields on individual spell level headers. */
+#zft-action-hud .zft-hud-slot-shields {display:inline-flex;gap:2px;margin-left:auto;align-items:center;flex-wrap:nowrap;max-width:65%;}
+#zft-action-hud .zft-hud-group summary .zft-hud-slot-shield {flex:0 0 auto;display:grid;place-items:center;width:12px;height:17px;padding:0;border:0;background:transparent;cursor:pointer;color:#b9a7ce;line-height:1;}
+#zft-action-hud .zft-hud-group summary .zft-hud-slot-shield.is-available {color:#c6ad83;opacity:1;text-shadow:0 0 3px #bda77677;}
+#zft-action-hud .zft-hud-group summary .zft-hud-slot-shield.is-spent {color:#685f76;opacity:.65;}
+#zft-action-hud .zft-hud-group summary .zft-hud-slot-shield i {font-size:11px;transform:none !important;color:inherit;}
+#zft-action-hud .zft-hud-group summary .zft-hud-slot-shield:disabled {cursor:default;opacity:.3;}
+#zft-action-hud .zft-hud-group summary .zft-hud-slot-shield:not(:disabled):hover {filter:brightness(1.55);outline:1px solid currentColor;outline-offset:0;}
+#zft-action-hud .zft-hud-group summary .zft-hud-group-chevron {flex:none;margin-left:5px;}
+#zft-action-hud .zft-hud-group summary small {margin-left:0;}
+#zft-action-hud .zft-hud-group summary:not(:has(.zft-hud-slot-shields)) small {margin-left:auto;}
+#zft-action-hud .zft-hud-group[open] summary .zft-hud-slot-shield i {transform:none;}
+/* Item state controls, distinct from using an Item or adding it to Favorites. */
+#zft-action-hud .zft-hud-item-state {flex:0 0 18px;align-self:center;height:24px;min-width:18px;padding:0 1px;border:0;background:transparent;color:var(--zft-muted);opacity:.65;font-size:11px;cursor:pointer;}
+#zft-action-hud .zft-hud-item-state.is-active {color:var(--zft-accent-bright);opacity:1;}
+#zft-action-hud .zft-hud-item-state:hover:not(:disabled) {opacity:1;filter:brightness(1.3);}
+#zft-action-hud .zft-hud-item-state:disabled {opacity:.25;cursor:default;}
+#zft-action-hud .zft-hud-group-items {grid-template-columns:repeat(3,minmax(0,1fr));}
+@media (max-width:1050px) {#zft-action-hud .zft-hud-group-items {grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:650px) {#zft-action-hud .zft-hud-group-items {grid-template-columns:1fr;}}
+
+/* dev.41: Item state controls need room for labels, especially attuned gear. */
+#zft-action-hud .zft-hud-group-items:has(.zft-hud-item-state) {grid-template-columns:repeat(2,minmax(0,1fr));}
+#zft-action-hud .zft-hud-group-items:has([data-hud-item-state="attune"]) {grid-template-columns:repeat(2,minmax(0,1fr));}
+
+/* dev.52: Native Actor checks, with fixed ability tints and legible bonus/passive columns. */
+#zft-action-hud .zft-hud-checks-items {grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;}
+#zft-action-hud .zft-hud-check-row {display:grid;grid-template-columns:15px 30px minmax(0,1fr) 29px 24px;align-items:center;gap:4px;min-width:0;min-height:32px;padding:5px 6px;border:1px solid color-mix(in srgb,var(--zft-check-color) 43%,transparent);border-left:3px solid var(--zft-check-color);border-radius:5px;background:rgba(0,0,0,.15);color:var(--zft-text);font:inherit;font-size:11px;text-align:left;cursor:pointer;}
+#zft-action-hud .zft-hud-check-row:hover,#zft-action-hud .zft-hud-check-row:focus-visible {background:var(--zft-panel3);border-color:var(--zft-check-color);outline:none;box-shadow:inset 0 0 0 1px var(--zft-check-color);}
+#zft-action-hud .zft-hud-check-icon {font-size:12px;color:var(--zft-check-color);}
+#zft-action-hud .zft-hud-check-ability {font-size:9px;font-weight:800;letter-spacing:.2px;color:var(--zft-check-color);}
+#zft-action-hud .zft-hud-check-name {min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--zft-text);}
+#zft-action-hud .zft-hud-check-modifier {font-weight:750;text-align:right;font-variant-numeric:tabular-nums;color:var(--zft-check-color);}
+#zft-action-hud .zft-hud-check-passive {text-align:center;border-radius:3px;padding:2px 0;background:rgba(255,255,255,.07);color:var(--zft-text);font-size:10px;font-variant-numeric:tabular-nums;}
+#zft-action-hud .zft-hud-check-row:not(:has(.zft-hud-check-passive)) {grid-template-columns:15px 30px minmax(0,1fr) 29px;}
+@media(max-width:760px) {#zft-action-hud .zft-hud-checks-items {grid-template-columns:1fr;}}
+
+/* dev.53: compact second tier; preserve original per-category color overrides and drop zones. */
+#zft-action-hud .zft-hud-action-area {display:flex;flex-direction:column;align-items:flex-start;gap:4px;}
+#zft-action-hud .zft-hud-secondary-categories {display:flex;align-items:stretch;flex-wrap:wrap;gap:3px;max-width:min(560px,calc(100vw - 230px));}
+#zft-action-hud .zft-hud-category-button.zft-hud-slim-button,
+#zft-action-hud .zft-hud-favorites-toggle.zft-hud-slim-button {
+  box-sizing:border-box;width:var(--zft-button-width);min-width:var(--zft-button-width);max-width:var(--zft-button-width);
+  height:21px;min-height:21px;display:flex;align-items:center;justify-content:center;
+  padding:2px 1px;margin:0;border-radius:4px;flex-direction:row;gap:0;
+  line-height:1.1;font-size:clamp(7px,calc(var(--zft-button-width) * .20),10px);font-weight:700;letter-spacing:-.15px;white-space:nowrap;
+  overflow:hidden;text-overflow:clip;
+}
+#zft-action-hud .zft-hud-secondary-categories .zft-hud-slim-button.zft-custom-button-color {color:var(--zft-button-override);}
+#zft-action-hud .zft-hud-tool-meta {display:flex;align-items:center;gap:4px;max-width:100%;min-width:0;font-size:9px;color:var(--zft-check-color);font-style:normal;}
+#zft-action-hud .zft-hud-tool-meta b {font-size:9px;}
+#zft-action-hud .zft-hud-tool-meta span {font-variant-numeric:tabular-nums;font-weight:700;}
+#zft-action-hud .zft-hud-tool-meta em {color:var(--zft-muted);font-style:normal;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+@media(max-width:900px) {#zft-action-hud .zft-hud-secondary-categories {max-width:440px;}}
+@media(max-width:570px) {#zft-action-hud .zft-hud-secondary-categories {max-width:225px;}}
+
+/* dev.56: Primary icon buttons alone determine HUD width. Secondary controls
+   are contained inside that width; the quick-access trio stays together when
+   it fits, otherwise wraps to its own secondary line. */
+#zft-action-hud .zft-hud-action-area {
+  width:var(--zft-action-area-width);
+  max-width:100%;min-width:0;flex:0 1 auto;
+}
+#zft-action-hud .zft-hud-categories,
+#zft-action-hud .zft-hud-secondary-categories {width:100%;max-width:100%;min-width:0;}
+#zft-action-hud .zft-hud-secondary-quick {display:flex;flex:0 0 auto;align-items:stretch;flex-wrap:wrap;gap:3px;max-width:100%;}
+#zft-action-hud .zft-hud-hotbar-toggle.zft-hud-slim-button {
+  display:flex;justify-content:center;align-items:center;
+  width:var(--zft-button-width);min-width:var(--zft-button-width);max-width:var(--zft-button-width);
+  height:21px;min-height:21px;flex:0 0 auto;padding:2px 1px;border:1px solid var(--zft-border);
+  border-radius:4px;background:linear-gradient(145deg,var(--zft-panel3),var(--zft-panel));
+  color:var(--zft-text);font-weight:700;letter-spacing:-.15px;
+  font-size:clamp(7px,calc(var(--zft-button-width) * .20),10px);line-height:1.1;
+}
+#zft-action-hud .zft-hud-hotbar-toggle:hover,
+#zft-action-hud .zft-hud-hotbar-toggle.is-active {background:var(--zft-panel3);border-color:var(--zft-accent-bright);}
+#zft-action-hud .zft-hud-hotbar-toggle.is-active {box-shadow:inset 0 -2px 0 var(--zft-accent-bright);}
+
+/* dev.55: theme-led hotbar presentation plus subtle theme-matched textures. */
+#zft-action-hud-hotbar {
+  border-radius:9px;padding:6px;gap:5px;
+  border-color:var(--zft-border);
+  background:var(--zft-surface-texture),linear-gradient(158deg,var(--zft-panel3),var(--zft-panel) 43%,var(--zft-bg));
+  background-repeat:repeat,no-repeat;
+  box-shadow:0 10px 28px var(--zft-shadow),inset 0 0 0 1px var(--zft-inset),0 0 0 2px rgba(0,0,0,.16);
+}
+#zft-action-hud-hotbar::before {
+  content:"";position:absolute;top:0;left:15%;right:15%;height:2px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--zft-hotbar-accent,var(--zft-accent-bright)),transparent);opacity:.9;
+}
+#zft-action-hud-hotbar .zft-hotbar-header {
+  border-bottom:1px solid color-mix(in srgb,var(--zft-border) 54%,transparent);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--zft-inset) 85%,transparent),transparent);
+  border-radius:4px 4px 0 0;padding:2px 2px 4px;
+}
+#zft-action-hud-hotbar .zft-hotbar-grip {color:var(--zft-accent-bright);}
+#zft-action-hud-hotbar .zft-hotbar-controls button {
+  border-color:color-mix(in srgb,var(--zft-border) 70%,transparent);
+  background:linear-gradient(145deg,var(--zft-panel3),var(--zft-panel2));
+  border-radius:4px;box-shadow:inset 0 1px 0 var(--zft-inset);
+}
+#zft-action-hud-hotbar .zft-hotbar-controls button:hover {border-color:var(--zft-accent-bright);}
+#zft-action-hud-hotbar .zft-hotbar-profile-tab {
+  border-radius:4px 4px 3px 3px;
+  background:linear-gradient(175deg,var(--zft-panel2),var(--zft-panel));
+}
+#zft-action-hud-hotbar .zft-hotbar-profile-tab[aria-selected='true'] {
+  background:linear-gradient(170deg,color-mix(in srgb,var(--zft-profile-accent,var(--zft-accent-bright)) 20%,var(--zft-panel3)),var(--zft-panel2));
+  border-bottom-color:var(--zft-profile-accent,var(--zft-accent-bright));
+}
+#zft-action-hud-hotbar .zft-hotbar-slot {
+  border-radius:5px;
+  box-shadow:inset 0 1px 0 var(--zft-inset),inset 0 -2px 3px rgba(0,0,0,.22);
+  transition:border-color .12s ease,box-shadow .12s ease,filter .12s ease;
+}
+#zft-action-hud-hotbar .zft-hotbar-slot.is-empty:not(.is-drop-target) {
+  background:linear-gradient(145deg,color-mix(in srgb,var(--zft-panel) 82%,transparent),color-mix(in srgb,var(--zft-bg) 80%,transparent));
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.30),inset 0 0 0 1px color-mix(in srgb,var(--zft-border) 21%,transparent);
+}
+#zft-action-hud-hotbar .zft-hotbar-slot:not(.is-empty):not(.is-drop-target):not(.zft-custom-button-color) {
+  border-color:color-mix(in srgb,var(--zft-border) 75%,var(--zft-accent-bright));
+  box-shadow:inset 0 0 0 1px var(--zft-inset),0 1px 4px rgba(0,0,0,.25);
+}
+#zft-action-hud-hotbar .zft-hotbar-slot:hover:not(.is-drop-target):not(.zft-custom-button-color) {
+  border-color:var(--zft-accent-bright);
+  box-shadow:inset 0 0 0 1px var(--zft-inset),0 0 5px color-mix(in srgb,var(--zft-accent-bright) 35%,transparent);
+}
+#zft-action-hud-hotbar .zft-hotbar-name {border-top:1px solid rgba(255,255,255,.12);}
+

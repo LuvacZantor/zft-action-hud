@@ -1,0 +1,182 @@
+<div class="zft-hud-content" style="--zft-primary-count:{{primaryCategoryCount}}" {{#if collapsed}}data-collapsed="true"{{/if}}>
+      {{#if showActiveEffects}}
+      <section class="zft-hud-effects-strip" aria-label="Active effects and conditions">
+        <div class="zft-hud-effects-icons">
+          {{#each activeEffects}}
+          <span class="zft-hud-effect" data-hud-effect="{{id}}" aria-label="{{name}}; {{#if durationShort}}{{durationShort}} remaining; {{/if}}right-click to remove" tabindex="0">
+            <img src="{{img}}" alt="" loading="lazy" />
+            <small class="zft-hud-effect-duration" data-effect-duration {{#unless durationShort}}hidden{{/unless}}>{{durationShort}}</small>
+          </span>
+          {{/each}}
+        </div>
+      </section>
+      {{/if}}
+
+  <div class="zft-hud-frame {{#if collapsed}}is-collapsed{{/if}} {{#unless hasActor}}is-empty{{/unless}}" data-hud-main>
+    <div class="zft-hud-ornament" aria-hidden="true"></div>
+    <header class="zft-hud-heading" data-drag-handle title="Unlock HUD to drag">
+      <span class="zft-hud-insignia" aria-hidden="true">✦</span>
+      <span class="zft-hud-brand">ZFT <span>ACTION HUD</span></span>
+      <span class="zft-hud-heading-status">DEVELOPMENT · V13</span>
+      <span class="zft-hud-handle" aria-hidden="true"><i class="fa-solid fa-grip-lines"></i></span>
+      <div class="zft-hud-heading-actions">
+        <button type="button" data-hud-control="settings" title="ZFT Action HUD settings" aria-label="Open HUD settings" aria-expanded="false" aria-haspopup="dialog"><i class="fa-solid fa-gear"></i></button>
+        <button type="button" data-hud-control="scale" title="Adjust Action HUD scale" aria-label="Adjust Action HUD scale" aria-expanded="false" aria-haspopup="true"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <button type="button" data-hud-control="theme" title="Cycle theme / follow campaign"><i class="fa-solid fa-palette"></i></button>
+        <button type="button" data-hud-control="move" title="Dock or float HUD" aria-label="Dock or float HUD" aria-pressed="false"><i class="fa-solid fa-anchor"></i></button>
+        <button type="button" data-hud-control="collapse" title="Collapse or expand HUD"><i class="fa-solid fa-chevron-down"></i></button>
+      </div>
+    </header>
+    <div class="zft-hud-body">
+      <section class="zft-hud-portrait-area" title="{{actorName}}">
+        <button type="button" class="zft-hud-avatar" data-hud-portrait title="Double-click to open {{actorName}}'s character sheet" aria-label="Open {{actorName}}'s character sheet (double-click or press Enter)" {{#unless canViewActorSheet}}disabled{{/unless}}><img src="{{portrait}}" alt="" /></button>
+        <div class="zft-hud-character-info">
+          <div class="zft-hud-identity-row">
+            <div class="zft-hud-name">{{actorName}}</div>
+            {{#if showInspiration}}
+            <button type="button" class="zft-hud-inspiration {{#if inspirationActive}}is-inspired{{/if}}" data-hud-control="inspiration" title="{{inspirationHint}}" aria-label="{{inspirationHint}}" aria-pressed="{{inspirationActive}}" {{#unless canToggleInspiration}}disabled{{/unless}}>
+              <i class="{{#if inspirationActive}}fa-solid{{else}}fa-regular{{/if}} fa-star" aria-hidden="true"></i>
+            </button>
+            {{/if}}
+          </div>
+          {{#if resourceSummary}}
+          <button type="button" class="zft-hud-hp-trigger" data-hud-control="hp" title="{{#if canEditHP}}Adjust Hit Points{{else}}Hit Points (read-only){{/if}}" aria-label="{{#if canEditHP}}Adjust Hit Points{{else}}Current Hit Points{{/if}}" aria-expanded="false" {{#unless canEditHP}}disabled{{/unless}}>
+            <span class="zft-hud-hp-line"><span class="zft-hud-hp-primary"><span class="zft-hud-hp-caption">HP</span><strong data-hp-current>{{resourceSummary.value}} / {{resourceSummary.max}}</strong></span><span class="zft-hud-hp-temp-badge" data-hp-temp-badge {{#unless hasTempHp}}hidden{{/unless}} title="Temporary Hit Points: {{tempHp}}" aria-label="{{tempHp}} temporary hit points"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i><em data-hp-temp-label>+{{tempHp}}</em></span></span>
+            <span class="zft-hud-hp-rail"><span class="zft-hud-hp-fill" data-hp-fill style="width:{{resourceSummary.percent}}%"></span></span>
+          </button>
+          {{else}}<div class="zft-hud-subtitle">{{actorSubtitle}}</div>{{/if}}
+        </div>
+      </section>
+      <section class="zft-hud-action-area" aria-label="Action categories">
+        {{#if hasActor}}
+        <nav class="zft-hud-categories" aria-label="Main action categories">
+          {{#each primaryCategories}}
+          <button type="button" class="zft-hud-category-button" data-hud-category="{{id}}" aria-controls="zft-hud-browser" aria-expanded="false" title="{{label}} ({{count}})" aria-label="{{label}}, {{count}} actions">
+            <i class="{{icon}}" aria-hidden="true"></i><small>{{count}}</small>
+          </button>
+          {{else}}
+          <span class="zft-hud-category-empty">No item actions available</span>
+          {{/each}}
+        </nav>
+        <nav class="zft-hud-secondary-categories" aria-label="Checks and quick access">
+          {{#each secondaryCategories}}
+          <button type="button" class="zft-hud-category-button zft-hud-slim-button" data-hud-category="{{id}}" aria-controls="zft-hud-browser" aria-expanded="false" title="{{label}} ({{count}})" aria-label="{{label}}, {{count}} actions">{{label}}</button>
+          {{/each}}
+          <span class="zft-hud-secondary-quick">
+            <button type="button" class="zft-hud-favorites-toggle zft-hud-slim-button {{#if favoritesSelected}}is-active{{/if}}" data-hud-control="favorites" data-favorite-dropzone aria-expanded="{{favoritesSelected}}" title="Favorites ({{favoriteCount}}). Drag actions here to pin." aria-label="Favorites, {{favoriteCount}} actions">Favs</button>
+            {{#if showRecentButton}}<button type="button" class="zft-hud-favorites-toggle zft-hud-recent-toggle zft-hud-slim-button {{#if recentSelected}}is-active{{/if}}" data-hud-control="recent" aria-expanded="{{recentSelected}}" title="Recent actions ({{recentCount}})" aria-label="Recent, {{recentCount}} actions">Recent</button>{{/if}}
+            <button type="button" class="zft-hud-hotbar-toggle zft-hud-slim-button {{#if hotbarVisible}}is-active{{/if}}" data-hud-control="hotbar" aria-pressed="{{hotbarVisible}}" title="Show or hide Custom Hotbar" aria-label="Show or hide Custom Hotbar">Hotbar</button>
+          </span>
+        </nav>
+      {{/if}}
+      </section>
+    </div>
+    {{#if hasActor}}
+    {{#if quickAccessExpanded}}
+    <div class="zft-hud-favorites-row" aria-label="{{#if favoritesSelected}}Favorite actions{{else}}Recent actions{{/if}}" data-quick-access-dropzone>
+      {{#if favoritesSelected}}
+        {{#each favorites}}
+        <div class="zft-hud-favorite-item" data-favorite-drag-item="{{id}}" draggable="true" aria-label="Favorite action">
+          <span class="zft-hud-reorder-handle" aria-hidden="true"><i class="fa-solid fa-grip-vertical"></i></span>
+          <button type="button" class="zft-hud-favorite-action {{#if active}}is-effect-active{{/if}}" data-use-item="{{id}}" aria-label="Use {{name}}; right-click to inspect; hover to preview"><img src="{{img}}" alt="" /><span>{{name}}</span></button>
+          <button type="button" class="zft-hud-favorite-remove" data-favorite-item="{{id}}" title="Remove {{name}} from Favorites" aria-label="Remove {{name}} from Favorites"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        {{else}}
+        <span class="zft-hud-favorite-hint">No Favorites. Use a star or drag an action here to add it.</span>
+        {{/each}}
+      {{else}}
+        {{#each recent}}
+        <div class="zft-hud-favorite-item" aria-label="Recently used action">
+          <button type="button" class="zft-hud-favorite-action {{#if active}}is-effect-active{{/if}}" data-use-item="{{id}}" aria-label="Use {{name}}; right-click to inspect; hover to preview"><img src="{{img}}" alt="" /><span>{{name}}</span></button>
+          <button type="button" class="zft-hud-favorite-remove" data-favorite-item="{{id}}" title="Toggle {{name}} as Favorite" aria-label="Toggle {{name}} as Favorite"><i class="fa-solid fa-star"></i></button>
+        </div>
+        {{else}}
+        <span class="zft-hud-favorite-hint">No recent uses from this HUD yet.</span>
+        {{/each}}
+      {{/if}}
+    </div>
+    {{/if}}
+    {{/if}}
+  </div>
+
+  {{#if canEditHP}}
+  <section class="zft-hud-hp-panel" data-hp-panel hidden aria-label="Hit Point management">
+    <div class="zft-hud-hp-mini-status">
+      <span class="zft-hud-hp-mini-current"><i class="fa-solid fa-heart-pulse" aria-hidden="true"></i><strong data-hp-panel-current>{{resourceSummary.value}} / {{resourceSummary.max}}</strong></span>
+      <span class="zft-hud-hp-mini-temp" data-hp-panel-temp-badge {{#unless hasTempHp}}hidden{{/unless}} title="Current Temporary Hit Points: {{tempHp}}"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i><strong data-hp-panel-temp>+{{tempHp}}</strong></span>
+    </div>
+    <div class="zft-hud-hp-mini-rail" role="meter" aria-label="Current Hit Points" aria-valuemin="0" aria-valuemax="{{resourceSummary.max}}" aria-valuenow="{{resourceSummary.value}}" data-hp-panel-meter>
+      <div class="zft-hud-hp-mini-fill" data-hp-panel-fill style="width:{{resourceSummary.percent}}%"></div>
+    </div>
+    <div class="zft-hud-hp-quick" aria-label="Hit Point adjustments">
+      <button type="button" data-hp-action="zero" title="Set HP to Zero (confirmation required)" aria-label="Set Hit Points to Zero"><i class="fa-solid fa-skull" aria-hidden="true"></i></button>
+      <button type="button" data-hp-action="damage" title="Apply Damage using Amount" aria-label="Apply Damage"><i class="fa-solid fa-minus" aria-hidden="true"></i></button>
+      <label class="zft-hud-hp-amount-wrap" title="Adjustment amount"><input id="zft-hp-amount" data-hp-amount type="number" min="0" max="999999" step="1" value="10" inputmode="numeric" aria-label="HP adjustment amount" /></label>
+      <button type="button" data-hp-action="heal" title="Heal using Amount" aria-label="Heal"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
+      <button type="button" data-hp-action="full" title="Restore Full Hit Points" aria-label="Full Heal"><i class="fa-solid fa-heart" aria-hidden="true"></i></button>
+      <button type="button" data-hp-action="temp" title="Set Temporary HP to Amount (enter 0 to clear)" aria-label="Set Temporary Hit Points"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i></button>
+    </div>
+  </section>
+  {{/if}}
+
+  <div class="zft-hud-popup" id="zft-hud-browser" data-hud-browser aria-label="Categorized action browser" hidden>
+    {{#each categories}}
+    <section class="zft-hud-category-panel" data-category-panel="{{id}}" hidden aria-label="{{label}}">
+      <div class="zft-hud-popup-header">
+        <span><i class="{{icon}}"></i> {{label}}</span>
+        <span class="zft-hud-popup-count">{{count}} {{#if isChecks}}checks{{else}}items{{/if}}</span>
+        {{#if groups.length}}
+        <button type="button" class="zft-hud-group-toggle-all" data-hud-expand="all" title="Expand all groups" aria-label="Expand all {{label}} groups"><i class="fa-solid fa-angles-down" aria-hidden="true"></i></button>
+        <button type="button" class="zft-hud-group-toggle-all" data-hud-expand="none" title="Collapse all groups" aria-label="Collapse all {{label}} groups"><i class="fa-solid fa-angles-up" aria-hidden="true"></i></button>
+        {{/if}}
+        <button type="button" class="zft-hud-close-browser" data-hud-control="close-browser" title="Close action browser" aria-label="Close action browser"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="zft-hud-browser-filters">
+        {{#if equippedFilter}}
+        <label class="zft-hud-filter-check" title="Filter only this category; does not change the Actor inventory"><input type="checkbox" data-hud-filter-setting="{{equippedFilter.setting}}" {{#if equippedFilter.checked}}checked{{/if}} /> <span>Show Unequipped</span></label>
+        {{/if}}
+        <label class="zft-hud-filter-check" title="Show or hide the action browser search field"><input type="checkbox" data-hud-show-search {{#if showBrowserSearch}}checked{{/if}} /> <span>Show Search</span></label>
+      </div>
+      {{#if showBrowserSearch}}
+      <label class="zft-hud-search"><i class="fa-solid fa-magnifying-glass"></i><input type="search" data-hud-search placeholder="Search {{label}}…" aria-label="Search {{label}}" autocomplete="off" /></label>
+      {{/if}}
+      <div class="zft-hud-groups">
+        {{#each groups}}
+        <details class="zft-hud-group" data-hud-group data-group-id="{{id}}">
+          <summary><span>{{label}}</span><small>{{#if checkGroup}}{{checks.length}}{{else}}{{items.length}}{{/if}}</small>{{#if slotPool}}<span class="zft-hud-slot-shields" role="group" aria-label="{{slotPool.tooltip}}">{{#each slotPool.shields}}<button type="button" class="zft-hud-slot-shield {{#if available}}is-available{{else}}is-spent{{/if}}" data-hud-resource-adjust="{{delta}}" data-resource-id="{{../slotPool.id}}" aria-label="{{title}}" title="{{title}}" {{#if disabled}}disabled{{/if}}><i class="fa-solid fa-shield" aria-hidden="true"></i></button>{{/each}}</span>{{/if}}<i class="fa-solid fa-chevron-down zft-hud-group-chevron"></i></summary>
+          {{#if checkGroup}}
+          <div class="zft-hud-group-items zft-hud-checks-items" role="group" aria-label="{{label}}">
+            {{#each checks}}
+            <button type="button" class="zft-hud-check-row" data-hud-roll-check="{{../rollKind}}" data-check-id="{{id}}" data-filter-name="{{name}} {{ability}}" style="--zft-check-color:{{color}}" title="Roll {{name}} ({{abilityName}}). {{modifier}}{{#if proficiency}}; {{proficiency}}{{/if}}{{#if ../showPassive}}; Passive {{passive}}{{/if}}" aria-label="Roll {{name}} {{../rollLabel}}, {{abilityName}}, modifier {{modifier}}{{#if proficiency}}, {{proficiency}}{{/if}}{{#if ../showPassive}}, passive {{passive}}{{/if}}">
+              <i class="{{icon}} zft-hud-check-icon" aria-hidden="true"></i>
+              <span class="zft-hud-check-ability">{{ability}}</span>
+              <span class="zft-hud-check-name">{{name}}</span>
+              <span class="zft-hud-check-modifier" title="Roll modifier">{{modifier}}</span>
+              {{#if ../showPassive}}<span class="zft-hud-check-passive" title="{{passiveHint}}">{{passive}}</span>{{/if}}
+            </button>
+            {{/each}}
+          </div>
+          {{else}}
+          <div class="zft-hud-group-items">
+          {{#each items}}
+            <div class="zft-hud-browser-item" data-hud-action-card="{{id}}" data-filter-name="{{name}}" data-category-drag-item="{{id}}" draggable="true" aria-label="Drag action to Favorites">
+              <button type="button" class="zft-hud-group-item {{#if active}}is-effect-active{{/if}}" data-use-item="{{id}}" aria-label="Use {{name}}; right-click to inspect; hover to preview">
+                <img src="{{img}}" alt="" loading="lazy" /><span class="zft-hud-item-text"><span class="zft-hud-item-name">{{name}}{{#if active}} <i class="fa-solid fa-circle-check zft-hud-active-indicator" title="Associated effect is active" aria-label="Active effect"></i>{{/if}}</span>{{#if sourceLabel}}<small class="zft-hud-item-source">{{sourceLabel}}</small>{{/if}}{{#if hasUses}}<small>{{uses}}/{{maxUses}}</small>{{/if}}{{#if toolCheck}}<span class="zft-hud-tool-meta" style="--zft-check-color:{{toolCheck.color}}" title="{{toolCheck.proficiency}}. {{toolCheck.hint}}"><i class="{{toolCheck.icon}}" aria-hidden="true"></i><b>{{toolCheck.ability}}</b><span>{{toolCheck.modifier}}</span><em>{{toolCheck.proficiency}}</em></span>{{/if}}</span>
+              </button>
+              {{#if itemState.equip}}<button type="button" class="zft-hud-item-state {{#if itemState.equip.state}}is-active{{/if}}" data-hud-item-state="equip" data-item-id="{{itemStateId}}" title="{{itemState.equip.title}}" aria-label="{{itemState.equip.title}}: {{name}}" aria-pressed="{{itemState.equip.state}}" {{#unless itemState.equip.editable}}disabled{{/unless}}><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></button>{{/if}}
+              {{#if itemState.attune}}<button type="button" class="zft-hud-item-state {{#if itemState.attune.state}}is-active{{/if}}" data-hud-item-state="attune" data-item-id="{{itemStateId}}" title="{{itemState.attune.title}}" aria-label="{{itemState.attune.title}}: {{name}}" aria-pressed="{{itemState.attune.state}}" {{#unless itemState.attune.editable}}disabled{{/unless}}><i class="fa-solid fa-sun" aria-hidden="true"></i></button>{{/if}}
+              <button type="button" class="zft-hud-pin-button {{#if favorite}}is-pinned{{/if}}" data-favorite-item="{{id}}" title="{{#if favorite}}Remove from Favorites{{else}}Add to Favorites{{/if}}" aria-label="{{#if favorite}}Remove {{name}} from Favorites{{else}}Add {{name}} to Favorites{{/if}}"><i class="{{#if favorite}}fa-solid{{else}}fa-regular{{/if}} fa-star"></i></button>
+            </div>
+          {{/each}}
+          </div>
+          {{/if}}
+        </details>
+        {{/each}}
+        <div class="zft-hud-empty-filter" data-hud-empty-filter hidden>No matching actions. Check filters or try another search.</div>
+      </div>
+      <div class="zft-hud-popup-note"><i class="fa-solid fa-circle-info"></i> {{#if isChecks}}Click to roll using native D&D5e.{{else}}{{actionHelpText}}{{/if}}</div>
+    </section>
+    {{/each}}
+  </div>
+
+</div>

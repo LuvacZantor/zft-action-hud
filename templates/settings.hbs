@@ -1,0 +1,144 @@
+  <section class="zft-hud-settings-panel" data-hud-settings-panel aria-label="ZFT Action HUD settings">
+    <header class="zft-hud-settings-heading" data-settings-drag-handle title="Drag to reposition settings">
+      <span><i class="fa-solid fa-gear" aria-hidden="true"></i> HUD Settings</span>
+      <button type="button" data-hud-control="close-settings" aria-label="Close HUD settings" title="Close settings"><i class="fa-solid fa-xmark"></i></button>
+    </header>
+    <p class="zft-hud-settings-autosave"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Changes are saved automatically</p>
+    <nav class="zft-hud-settings-tabs" role="tablist" aria-label="HUD settings sections">
+      <button type="button" role="tab" id="zft-settings-tab-general" data-settings-tab="general" aria-controls="zft-settings-panel-general" aria-selected="true" tabindex="0">General</button>
+      <button type="button" role="tab" id="zft-settings-tab-appearance" data-settings-tab="appearance" aria-controls="zft-settings-panel-appearance" aria-selected="false" tabindex="-1">Appearance</button>
+      <button type="button" role="tab" id="zft-settings-tab-actions" data-settings-tab="actions" aria-controls="zft-settings-panel-actions" aria-selected="false" tabindex="-1">Actions</button>
+      <button type="button" role="tab" id="zft-settings-tab-hotbar" data-settings-tab="hotbar" aria-controls="zft-settings-panel-hotbar" aria-selected="false" tabindex="-1">Hotbar</button>
+      <button type="button" role="tab" id="zft-settings-tab-advanced" data-settings-tab="advanced" aria-controls="zft-settings-panel-advanced" aria-selected="false" tabindex="-1">Advanced</button>
+    </nav>
+    <div class="zft-hud-settings-content">
+      <div class="zft-hud-settings-tab-panel" id="zft-settings-panel-general" role="tabpanel" aria-labelledby="zft-settings-tab-general" data-settings-tab-panel="general">
+      <fieldset class="zft-hud-settings-group"><legend>General</legend>
+        <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="enabled" {{#if showHud}}checked{{/if}} /><span>Show Action HUD</span></label>
+        <p class="zft-hud-settings-note">Turning this off closes the HUD and this window. To turn it back on, open Configure Settings → Module Settings → ZFT Action HUD → Show Action HUD. No saved preferences or Favorites are deleted.</p>
+      </fieldset>
+      <fieldset class="zft-hud-settings-group"><legend>Position &amp; Layout</legend>
+        <div class="zft-hud-settings-buttons">
+          <button type="button" data-settings-command="dock"><i class="fa-solid fa-anchor"></i> Dock Upper Left</button>
+          <button type="button" data-settings-command="float"><i class="fa-solid fa-up-down-left-right"></i> Float / Drag</button>
+        </div>
+        <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="hudFloatingLocked" {{#if hudFloatingLocked}}checked{{/if}} /><span>Lock Floating HUD Position</span></label>
+        <p class="zft-hud-settings-note">Dock anchors the HUD beside Foundry's upper-left controls. Float allows moving it only when Floating Position Lock is off. Saved floating positions are retained.</p>
+      </fieldset>
+      </div>
+      <div class="zft-hud-settings-tab-panel" id="zft-settings-panel-appearance" role="tabpanel" aria-labelledby="zft-settings-tab-appearance" data-settings-tab-panel="appearance" hidden>
+      <fieldset class="zft-hud-settings-group"><legend>Appearance</legend>
+        {{#if settings.allowThemeOverride}}
+        <label class="zft-hud-setting-line"><span>Personal Theme</span>
+          <select data-hud-setting="clientTheme">
+            {{#each settings.clientThemeOptions}}
+            <option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </label>
+        {{else}}<p class="zft-hud-settings-note">The GM has disabled personal theme overrides.</p>{{/if}}
+        <label class="zft-hud-setting-line"><span>Category Button Size</span>
+          <select data-hud-setting="categoryButtonSize">
+            <option value="tiny" {{#if settings.categoryButtonSizeIsTiny}}selected{{/if}}>Tiny</option>
+            <option value="small" {{#if settings.categoryButtonSizeIsSmall}}selected{{/if}}>Small</option>
+            <option value="medium" {{#if settings.categoryButtonSizeIsMedium}}selected{{/if}}>Medium</option>
+            <option value="large" {{#if settings.categoryButtonSizeIsLarge}}selected{{/if}}>Large</option>
+          </select>
+        </label>
+        <label class="zft-hud-settings-slider"><span>HUD Background Opacity <output data-hud-setting-value="hudBackgroundOpacity">{{settings.hudBackgroundOpacity}}%</output></span>
+          <input type="range" data-hud-setting="hudBackgroundOpacity" min="0" max="100" step="5" value="{{settings.hudBackgroundOpacity}}" />
+        </label>
+        <label class="zft-hud-settings-slider"><span>Action Browser Background Opacity <output data-hud-setting-value="browserBackgroundOpacity">{{settings.browserBackgroundOpacity}}%</output></span>
+          <input type="range" data-hud-setting="browserBackgroundOpacity" min="0" max="100" step="5" value="{{settings.browserBackgroundOpacity}}" />
+        </label>
+        <label class="zft-hud-settings-slider"><span>HUD UI Scale <output data-hud-setting-value="uiScale">{{settings.scalePercent}}%</output></span>
+          <input type="range" data-hud-setting="uiScale" min="0.75" max="1.25" step="0.05" value="{{settings.uiScale}}" />
+        </label>
+      </fieldset>
+      <fieldset class="zft-hud-settings-group"><legend>Button Colors</legend>
+        <p class="zft-hud-settings-note">Buttons follow the selected theme unless individually customized. Right-click a category or hotbar slot for the color wheel and HEX editor.</p>
+        <div class="zft-hud-settings-buttons"><button type="button" data-settings-command="reset-button-colors"><i class="fa-solid fa-rotate-left"></i> Reset All Button Colors</button></div>
+        <p class="zft-hud-settings-note">Resets your category colors and every profile's slot colors on the currently selected Actor. Confirmation required.</p>
+      </fieldset>
+      </div>
+      <div class="zft-hud-settings-tab-panel" id="zft-settings-panel-actions" role="tabpanel" aria-labelledby="zft-settings-tab-actions" data-settings-tab-panel="actions" hidden>
+      <fieldset class="zft-hud-settings-group"><legend>Inventory Visibility</legend>
+        {{#if supportsInventoryFilters}}
+        <p class="zft-hud-settings-note">These RPG-specific filters affect only the HUD, not the character sheet.</p>
+        {{#each inventoryFilters}}
+        <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="{{key}}" {{#if checked}}checked{{/if}} /><span>{{label}}</span></label>
+        {{/each}}
+        {{/if}}
+      </fieldset>
+      <fieldset class="zft-hud-settings-group"><legend>Status Effects</legend>
+        <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="showActiveEffects" {{#if showActiveEffects}}checked{{/if}} /><span>Show Active Effects Strip</span></label>
+        <p class="zft-hud-settings-note">Displays effects and conditions already managed by Foundry and your installed modules. Read-only.</p>
+      </fieldset>
+      <fieldset class="zft-hud-settings-group"><legend>Quick Access</legend>
+        <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="showRecentButton" {{#if showRecentButton}}checked{{/if}} /><span>Show Recent Actions Button</span></label>
+        <div class="zft-hud-settings-buttons">
+          <button type="button" data-settings-command="favorites"><i class="fa-solid fa-star"></i> Favorites</button>
+          {{#if showRecentButton}}<button type="button" data-settings-command="recent"><i class="fa-solid fa-clock-rotate-left"></i> Recent</button>{{/if}}
+        </div>
+        <p class="zft-hud-settings-note">Rearrange Favorites by dragging actions. Favorites and the hotbar layout are stored on the Actor; visual preferences stay in this browser.</p>
+      </fieldset>
+      </div>
+      <div class="zft-hud-settings-tab-panel" id="zft-settings-panel-hotbar" role="tabpanel" aria-labelledby="zft-settings-tab-hotbar" data-settings-tab-panel="hotbar" hidden>
+      <fieldset class="zft-hud-settings-group"><legend>Custom Hotbar</legend>
+        <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="showCustomHotbar" {{#if showCustomHotbar}}checked{{/if}} /><span>Show Custom Hotbar</span></label>
+        <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="showHotbarLabels" {{#if showHotbarLabels}}checked{{/if}} /><span>Show Item Names on Icons</span></label>
+        <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="hotbarLocked" {{#if hotbarLocked}}checked{{/if}} /><span>Lock Hotbar Layout</span></label>
+        <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="hotbarPositionLocked" {{#if hotbarPositionLocked}}checked{{/if}} /><span>Lock Hotbar Position</span></label>
+        <label class="zft-hud-setting-line"><span>Hotbar Docking</span>
+          <select data-hud-setting="hotbarDockMode" aria-label="Hotbar docking mode">
+            <option value="auto" {{#if hotbarDockAuto}}selected{{/if}}>Automatic (preserve existing)</option>
+            <option value="docked" {{#if hotbarDockDocked}}selected{{/if}}>Dock Bottom Center</option>
+            <option value="floating" {{#if hotbarDockFloating}}selected{{/if}}>Floating / Draggable</option>
+          </select>
+        </label>
+        <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="autoCombatProfile" {{#if autoCombatProfile}}checked{{/if}} /><span>Auto-switch to Combat profile</span></label>
+        <p class="zft-hud-settings-note">Enabled by default. Entering combat selects the permanent Combat profile. Leaving combat restores your previous profile unless you switched manually.</p>
+        <label class="zft-hud-settings-slider"><span>Custom Hotbar UI Scale <output data-hud-setting-value="hotbarUiScale">{{hotbarScalePercent}}%</output></span>
+          <input type="range" data-hud-setting="hotbarUiScale" min="0.5" max="1.5" step="0.05" value="{{hotbarUiScale}}" />
+        </label>
+        <p class="zft-hud-settings-note">Hotbar scaling is independent of HUD UI Scale and previews while dragging.</p>
+        <label class="zft-hud-setting-line"><span>Rows (1–20)</span><input type="number" min="1" max="20" step="1" data-hud-setting="hotbarRows" value="{{hotbarRows}}" {{#unless hotbarWritable}}disabled{{/unless}} /></label>
+        <label class="zft-hud-setting-line"><span>Columns (1–20)</span><input type="number" min="1" max="20" step="1" data-hud-setting="hotbarColumns" value="{{hotbarColumns}}" {{#unless hotbarWritable}}disabled{{/unless}} /></label>
+        <p class="zft-hud-settings-note">Grid dimensions now belong to the active Actor profile. Switch profiles using the hotbar tabs; unlock Layout and use Profiles to create, duplicate, rename, or delete them.</p>
+        <p class="zft-hud-settings-note">The hotbar stays independent. New users start bottom-centered; select Floating or use the header dock button to reposition it. Drag its grip only while floating and Position Lock is off. Layout Lock prevents changing assignments and resizing, but does not prevent movement. Both locks always remain accessible. Resize dynamically from the bottom-right corner. Unlock Layout and choose Dividers on the hotbar to add or remove column separators. Changing grid size never deletes hidden assignments or dividers.</p>
+      </fieldset>
+      </div>
+      <div class="zft-hud-settings-tab-panel" id="zft-settings-panel-advanced" role="tabpanel" aria-labelledby="zft-settings-tab-advanced" data-settings-tab-panel="advanced" hidden>
+      <fieldset class="zft-hud-settings-group"><legend>Maintenance · Hotbar Data</legend>
+        <p class="zft-hud-settings-note">Cleanup removes only empty legacy Default profiles and redundant old hotbar flags. Populated profiles are preserved. Reset clears every hotbar profile and assignment on the selected character; Favorites, Recent and appearance settings stay intact.</p>
+        <div class="zft-hud-settings-buttons">
+          <button type="button" data-settings-command="maintenance-clean-current" {{#unless hotbarWritable}}disabled{{/unless}}><i class="fa-solid fa-broom"></i> Clean Up Current Character</button>
+          <button type="button" data-settings-command="maintenance-reset-current" {{#unless hotbarWritable}}disabled{{/unless}}><i class="fa-solid fa-rotate-left"></i> Reset Current Character Hotbar</button>
+        </div>
+        {{#if settings.isGM}}
+        <p class="zft-hud-settings-note">GM world-wide operations include directory player characters only, not NPCs, compendium Actors, or unlinked scene tokens. Preview and backup are required before changes.</p>
+        <div class="zft-hud-settings-buttons">
+          <button type="button" data-settings-command="maintenance-clean-all"><i class="fa-solid fa-broom"></i> Clean Up All Characters</button>
+          <button type="button" data-settings-command="maintenance-reset-all"><i class="fa-solid fa-triangle-exclamation"></i> Reset All Character Hotbars</button>
+        </div>
+        {{/if}}
+      </fieldset>
+      <fieldset class="zft-hud-settings-group"><legend>Diagnostics</legend>
+        <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="clientDebugLogging" {{#if clientDebugLogging}}checked{{/if}} /><span>Client Debug Logging</span></label>
+      </fieldset>
+      {{#if settings.isGM}}
+      <fieldset class="zft-hud-settings-group"><legend>GM · Campaign Appearance</legend>
+        <label class="zft-hud-setting-line"><span>Campaign Theme</span>
+          <select data-hud-setting="worldTheme" data-world-setting="true">
+            {{#each settings.worldThemeOptions}}
+            <option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </label>
+        <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="gmDebugLogging" data-world-setting="true" {{#if gmDebugLogging}}checked{{/if}} /><span>GM Debug Logging (World)</span></label>
+        <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="allowThemeOverride" data-world-setting="true" {{#if settings.allowThemeOverride}}checked{{/if}} /><span>Allow Player Theme Overrides</span></label>
+      </fieldset>
+      {{/if}}
+      </div>
+    </div>
+  </section>
