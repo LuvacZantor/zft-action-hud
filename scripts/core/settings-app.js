@@ -43,6 +43,8 @@ export class ZFTActionHudSettings extends Mixin(Base) {
     const clientTheme = get('clientTheme');
     const size = get('categoryButtonSize');
     const profile = activeHotbarProfile(this.hud?._actor);
+    const sharedFolder=game.folders?.get?.(get('sharedMacroFolderId'));
+    const gmFolder=game.folders?.get?.(get('gmMacroFolderId'));
     return {
       ...context,
       showRecentButton: get('showRecentButton'),
@@ -62,12 +64,12 @@ export class ZFTActionHudSettings extends Mixin(Base) {
       hotbarScalePercent: Math.round(get('hotbarUiScale') * 100),
       sharedMacroFolderId:get('sharedMacroFolderId'),
       gmMacroFolderId:get('gmMacroFolderId'),
-      sharedMacroSort:get('sharedMacroSort'),
-      sharedSortAlpha:get('sharedMacroSort')==='alpha',
-      sharedSortDirectory:get('sharedMacroSort')==='directory',
-      gmMacroSort:get('gmMacroSort'),
-      gmSortAlpha:get('gmMacroSort')==='alpha',
-      gmSortDirectory:get('gmMacroSort')==='directory',
+      sharedSortAlpha:sharedFolder?.sorting!=='m',
+      sharedSortManual:sharedFolder?.sorting==='m',
+      sharedFolderSelected:Boolean(sharedFolder),
+      gmSortAlpha:gmFolder?.sorting!=='m',
+      gmSortManual:gmFolder?.sorting==='m',
+      gmFolderSelected:Boolean(gmFolder),
       macroFolders: macroFolders().map(f=>({ id:f.id,name:f.name,selectedShared:f.id===get('sharedMacroFolderId'),selectedGm:f.id===get('gmMacroFolderId') })),
       showHud: get('enabled'),
       hudFloatingLocked: get('hudFloatingLocked'),
@@ -214,7 +216,10 @@ export class ZFTActionHudSettings extends Mixin(Base) {
           }
           await game.settings.set(MODULE_ID, key, value);
           // Hiding the HUD closes this window too. Re-enable from Module Settings.
-          if (['sharedMacroFolderId','gmMacroFolderId','sharedMacroSort','gmMacroSort'].includes(key)) return;
+          if (['sharedMacroFolderId','gmMacroFolderId'].includes(key)) {
+            await this.render(true);
+            return;
+          }
           if (key === 'enabled' || key === 'hudFloatingLocked' || key.startsWith('hotbar') || ['showCustomHotbar','showHotbarLabels'].includes(key)) return;
           // These settings already invoke HUD.refresh via their registered
           // onChange callback; don't queue a second full render.
@@ -227,6 +232,26 @@ export class ZFTActionHudSettings extends Mixin(Base) {
           ui.notifications?.warn('Could not save HUD setting; see console.');
           this.hud?.applyAppearance();
           await this.render(true);
+        }
+      });
+    });
+    // These controls update the actual Macro Directory Folder's sorting mode.
+    // There is no parallel ZFT preference that can disagree with its sidebar.
+    root.querySelectorAll('[data-macro-folder-sorting]').forEach(input=>{
+      input.addEventListener('change',async()=>{
+        if(!game.user?.isGM)return;
+        const kind=input.dataset.macroFolderSorting;
+        const folderKey=kind==='shared'?'sharedMacroFolderId':'gmMacroFolderId';
+        const folder=game.folders?.get?.(game.settings.get(MODULE_ID,folderKey));
+        if(!folder || folder.type!=='Macro')return;
+        try {
+          if(input.value!==folder.sorting)await folder.update({sorting:input.value});
+          this.hud?._macroLibraries?.refresh();
+          this.syncPreferences();
+        } catch(error) {
+          console.error(`${LOG} | ❌ Cannot set native Macro folder sorting`,error);
+          ui.notifications?.error('Could not change Macro folder sorting; see console.');
+          this.syncPreferences();
         }
       });
     });
@@ -293,6 +318,12 @@ export class ZFTActionHudSettings extends Mixin(Base) {
       if (input.type === 'checkbox') input.checked = Boolean(value);
       else if (input.type !== 'range') input.value = String(value);
     });
+    for(const input of this.element.querySelectorAll('[data-macro-folder-sorting]')){
+      const key=input.dataset.macroFolderSorting==='shared'?'sharedMacroFolderId':'gmMacroFolderId';
+      const folder=game.folders?.get?.(game.settings.get(MODULE_ID,key));
+      input.disabled=!folder || !game.user?.isGM;
+      input.value=folder?.sorting==='m'?'m':'a';
+    }
   }
 
   _updatePositionControl() {

@@ -1489,3 +1489,8 @@ body:has(#zft-action-hud[data-mode='docked']) #interface #ui-left:has(#scene-nav
 #zft-action-hud .zft-hud-heading-actions [data-hud-control$='-macros'].is-active {
   color:var(--zft-accent-bright);border-color:var(--zft-border);background:var(--zft-panel3);
 }
+
+/* dev.70: Native Macro Directory manual sort drop-position feedback. */
+.zft-macro-library-item.is-dragging {opacity:.55;}
+.zft-macro-library-item.is-drop-before {box-shadow:inset 3px 0 0 var(--zft-accent-bright);}
+.zft-macro-library-item.is-drop-after {box-shadow:inset -3px 0 0 var(--zft-accent-bright);}

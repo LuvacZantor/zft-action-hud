@@ -1,6 +1,6 @@
 import { THEME_CHOICES } from '../themes/registry.js';
 export const MODULE_ID = 'zft-action-hud';
-export const VERSION = '0.1.0-dev.67';
+export const VERSION = '0.1.0-dev.70';
 export const DEFAULT_POSITION = Object.freeze({ mode: 'docked', x: null, y: null }); // New clients anchor beside Foundry controls.
 
 export function registerSettings() {
@@ -20,13 +20,7 @@ export function registerSettings() {
     scope: 'client', config: false, type: String, default: '',
     onChange: () => window.ZFTActionHud?.refreshMacroLibraries?.()
   });
-  for (const [key, scope] of [['sharedMacroSort','world'],['gmMacroSort','client']]) {
-    game.settings.register(MODULE_ID, key, {
-      scope, config: false, type: String, default: 'alpha',
-      choices: { alpha: 'Alphabetical', directory: 'Directory order' },
-      onChange: () => window.ZFTActionHud?.refreshMacroLibraries?.()
-    });
-  }
+  // Macro sorting lives on the Foundry Folder (sorting 'a'/'m'), not in ZFT settings.
   for (const key of ['sharedMacroPosition', 'gmMacroPosition']) {
     game.settings.register(MODULE_ID, key, {scope:'client',config:false,type:Object,default:{x:null,y:null}});
   }

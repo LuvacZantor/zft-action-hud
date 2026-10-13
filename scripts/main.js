@@ -99,7 +99,10 @@ Hooks.once('ready', async () => {
   });
   // Foundry Macro Directory edits reflect in open floating libraries immediately.
   for (const hook of ['createMacro','updateMacro','deleteMacro','createFolder','updateFolder','deleteFolder']) {
-    Hooks.on(hook, () => app?._macroLibraries?.refresh());
+    Hooks.on(hook, () => {
+      app?._macroLibraries?.refresh();
+      if (hook.endsWith('Folder')) app?._settingsWindow?.syncPreferences?.();
+    });
   }
   Hooks.on('canvasReady', update);
   // Foundry's Configure Player Character assignment can change while the HUD

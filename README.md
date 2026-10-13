@@ -1,4 +1,4 @@
-# ZFT Action HUD v0.1.0-dev.67
+# ZFT Action HUD v0.1.0-dev.70
 
 ## dev.67 local testing changes
 
@@ -564,3 +564,16 @@ Roadmap: https://github.com/LuvacZantor/zft-action-hud/blob/develop/ROADMAP.md
 
 - Replaced the Carolingian-only dev.62 selector with a Foundry V13 native `#scene-navigation` selector. Native navigation and its enclosing interface stacking context receive priority above the docked HUD while expanded or keyboard-focused. No HUD offsets, hotbar behavior, or saved settings change.
 - Live Foundry V13 verification pending.
+
+
+### dev.70: Native Macro Directory sorting
+
+Shared and GM floating macro libraries now mirror their selected Foundry Macro Directory folders.
+Both alphabetical and manual sorting use the Folder document's native `sorting` property.
+When a GM drags a macro to a new button position, gap, or empty grid cell in a manually sorted floating library,
+ZFT reindexes that folder's Macro documents using their native integer `sort` keys.
+The Foundry sidebar, other connected clients, and the floating libraries therefore read
+the same ordering. Shared macro ordering is visible to players with Macro permissions.
+Drag-to-character-hotbar continues to copy Macro references; no Actor or Token flags
+are used for library ordering. The former ZFT-specific `sharedMacroSort` and
+`gmMacroSort` preferences are no longer read or written.

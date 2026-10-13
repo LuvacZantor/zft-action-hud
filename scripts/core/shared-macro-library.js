@@ -4,8 +4,8 @@ import { executeHotbarMacro, makeMacroReference } from './macro-hotbar.js';
 
 /** Macro Directory folders are authoritative. Neither library writes Actor flags. */
 export const LIBRARY_CONFIG = Object.freeze({
-  shared: { folderKey: 'sharedMacroFolderId', sortKey: 'sharedMacroSort', positionKey: 'sharedMacroPosition', title: 'Shared Macros' },
-  gm: { folderKey: 'gmMacroFolderId', sortKey: 'gmMacroSort', positionKey: 'gmMacroPosition', title: 'GM Macros' }
+  shared: { folderKey: 'sharedMacroFolderId', positionKey: 'sharedMacroPosition', title: 'Shared Macros' },
+  gm: { folderKey: 'gmMacroFolderId', positionKey: 'gmMacroPosition', title: 'GM Macros' }
 });
 
 export function macroFolders() {
@@ -13,13 +13,47 @@ export function macroFolders() {
     .sort((a,b) => a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'}));
 }
 
-export function libraryMacroDocuments(macros, folderId, sort = 'alpha') {
+/** Follow the actual selected Folder's native a/m sorting mode on every render. */
+export function libraryMacroDocuments(macros, folderId, folder = game.folders?.get?.(folderId)) {
   if (!folderId) return [];
   const visible = [...macros].filter(m => m?.folder?.id === folderId && m.visible !== false);
   const alpha = (a,b) => a.name.localeCompare(b.name, undefined, {numeric:true, sensitivity:'base'}) || String(a.id).localeCompare(String(b.id));
-  return visible.sort(sort === 'directory'
+  return visible.sort(folder?.sorting === 'm'
     ? (a,b) => (Number(a.sort) || 0) - (Number(b.sort) || 0) || alpha(a,b)
     : alpha);
+}
+
+/** Foundry Macro.sort is the only persisted library order.
+ * Reindex one selected Macro folder deterministically. The native Folder and
+ * all clients will read these same keys. Nothing is stored on Actors/Tokens.
+ */
+export async function reorderFolderMacro(folderId, sourceId, targetId, sortBefore = true) {
+  if (!game.user?.isGM) throw new Error('Only a GM may reorder Macro Directory folders.');
+  const folder = game.folders?.get?.(folderId);
+  if (!folder || folder.type !== 'Macro' || folder.sorting !== 'm')
+    throw new Error('A Macro Directory folder in Manual sorting mode is required.');
+  const source = game.macros?.get?.(sourceId);
+  const target = game.macros?.get?.(targetId);
+  if (!source || !target || source.id === target.id ||
+      source.folder?.id !== folderId || target.folder?.id !== folderId) return false;
+  const siblings = [...(game.macros?.contents ?? [])]
+    .filter(macro => macro.folder?.id === folderId)
+    .sort((a,b) => (Number(a.sort) || 0) - (Number(b.sort) || 0) ||
+      a.name.localeCompare(b.name, undefined, {numeric:true, sensitivity:'base'}));
+  const originalIds = siblings.map(macro => macro.id);
+  const sourceIndex = siblings.findIndex(macro => macro.id === sourceId);
+  if (sourceIndex < 0) return false;
+  const [moved] = siblings.splice(sourceIndex, 1);
+  const targetIndex = siblings.findIndex(macro => macro.id === targetId);
+  if (targetIndex < 0) return false;
+  siblings.splice(targetIndex + (sortBefore ? 0 : 1), 0, moved);
+  if (siblings.every((macro, index) => macro.id === originalIds[index])) return false;
+
+  // Foundry's native Macro sort field, never a shadow ZFT preference.
+  // Reindexing the chosen folder avoids colliding legacy/duplicate sort keys.
+  const updates = siblings.map((macro, index) => ({_id: macro.id, sort: (index + 1) * 10000}));
+  await foundry.documents.Macro.updateDocuments(updates);
+  return true;
 }
 
 const clamp = (n,min,max) => Math.max(min,Math.min(max,n));
@@ -27,12 +61,15 @@ function make(tag,classes='',text='') {
   const el=document.createElement(tag);el.className=classes;if(text)el.textContent=text;return el;
 }
 
-/** A read-only, themeable floating Macro hotbar. Shared and GM use the same implementation. */
+/** Two themeable, Folder-backed Macro libraries; GM drag-sort writes native Folder order. */
 export class ZFTMacroLibraries {
   constructor(hud) {
     this.hud=hud;
     this.windows=new Map();
     this._drags=new Map();
+    this._macroDrag=null;
+    this._sortBusy=false;
+    this._suppressClickUntil=0;
   }
   configured(kind) {
     const config=LIBRARY_CONFIG[kind];
@@ -101,7 +138,6 @@ export class ZFTMacroLibraries {
     const cfg=LIBRARY_CONFIG[kind];
     const folderId=game.settings.get(MODULE_ID,cfg.folderKey);
     const folder=game.folders?.get?.(folderId);
-    const sort=game.settings.get(MODULE_ID,cfg.sortKey);
     root.dataset.theme=resolveTheme({clientTheme:game.settings.get(MODULE_ID,'clientTheme')});
     root.dataset.textures=String(Boolean(game.settings.get(MODULE_ID,'showThemeTextures')));
     root.style.setProperty('--zft-scale',String(game.settings.get(MODULE_ID,'hotbarUiScale')||1));
@@ -113,14 +149,16 @@ export class ZFTMacroLibraries {
     close.title='Close macro library';close.setAttribute('aria-label',`Close ${cfg.title}`);close.dataset.libraryClose='';
     header.append(title,location,close);
     const body=make('div','zft-macro-library-body');
-    const items=libraryMacroDocuments(game.macros?.contents||[],folderId,sort);
+    const items=libraryMacroDocuments(game.macros?.contents||[],folderId,folder);
+    const manual=folder?.sorting === 'm';
+    const gmReorder=Boolean(game.user?.isGM && manual);
     const grid=make('div','zft-macro-library-grid');
     for(const macro of items) {
       const uuid=macro.uuid||`Macro.${macro.id}`;
       const button=make('button','zft-macro-library-item');
       button.type='button';button.draggable=macro.canExecute!==false;
       button.dataset.macroUuid=uuid;
-      button.title=`${macro.name}${macro.canExecute===false?' (not executable by this player)':' · Click to execute · Drag to personal hotbar'}`;
+      button.title=`${macro.name}${macro.canExecute===false?' (not executable by this player)':' · Click to execute · Drag to personal hotbar'}${gmReorder?' · GM: drag to reorder folder':''}`;
       button.setAttribute('aria-label',`Macro: ${macro.name}`);
       const img=make('img');img.src=macro.img||'icons/svg/dice-target.svg';img.alt='';
       const name=make('span','zft-macro-library-name',macro.name);
@@ -128,6 +166,7 @@ export class ZFTMacroLibraries {
       if(macro.canExecute===false) {button.disabled=true;button.title=`${macro.name} (permission required)`;}
       button.addEventListener('click',async event=>{
         event.stopPropagation();
+        if (performance.now() < this._suppressClickUntil) return;
         const ref=makeMacroReference(uuid,macro);
         const result=await executeHotbarMacro(ref,{actor:this.hud?._actor});
         if(!result.ok) ui.notifications?.warn(`Cannot execute ${macro.name}: ${result.reason}.`);
@@ -135,15 +174,107 @@ export class ZFTMacroLibraries {
       button.addEventListener('dragstart',event=>{
         if(macro.canExecute===false){event.preventDefault();return;}
         const payload=JSON.stringify({type:'Macro',uuid});
-        event.dataTransfer.effectAllowed='copy';
+        // copyMove permits both native folder rearrangement and the existing
+        // copy onto a character's custom hotbar; the destination chooses.
+        event.dataTransfer.effectAllowed=gmReorder?'copyMove':'copy';
         event.dataTransfer.setData('application/x-zft-hud-action',payload);
         event.dataTransfer.setData('text/plain',payload);
+        if(gmReorder) {
+          this._macroDrag={kind,folderId,sourceId:macro.id};
+          event.dataTransfer.setData('application/x-zft-macro-folder-sort',macro.id);
+        }
+        button.classList.add('is-dragging');
+      });
+      button.addEventListener('dragend',()=>{
+        this._macroDrag=null;
+        this._suppressClickUntil=performance.now()+250;
+        root.querySelectorAll('.is-dragging,.is-drop-before,.is-drop-after').forEach(el=>
+          el.classList.remove('is-dragging','is-drop-before','is-drop-after'));
       });
       grid.append(button);
     }
+    if (gmReorder && items.length) this._wireSortGrid(kind, folderId, grid);
     if(!items.length) body.append(make('p','zft-macro-library-empty','No available macros in this folder.'));
     else body.append(grid);
     root.append(header,body);
+  }
+
+  /** Return an insertion boundary in the visual grid (0 to item count).
+   * Hit-tests rows and midpoint boundaries, including gaps and empty cells.
+   */
+  _gridInsertionIndex(grid, x, y) {
+    const buttons = [...grid.querySelectorAll('.zft-macro-library-item')];
+    if (!buttons.length) return 0;
+    const rows = [];
+    for (let index = 0; index < buttons.length; index++) {
+      const rect = buttons[index].getBoundingClientRect();
+      const previous = rows[rows.length - 1];
+      if (!previous || Math.abs(previous.top - rect.top) > 4)
+        rows.push({top:rect.top, centerY:(rect.top + rect.bottom)/2, entries:[]});
+      rows[rows.length - 1].entries.push({index, midX:(rect.left + rect.right)/2});
+    }
+    const row = rows.reduce((best, candidate) =>
+      Math.abs(candidate.centerY-y) < Math.abs(best.centerY-y) ? candidate : best);
+    for (const entry of row.entries) if (x < entry.midX) return entry.index;
+    return row.entries[row.entries.length-1].index + 1;
+  }
+
+  _wireSortGrid(kind, folderId, grid) {
+    const mime = 'application/x-zft-macro-folder-sort';
+    const eligible = event => Boolean(game.user?.isGM && !this._sortBusy &&
+      game.folders?.get?.(folderId)?.sorting === 'm' &&
+      [...(event.dataTransfer?.types ?? [])].includes(mime));
+    const clearMarkers = () => grid.querySelectorAll('.is-drop-before,.is-drop-after')
+      .forEach(button => button.classList.remove('is-drop-before','is-drop-after'));
+    grid.addEventListener('dragover', event => {
+      if (!eligible(event)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      event.dataTransfer.dropEffect='move';
+      clearMarkers();
+      const buttons = [...grid.querySelectorAll('.zft-macro-library-item')];
+      const boundary = this._gridInsertionIndex(grid,event.clientX,event.clientY);
+      const marker = buttons[Math.min(boundary,buttons.length-1)];
+      marker?.classList.add(boundary>=buttons.length?'is-drop-after':'is-drop-before');
+    });
+    grid.addEventListener('dragleave', event => {
+      if (!grid.contains(event.relatedTarget)) clearMarkers();
+    });
+    grid.addEventListener('drop', event => {
+      if (!eligible(event)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      clearMarkers();
+      const sourceId = event.dataTransfer?.getData(mime) || this._macroDrag?.sourceId;
+      const buttons = [...grid.querySelectorAll('.zft-macro-library-item')];
+      const boundary = this._gridInsertionIndex(grid,event.clientX,event.clientY);
+      const targetButton = buttons[Math.min(boundary,buttons.length-1)];
+      const targetId = targetButton?.dataset.macroUuid?.split('.').at(-1);
+      const before = boundary < buttons.length;
+      this._macroDrag=null;
+      this._suppressClickUntil=performance.now()+250;
+      if (!sourceId || !targetId) {
+        console.warn('[ZFT] ⚠️ v0.1.0-dev.70 | Macro drop has no valid source/target', {kind,sourceId,targetId});
+        return;
+      }
+      console.log('[ZFT] 🔍 v0.1.0-dev.70 | Native Macro folder drop', {kind,sourceId,targetId,before,boundary});
+      void this._reorder(folderId,sourceId,targetId,before);
+    });
+  }
+
+  async _reorder(folderId,sourceId,targetId,before) {
+    if(this._sortBusy)return;
+    this._sortBusy=true;
+    try {
+      const changed = await reorderFolderMacro(folderId,sourceId,targetId,before);
+      console.log(`[ZFT] ${changed ? '✅' : '🔍'} v0.1.0-dev.70 | ${changed ? 'Macro folder order saved' : 'Macro folder drop left order unchanged'}`, {folderId,sourceId,targetId,before});
+      // updateMacro hooks refresh all clients; also repaint locally.
+      this.refresh();
+    } catch(error) {
+      console.error('[ZFT] ❌ Macro Directory sort failed',error);
+      ui.notifications?.error('Could not reorder Macro Directory; see console.');
+      this.refresh();
+    } finally {this._sortBusy=false;}
   }
   refresh() {
     for(const [kind,root] of [...this.windows]){
@@ -159,5 +290,5 @@ export class ZFTMacroLibraries {
     this.windows.get(kind)?.remove();this.windows.delete(kind);
     this.hud?.syncMacroLibraryButtons?.();
   }
-  destroy(){for(const kind of [...this.windows.keys()])this.close(kind);}
+  destroy(){this._macroDrag=null;for(const kind of [...this.windows.keys()])this.close(kind);}
 }

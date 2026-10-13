@@ -111,9 +111,9 @@
             </select>
           </label>
           <label class="zft-hud-setting-line"><span>Shared Sorting</span>
-            <select data-hud-setting="sharedMacroSort" data-world-setting="true">
-              <option value="alpha" {{#if sharedSortAlpha}}selected{{/if}}>Alphabetical (A–Z)</option>
-              <option value="directory" {{#if sharedSortDirectory}}selected{{/if}}>Foundry Directory Order</option>
+            <select data-macro-folder-sorting="shared" {{#unless sharedFolderSelected}}disabled{{/unless}}>
+              <option value="a" {{#if sharedSortAlpha}}selected{{/if}}>Alphabetical (A–Z)</option>
+              <option value="m" {{#if sharedSortManual}}selected{{/if}}>Manual (GM)</option>
             </select>
           </label>
           <label class="zft-hud-setting-line"><span>GM Personal Macro Folder</span>
@@ -123,12 +123,12 @@
             </select>
           </label>
           <label class="zft-hud-setting-line"><span>GM Sorting</span>
-            <select data-hud-setting="gmMacroSort">
-              <option value="alpha" {{#if gmSortAlpha}}selected{{/if}}>Alphabetical (A–Z)</option>
-              <option value="directory" {{#if gmSortDirectory}}selected{{/if}}>Foundry Directory Order</option>
+            <select data-macro-folder-sorting="gm" {{#unless gmFolderSelected}}disabled{{/unless}}>
+              <option value="a" {{#if gmSortAlpha}}selected{{/if}}>Alphabetical (A–Z)</option>
+              <option value="m" {{#if gmSortManual}}selected{{/if}}>Manual (GM)</option>
             </select>
           </label>
-          <p class="zft-hud-settings-note">Folder contents are read-only. The Shared library is visible to players with permission to access its Macros. Use the HUD title bar buttons to open either library, then drag a permitted Macro into an unlocked character hotbar slot.</p>
+          <p class="zft-hud-settings-note">Sorting changes the actual Foundry Macro Directory folder. In Manual mode, GMs can reorder directly in the floating library or in the sidebar; both reflect the same order. Players see the Shared folder order, subject to Macro permissions. Drag a permitted Macro to copy it onto a character hotbar.</p>
         </fieldset>
         {{/if}}
 
