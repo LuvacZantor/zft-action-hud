@@ -52,8 +52,8 @@ Build a single, themeable hybrid action HUD with an expandable D&D5e action menu
 | Native Macro folder sorting | Implemented; one live scenario confirmed | `dev.70` writes Macro document `sort` in a native manually sorted Folder; floating grids follow native manual/alphabetical folder sorting |
 | Macro drag-to-character-hotbar | Implemented | Copies a Macro reference to a permitted unlocked character slot; does not clone the Macro |
 | Skills, Saves, Abilities, and Tool Checks in character hotbar | **Not implemented; queued for dev.71** | These check-style actions are available through the HUD menus but are not yet assignable to character hotbar slots |
-| Optional pinned character | **Not implemented** | Separate from assigned-character fallback and selected token |
-| Non-spell resources | **Partial** | D&D5e uses/availability are surfaced for applicable actions; a comprehensive agreed UI for ammunition, charges, and other tracked pools is outstanding |
+| Optional pinned character | **Backlog, lower priority** | Not currently scheduled; separate from assigned-character fallback and selected token |
+| Non-spell resources | **Partial; queued for dev.72** | Audit existing D&D5e uses/availability first, then surface useful ammunition, charges, consumable/item uses and supported resource pools without duplicating counters |
 | Persistent GM utility controls | **Partial / review** | Existing GM/Shared Macro libraries are implemented; decide if anything beyond them is actually needed |
 | V14 compatibility | **Unverified** | Manifest compatibility is not proof that V14 / D&D5e 6.x works |
 
@@ -65,13 +65,13 @@ Build a single, themeable hybrid action HUD with an expandable D&D5e action menu
 
 ## Prioritized active backlog
 
-Priority 1 has been explicitly queued by the owner for the next development build. Remaining priorities are proposed sequencing, not automatic approval to implement or change GitHub.
+The owner has queued hotbar check shortcuts for dev.71 and resource tracking for the following development build, dev.72. Other work stays proposed or deferred. A roadmap entry does not authorize module code changes or GitHub commits.
 
 | Priority | Candidate build | Work | Completion criteria |
 | --- | --- | --- | --- |
 | 1 | dev.71 | Add Skills, Saving Throws, Ability Checks, and Tool Checks to character hotbars | Drag permitted check shortcuts into unlocked slots; run native D&D5e rolls; show current labels/modifiers; persist per Actor/profile; honor locks and permissions |
-| 2 | dev.72 | Optional pinned-character selection | Explicit opt-in; pinned Actor takes precedence only when enabled; switching/unpinning works without changing native token selection; no inadvertent changes to other clients |
-| 3 | dev.73 | Remaining resource presentation | Agree on which charge/ammo/item-use pools are useful; use authoritative Actor/Item/Activity values; respect native consumption and Midi-QOL/CPR |
+| 2 | dev.72 | Resource tracking and clearer remaining-use indicators | Audit existing resource displays first; prioritize useful ammo, charges and Item/Activity uses from native D&D5e data; respect system consumption, permissions and Midi-QOL/CPR |
+| Backlog | Unscheduled | Optional pinned-character selection | Lower priority; only revisit if table use demonstrates a need; no code planned |
 | 4 | Scope review | Remaining GM utility needs | Decide whether Shared/GM Macro libraries cover the original GM-controls goal; avoid building controls without a concrete use case |
 | 5 | Testing | Complete Foundry V13 GM/player regression pass | Verify critical HUD, hotbar, Macro, theme, storage, and permission workflows below |
 | 6 | Compatibility | Validate Foundry V14 / D&D5e 6.x separately | Adapt only incompatible APIs and verify native workflows in the V14 test world |
@@ -87,19 +87,21 @@ Priority 1 has been explicitly queued by the owner for the next development buil
 - **Acceptance:** Skill, Save, Ability, and Tool shortcuts work for a permitted player and GM; survive refresh/profile changes; respond to changed character modifiers; and reject unauthorized drops.
 - **Scope:** Queued for implementation and live Foundry testing, not yet built or verified.
 
-### 2. Pinned character (later candidate)
+### 2. Resource tracking and remaining-use indicators (queued for dev.72)
 
-- Introduce an optional *per-user* character pin that does not select or alter canvas tokens.
-- Define precedence relative to controlled token, multiple selected tokens, and existing assigned-character fallback.
-- Provide an obvious indicator and clear/unpin action; avoid invisible Actor switches.
-- **Acceptance:** Pinning, unpinning, token changes, reload, and GM/player ownership all behave as explicitly designed.
+- Start with an audit of current spell-slot, Item, and Activity use/availability displays; retain working behavior and avoid duplicating existing indicators.
+- Prioritize helpful, compact player-facing visibility for native D&D5e ammunition, charges, consumable quantities, and limited-use features or items **where the underlying data supports it**.
+- Read authoritative Actor, Item, and Activity resource values rather than introducing ZFT-maintained counters or a separate resource-management dashboard.
+- Refresh displayed counts when native D&D5e or supported Midi-QOL/CPR workflows change resources. Do not automatically consume resources independently of those workflows.
+- Preserve GM/player ownership boundaries; only offer adjustment controls when an appropriate native operation and authorization exist.
+- **Acceptance:** In live V13, resource displays agree with character sheets before and after native use/casting/consumption; update on refresh and changes; behave predictably for GM/player clients and missing or unsupported resource data.
+- **Scope:** Queued for implementation after dev.71. Exact resource types and presentation depend on auditing the current code and data; no giant new dashboard.
 
-### 3. Remaining resource display (later candidate)
+### Unscheduled backlog: optional pinned character
 
-- Inventory and Activity availability/uses exist in some form; inspect first instead of duplicating the current implementation.
-- Identify which ammunition, charges, consumable uses, or other resource pools need dedicated UI.
-- Display current values from native D&D5e documents. Where modification is allowed, use the supported native document/API operation.
-- **Acceptance:** Native casting/consumption, Midi-QOL/CPR execution, ownership changes, and refresh never disagree with the sheet.
+- Low current table value; no version assigned and no implementation planned in the next builds.
+- If revisited, provide an explicit per-user pin/unpin action that does not change selected canvas tokens, with clear precedence over the existing assigned-character fallback.
+- Revisit only when the table has a specific use case; keep ordinary token following unchanged meanwhile.
 
 ## Current testing and release gates
 
@@ -127,7 +129,9 @@ Priority 1 has been explicitly queued by the owner for the next development buil
 | Customization, profiles and theme variants | Implemented | User experience, access and persistence testing |
 | Native resources and utility controls | Partial | Additional useful pools; GM utility scope |
 | Macro libraries and folder-backed ordering | Implemented; partial live confirmation | Player/GM and persistence tests |
-| Additional assignable check actions and pinning | Queued / planned | Skills, Saves, Abilities, Tools queued for dev.71; optional pinning proposed for dev.72 |
+| Additional check hotbar actions | Queued | Skills, Saves, Abilities, Tools queued for dev.71 |
+| Resource use visibility | Queued | Native resource tracking and remaining-use indicators prioritized for dev.72 |
+| Optional pinned character | Backlog | Lower priority; no build assigned |
 | Compatibility and stable release | Release gate | V13 acceptance, V14 verification, explicit approval |
 
 ## Superseded, separate, or deferred work
@@ -137,7 +141,7 @@ Priority 1 has been explicitly queued by the owner for the next development buil
 - **Nested Macro folders:** Deliberately deferred. Shared and GM libraries currently read direct members of their configured folders.
 - **Maintenance/data recovery:** A separate unresolved workstream, not part of native Macro sorting or the next proposed feature build. Do not assume cleanup/reset provides a verified restore path.
 - **Additional RPG adapters (such as PF2e), external theme packs, community profile import/export, advanced keyboard/touch controls, and extra ZFT Tools integration:** Future enhancements, not first-release commitments.
-- **Edge snapping, optional keyboard controls, resource/economy widgets and other older planning ideas:** Reassess explicitly before treating them as required; do not infer they are complete from archived [x] design decisions.
+- **Edge snapping, optional keyboard controls, action-economy widgets and other older planning ideas:** Reassess explicitly before treating them as required; do not infer they are complete from archived [x] design decisions.
 
 ## Roadmap maintenance rules
 
