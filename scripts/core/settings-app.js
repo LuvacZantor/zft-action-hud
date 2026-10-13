@@ -40,7 +40,6 @@ export class ZFTActionHudSettings extends Mixin(Base) {
     const context = await super._prepareContext(options);
     const get = k => game.settings.get(MODULE_ID, k);
     const clientTheme = get('clientTheme');
-    const worldTheme = get('worldTheme');
     const size = get('categoryButtonSize');
     const profile = activeHotbarProfile(this.hud?._actor);
     return {
@@ -78,14 +77,9 @@ export class ZFTActionHudSettings extends Mixin(Base) {
       gmDebugLogging: get('gmDebugLogging'),
       settings: {
         isGM: Boolean(game.user?.isGM),
-        allowThemeOverride: get('allowThemeOverride'),
-        clientThemeIsInherit: clientTheme === 'inherit',
         clientThemeIsZftDefault: clientTheme === 'zft-default',
         clientThemeIsGothicArcane: clientTheme === 'gothic-arcane',
-        clientThemeOptions: themeOptions(clientTheme, { includeInherit: true }),
-        worldThemeIsZftDefault: worldTheme === 'zft-default',
-        worldThemeIsGothicArcane: worldTheme === 'gothic-arcane',
-        worldThemeOptions: themeOptions(worldTheme),
+        clientThemeOptions: themeOptions(clientTheme),
         categoryButtonSizeIsTiny: size === 'tiny',
         categoryButtonSizeIsSmall: size === 'small',
         categoryButtonSizeIsMedium: size === 'medium',
@@ -210,7 +204,6 @@ export class ZFTActionHudSettings extends Mixin(Base) {
           await game.settings.set(MODULE_ID, key, value);
           // Hiding the HUD closes this window too. Re-enable from Module Settings.
           if (key === 'enabled' || key === 'hudFloatingLocked' || key.startsWith('hotbar') || ['showCustomHotbar','showHotbarLabels'].includes(key)) return;
-          if (key === 'allowThemeOverride') await this.render(true);
           // These settings already invoke HUD.refresh via their registered
           // onChange callback; don't queue a second full render.
           if (['showRecentButton','showUnchargedItems','showUnequippedWeapons','showUnequippedEquipment',

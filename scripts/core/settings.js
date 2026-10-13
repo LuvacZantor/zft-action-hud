@@ -1,6 +1,6 @@
 import { THEME_CHOICES } from '../themes/registry.js';
 export const MODULE_ID = 'zft-action-hud';
-export const VERSION = '0.1.0-dev.57';
+export const VERSION = '0.1.0-dev.58';
 export const DEFAULT_POSITION = Object.freeze({ mode: 'docked', x: null, y: null }); // New clients anchor beside Foundry controls.
 
 export function registerSettings() {
@@ -11,23 +11,23 @@ export function registerSettings() {
     onChange: () => window.ZFTActionHud?.refresh?.()
   });
   game.settings.register(MODULE_ID, 'worldTheme', {
-    name: 'Campaign HUD Theme',
-    hint: 'World-level appearance used unless a player chooses an override.',
-    scope: 'world', config: true, type: String, default: 'zft-default',
+    name: 'Legacy Campaign HUD Theme (unused)',
+    hint: 'Retained only to preserve old saved settings. Theme selection is personal-only.',
+    scope: 'world', config: false, type: String, default: 'zft-default',
     choices: THEME_CHOICES,
     onChange: () => window.ZFTActionHud?.applyAppearance?.()
   });
   game.settings.register(MODULE_ID, 'allowThemeOverride', {
-    name: 'Allow Player Theme Overrides',
-    hint: 'Allows each player to select a different visual theme.',
-    scope: 'world', config: true, type: Boolean, default: true,
+    name: 'Legacy Player Theme Override (unused)',
+    hint: 'Retained only for backwards compatibility. Personal themes are always enabled.',
+    scope: 'world', config: false, type: Boolean, default: true,
     onChange: () => window.ZFTActionHud?.applyAppearance?.()
   });
   game.settings.register(MODULE_ID, 'clientTheme', {
     name: 'Personal HUD Theme',
-    hint: 'Use campaign appearance or choose a personal theme.',
-    scope: 'client', config: true, type: String, default: 'inherit',
-    choices: { inherit: 'Follow Campaign', ...THEME_CHOICES },
+    hint: 'Choose a personal appearance. ZFT Default has no WebP texture overlay.',
+    scope: 'client', config: true, type: String, default: 'zft-default',
+    choices: THEME_CHOICES,
     onChange: () => window.ZFTActionHud?.applyAppearance?.()
   });
   // Expose the existing lock/unlock behavior in Foundry Module Settings too.

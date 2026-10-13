@@ -1,4 +1,11 @@
-# ZFT Action HUD v0.1.0-dev.57
+# ZFT Action HUD v0.1.0-dev.58
+
+## dev.58 local texture integration
+
+- Six named themes use their corresponding seamless WebP files in `assets/textures/` as subtle repeated overlays behind the existing theme colors. The **ZFT Default** theme remains unchanged (no art overlay). The uploaded filename `royal_saphire.webp` is referenced exactly as stored on GitHub.
+- The Action HUD, category browser and custom hotbar share the theme texture. Surface/popup opacity controls still govern texture visibility. CSS pattern fallback remains when WebP is missing.
+- Campaign/world theme selection and Follow Campaign are temporarily removed from the interface. Themes are personal-only, including for players; legacy world settings remain registered but hidden for backwards compatibility. Legacy personal `inherit` values resolve to ZFT Default until a named theme is selected.
+- No changes to HUD geometry, docking, action execution or saved hotbar profiles. Live Foundry verification pending.
 
 ## dev.57 local testing changes
 

@@ -15,22 +15,19 @@ export const THEME_CHOICES = Object.freeze(Object.fromEntries(
   Object.values(THEMES).map(({ id, label }) => [id, label])
 ));
 
-export function themeOptions(selectedTheme, { includeInherit = false } = {}) {
-  const options = Object.values(THEMES).map(({ id, label }) => ({
-    id, label, selected: id === selectedTheme
+export function themeOptions(selectedTheme) {
+  return Object.values(THEMES).map(({ id, label }) => ({
+    id, label, selected: id === selectedTheme || (id === 'zft-default' && !Object.hasOwn(THEMES, selectedTheme))
   }));
-  return includeInherit
-    ? [{ id: 'inherit', label: 'Follow Campaign', selected: selectedTheme === 'inherit' }, ...options]
-    : options;
 }
 
-export function resolveTheme({ worldTheme, clientTheme, allowOverride }) {
-  const requested = allowOverride && clientTheme !== 'inherit' ? clientTheme : worldTheme;
-  return Object.hasOwn(THEMES, requested) ? requested : 'zft-default';
+/** Personal-only themes. Legacy "inherit" settings now resolve to ZFT Default. */
+export function resolveTheme({ clientTheme } = {}) {
+  return Object.hasOwn(THEMES, clientTheme) ? clientTheme : 'zft-default';
 }
 
 export function nextClientTheme(current) {
-  const choices = ['inherit', ...Object.keys(THEMES)];
+  const choices = Object.keys(THEMES);
   const i = choices.indexOf(current);
   return choices[(i + 1) % choices.length];
 }

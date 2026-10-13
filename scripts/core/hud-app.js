@@ -169,17 +169,12 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
       showRecentButton,
       settings: {
         isGM: Boolean(game.user?.isGM),
-        allowThemeOverride: game.settings.get(MODULE_ID, 'allowThemeOverride'),
         clientTheme: game.settings.get(MODULE_ID, 'clientTheme'),
-        worldTheme: game.settings.get(MODULE_ID, 'worldTheme'),
         categoryButtonSize: game.settings.get(MODULE_ID, 'categoryButtonSize'),
         uiScale: game.settings.get(MODULE_ID, 'uiScale'),
         scalePercent: Math.round((game.settings.get(MODULE_ID, 'uiScale') || 1) * 100),
-        clientThemeIsInherit: game.settings.get(MODULE_ID, 'clientTheme') === 'inherit',
         clientThemeIsZftDefault: game.settings.get(MODULE_ID, 'clientTheme') === 'zft-default',
         clientThemeIsGothicArcane: game.settings.get(MODULE_ID, 'clientTheme') === 'gothic-arcane',
-        worldThemeIsZftDefault: game.settings.get(MODULE_ID, 'worldTheme') === 'zft-default',
-        worldThemeIsGothicArcane: game.settings.get(MODULE_ID, 'worldTheme') === 'gothic-arcane',
         categoryButtonSizeIsTiny: game.settings.get(MODULE_ID, 'categoryButtonSize') === 'tiny',
         categoryButtonSizeIsSmall: game.settings.get(MODULE_ID, 'categoryButtonSize') === 'small',
         categoryButtonSizeIsMedium: game.settings.get(MODULE_ID, 'categoryButtonSize') === 'medium',
@@ -206,9 +201,7 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
     // coordinates. Host the AppV2 root directly under body like the hotbar.
     if (root.parentElement !== document.body) document.body.append(root);
     root.dataset.theme = resolveTheme({
-      worldTheme: game.settings.get(MODULE_ID, 'worldTheme'),
-      clientTheme: game.settings.get(MODULE_ID, 'clientTheme'),
-      allowOverride: game.settings.get(MODULE_ID, 'allowThemeOverride')
+      clientTheme: game.settings.get(MODULE_ID, 'clientTheme')
     });
     root.dataset.hasActor = String(Boolean(this._actor));
     root.dataset.buttonSize = game.settings.get(MODULE_ID, 'categoryButtonSize') || 'small';
@@ -638,8 +631,7 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
     const root = this.element;
     const get = key => previewKey === key ? previewValue : game.settings.get(MODULE_ID, key);
     root.dataset.theme = resolveTheme({
-      worldTheme: get('worldTheme'), clientTheme: get('clientTheme'),
-      allowOverride: get('allowThemeOverride')
+      clientTheme: get('clientTheme')
     });
     root.dataset.buttonSize = get('categoryButtonSize') || 'small';
     root.style.setProperty('--zft-scale', String(get('uiScale') || 1));
@@ -1217,10 +1209,6 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
   }
 
   async _cycleTheme() {
-    if (!game.settings.get(MODULE_ID, 'allowThemeOverride')) {
-      ui.notifications?.info('This world disables personal theme overrides.');
-      return;
-    }
     const current = game.settings.get(MODULE_ID, 'clientTheme');
     await game.settings.set(MODULE_ID, 'clientTheme', nextClientTheme(current));
   }

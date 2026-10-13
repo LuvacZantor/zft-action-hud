@@ -28,7 +28,6 @@
       </div>
       <div class="zft-hud-settings-tab-panel" id="zft-settings-panel-appearance" role="tabpanel" aria-labelledby="zft-settings-tab-appearance" data-settings-tab-panel="appearance" hidden>
       <fieldset class="zft-hud-settings-group"><legend>Appearance</legend>
-        {{#if settings.allowThemeOverride}}
         <label class="zft-hud-setting-line"><span>Personal Theme</span>
           <select data-hud-setting="clientTheme">
             {{#each settings.clientThemeOptions}}
@@ -36,7 +35,6 @@
             {{/each}}
           </select>
         </label>
-        {{else}}<p class="zft-hud-settings-note">The GM has disabled personal theme overrides.</p>{{/if}}
         <label class="zft-hud-setting-line"><span>Category Button Size</span>
           <select data-hud-setting="categoryButtonSize">
             <option value="tiny" {{#if settings.categoryButtonSizeIsTiny}}selected{{/if}}>Tiny</option>
@@ -127,16 +125,8 @@
         <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="clientDebugLogging" {{#if clientDebugLogging}}checked{{/if}} /><span>Client Debug Logging</span></label>
       </fieldset>
       {{#if settings.isGM}}
-      <fieldset class="zft-hud-settings-group"><legend>GM · Campaign Appearance</legend>
-        <label class="zft-hud-setting-line"><span>Campaign Theme</span>
-          <select data-hud-setting="worldTheme" data-world-setting="true">
-            {{#each settings.worldThemeOptions}}
-            <option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>
-            {{/each}}
-          </select>
-        </label>
+      <fieldset class="zft-hud-settings-group"><legend>GM Diagnostics</legend>
         <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="gmDebugLogging" data-world-setting="true" {{#if gmDebugLogging}}checked{{/if}} /><span>GM Debug Logging (World)</span></label>
-        <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="allowThemeOverride" data-world-setting="true" {{#if settings.allowThemeOverride}}checked{{/if}} /><span>Allow Player Theme Overrides</span></label>
       </fieldset>
       {{/if}}
       </div>
