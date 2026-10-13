@@ -51,7 +51,7 @@ Build a single, themeable hybrid action HUD with an expandable D&D5e action menu
 | GM Macro library | Implemented | GM-only floating library backed by a configured Macro Directory folder |
 | Native Macro folder sorting | Implemented; one live scenario confirmed | `dev.70` writes Macro document `sort` in a native manually sorted Folder; floating grids follow native manual/alphabetical folder sorting |
 | Macro drag-to-character-hotbar | Implemented | Copies a Macro reference to a permitted unlocked character slot; does not clone the Macro |
-| Skills and Saves in character hotbar | **Not implemented** | These are available as menu actions but the source deliberately excludes check-type actions from Favorites/hotbar drag |
+| Skills, Saves, Abilities, and Tool Checks in character hotbar | **Not implemented; queued for dev.71** | These check-style actions are available through the HUD menus but are not yet assignable to character hotbar slots |
 | Optional pinned character | **Not implemented** | Separate from assigned-character fallback and selected token |
 | Non-spell resources | **Partial** | D&D5e uses/availability are surfaced for applicable actions; a comprehensive agreed UI for ammunition, charges, and other tracked pools is outstanding |
 | Persistent GM utility controls | **Partial / review** | Existing GM/Shared Macro libraries are implemented; decide if anything beyond them is actually needed |
@@ -65,11 +65,11 @@ Build a single, themeable hybrid action HUD with an expandable D&D5e action menu
 
 ## Prioritized active backlog
 
-Priorities below are **proposed sequencing**, not automatic approval to implement, change GitHub, or include extra functionality.
+Priority 1 has been explicitly queued by the owner for the next development build. Remaining priorities are proposed sequencing, not automatic approval to implement or change GitHub.
 
 | Priority | Candidate build | Work | Completion criteria |
 | --- | --- | --- | --- |
-| 1 | dev.71 | Assign Skills and Saving Throws to character hotbar slots | Drag permitted checks/saves to unlocked slots; execute native D&D5e rolls, display accurate labels and values, persist in correct Actor/profile, handle missing references and permissions |
+| 1 | dev.71 | Add Skills, Saving Throws, Ability Checks, and Tool Checks to character hotbars | Drag permitted check shortcuts into unlocked slots; run native D&D5e rolls; show current labels/modifiers; persist per Actor/profile; honor locks and permissions |
 | 2 | dev.72 | Optional pinned-character selection | Explicit opt-in; pinned Actor takes precedence only when enabled; switching/unpinning works without changing native token selection; no inadvertent changes to other clients |
 | 3 | dev.73 | Remaining resource presentation | Agree on which charge/ammo/item-use pools are useful; use authoritative Actor/Item/Activity values; respect native consumption and Midi-QOL/CPR |
 | 4 | Scope review | Remaining GM utility needs | Decide whether Shared/GM Macro libraries cover the original GM-controls goal; avoid building controls without a concrete use case |
@@ -77,14 +77,15 @@ Priorities below are **proposed sequencing**, not automatic approval to implemen
 | 6 | Compatibility | Validate Foundry V14 / D&D5e 6.x separately | Adapt only incompatible APIs and verify native workflows in the V14 test world |
 | 7 | Release review | First stable release | Confirm accepted version, remaining defects, release notes, manifest, installation package; request separate approval for `main`, tag, and Release |
 
-### 1. Skills and Saving Throws as hotbar actions (next candidate)
+### 1. Check shortcuts on character hotbars (queued for dev.71)
 
-- Reuse existing D&D5e check/roll adapters rather than converting checks into fake Items or Macros.
-- Define stable stored references and labels for skill and save actions, consistent with the existing Actor-owned profile model.
-- Work with the current drag/drop locks, duplicate/replace/move semantics, profile switching, and missing-reference handling.
-- Verify native roll dialogs and relevant system/module hooks still execute.
-- **Acceptance:** Owned character, GM actor, refresh, profile change, reassignment, and rejected unauthorized drops behave predictably.
-- **Scope note:** Adding Ability checks or Tool proficiency shortcuts may be sensible, but requires a deliberate scope decision; do not silently include them.
+- Include **Skills, Saving Throws, Ability Checks, and Tool Checks** as draggable shortcuts from their existing HUD menus to unlocked character hotbar slots.
+- Use existing native D&D5e check/roll adapters, not fake Items, new Macros, or duplicated modifiers.
+- Store stable check identifiers in Actor-owned hotbar profiles; resolve current labels and modifiers from the Actor when rendering.
+- Preserve existing slot copy/move/replace behavior, profile switching, layout lock, and Actor ownership checks. Display or handle invalid and missing references predictably.
+- Clicking a check shortcut must invoke the same native D&D5e roll (including dialog, hooks, and installed compatible automation) as its corresponding HUD menu entry.
+- **Acceptance:** Skill, Save, Ability, and Tool shortcuts work for a permitted player and GM; survive refresh/profile changes; respond to changed character modifiers; and reject unauthorized drops.
+- **Scope:** Queued for implementation and live Foundry testing, not yet built or verified.
 
 ### 2. Pinned character (later candidate)
 
@@ -126,7 +127,7 @@ Priorities below are **proposed sequencing**, not automatic approval to implemen
 | Customization, profiles and theme variants | Implemented | User experience, access and persistence testing |
 | Native resources and utility controls | Partial | Additional useful pools; GM utility scope |
 | Macro libraries and folder-backed ordering | Implemented; partial live confirmation | Player/GM and persistence tests |
-| Additional assignable check actions and pinning | Planned | Proposed dev.71 and dev.72 |
+| Additional assignable check actions and pinning | Queued / planned | Skills, Saves, Abilities, Tools queued for dev.71; optional pinning proposed for dev.72 |
 | Compatibility and stable release | Release gate | V13 acceptance, V14 verification, explicit approval |
 
 ## Superseded, separate, or deferred work
