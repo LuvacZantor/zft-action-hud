@@ -1,4 +1,4 @@
-<div class="zft-hud-content" style="--zft-primary-count:{{primaryCategoryCount}}" {{#if collapsed}}data-collapsed="true"{{/if}}>
+<div class="zft-hud-content" style="--zft-primary-count:{{primaryCategoryCount}};--zft-secondary-count:{{secondaryCategoryCount}}" {{#if collapsed}}data-collapsed="true"{{/if}}>
       {{#if showActiveEffects}}
       <section class="zft-hud-effects-strip" aria-label="Active effects and conditions">
         <div class="zft-hud-effects-icons">
@@ -20,9 +20,11 @@
       <span class="zft-hud-heading-status">DEVELOPMENT · V13</span>
       <span class="zft-hud-handle" aria-hidden="true"><i class="fa-solid fa-grip-lines"></i></span>
       <div class="zft-hud-heading-actions">
+        {{#if sharedMacroConfigured}}<button type="button" data-hud-control="shared-macros" title="Open Shared Macro Library" aria-label="Open Shared Macro Library" aria-pressed="false"><i class="fa-solid fa-book-open"></i></button>{{/if}}
+        {{#if gmMacroConfigured}}<button type="button" data-hud-control="gm-macros" title="Open GM Macro Library" aria-label="Open GM Macro Library" aria-pressed="false"><i class="fa-solid fa-scroll"></i></button>{{/if}}
         <button type="button" data-hud-control="settings" title="ZFT Action HUD settings" aria-label="Open HUD settings" aria-expanded="false" aria-haspopup="dialog"><i class="fa-solid fa-gear"></i></button>
         <button type="button" data-hud-control="scale" title="Adjust Action HUD scale" aria-label="Adjust Action HUD scale" aria-expanded="false" aria-haspopup="true"><i class="fa-solid fa-magnifying-glass"></i></button>
-        <button type="button" data-hud-control="theme" title="Cycle theme / follow campaign"><i class="fa-solid fa-palette"></i></button>
+        <button type="button" data-hud-control="theme" title="Left-click: next theme. Right-click: previous theme" aria-label="Cycle personal theme forward or backward"><i class="fa-solid fa-palette"></i></button>
         <button type="button" data-hud-control="move" title="Dock or float HUD" aria-label="Dock or float HUD" aria-pressed="false"><i class="fa-solid fa-anchor"></i></button>
         <button type="button" data-hud-control="collapse" title="Collapse or expand HUD"><i class="fa-solid fa-chevron-down"></i></button>
       </div>

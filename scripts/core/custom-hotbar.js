@@ -4,6 +4,7 @@ import { ZFTScalePopover } from './scale-popover.js';
 import { CombatProfileCoordinator } from './combat-profile.js';
 import { ZFTButtonColors, applyButtonColor } from './button-colors.js';
 import { getSystemAdapter } from '../adapters/registry.js';
+import { macroUuidFromDrop, macroDocumentSync, macroDocument, makeMacroReference, isMacroReference, executeHotbarMacro } from './macro-hotbar.js';
 import { actionReference, resolveActionReference, storedHotbarSlots, saveHotbarSlots, assignHotbarSlot, storedHotbarDividers, saveHotbarDividers, hotbarColumnTracks, storedHotbarRowDividers, saveHotbarRowDividers, hotbarRowTracks, hotbarDividerLabels, setHotbarDividerLabel, hotbarProfiles, activeHotbarProfile, ensureHotbarProfiles, saveHotbarDimensions, createHotbarProfile, renameHotbarProfile, deleteHotbarProfile, selectHotbarProfile, switchHotbarProfileFast, isBuiltinHotbarProfile, hotbarProfileAccent, setHotbarProfileAccent, reorderHotbarProfile, hotbarSlotColor, setHotbarSlotColor, MAX_HOTBAR_PROFILES } from './actor-quick-access.js';
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, Number(value) || min));
@@ -31,8 +32,14 @@ function readDrop(event, actor) {
   try {
     const json = JSON.parse(raw);
     if (json?.actor === actor?.uuid && typeof json.id === 'string') {
+      if (json.kind === 'macro') {
+        const uuid = macroUuidFromDrop({type:'Macro',uuid:json.uuid});
+        return uuid ? { macroUuid: uuid, from: json.source === 'hotbar' ? Number(json.slot) : null } : null;
+      }
       return { id: json.id, from: json.source === 'hotbar' ? Number(json.slot) : null };
     }
+    const macroUuid = macroUuidFromDrop(json);
+    if (macroUuid) return { macroUuid, from: null };
     // Foundry Item drag; accept only Items belonging to the active Actor.
     if (json?.type === 'Item' && typeof json.uuid === 'string' && json.uuid.startsWith(`${actor?.uuid}.Item.`)) {
       const id = json.uuid.split('.').at(-1);
@@ -136,6 +143,7 @@ export class ZFTCustomHotbar {
     const root = this.root;
     root.replaceChildren();
     root.dataset.theme = this.hud.element?.dataset.theme || 'zft-default';
+    root.dataset.textures = String(Boolean(this._settings('showThemeTextures')));
     root.dataset.locked = String(Boolean(this._settings('hotbarLocked')));
     root.dataset.positionLocked = String(Boolean(this._settings('hotbarPositionLocked')));
     root.dataset.dockMode = this._dockMode();
@@ -588,9 +596,29 @@ export class ZFTCustomHotbar {
     const slot = element('div', 'zft-hotbar-slot');
     slot.dataset.hotbarSlot = String(index);
     const ref = refs[index];
-    const id = resolveActionReference(actor, ref, adapter);
+    const macroRef = isMacroReference(ref) ? ref : null;
+    const macro = macroRef ? macroDocumentSync(macroRef.uuid) : null;
+    const id = macroRef ? null : resolveActionReference(actor, ref, adapter);
     const preview = id ? adapter?.getItemPreview?.(actor, id) : null;
-    if (id && preview) {
+    if (macroRef) {
+      const name = macro?.name || macroRef.name || 'Macro';
+      const action = element('button', 'zft-hotbar-action', `Execute ${name}; drag to rearrange`);
+      action.type = 'button'; action.dataset.macroUuid = macroRef.uuid;
+      action.draggable = !locked && actorWritable;
+      action.setAttribute('aria-label', `Execute Macro ${name}`);
+      const image = element('img'); image.src = macro?.img || macroRef.img || 'icons/svg/dice-target.svg'; image.alt = '';
+      action.append(image);
+      if (this._settings('showHotbarLabels')) {
+        const label = element('span', 'zft-hotbar-name'); label.textContent = name;
+        action.append(label);
+      }
+      slot.append(action);
+      if (!locked && actorWritable) {
+        const remove = element('button', 'zft-hotbar-remove', `Clear ${name} from slot ${index + 1}`);
+        remove.type = 'button'; remove.dataset.hotbarRemove = String(index);
+        remove.append(fa('xmark')); slot.append(remove);
+      }
+    } else if (id && preview) {
       const action = element('button', 'zft-hotbar-action', `Use ${preview.name}; right-click for Item sheet; drag to rearrange`);
       action.type = 'button'; action.dataset.useItem = id;
       action.draggable = !locked && actorWritable;
@@ -665,10 +693,44 @@ export class ZFTCustomHotbar {
       });
       button.addEventListener('dragend', () => { this._draggedSlot = null; this._suppressUntil = performance.now() + 250; });
     }
+    for (const button of root.querySelectorAll('[data-macro-uuid]')) {
+      button.addEventListener('click', event => {
+        event.preventDefault(); event.stopPropagation();
+        if (performance.now() < this._suppressUntil) return;
+        const uuid = button.dataset.macroUuid;
+        const ref = storedHotbarSlots(this.actor).find(entry => isMacroReference(entry) && entry.uuid === uuid);
+        void executeHotbarMacro(ref, { actor: this.actor }).then(result => {
+          if (result.ok) return;
+          const messages = { invalid:'Invalid Macro reference.', missing:'Macro no longer exists or is unavailable.',
+            permission:'You do not have permission to execute that Macro.', error:'Macro failed; see console.' };
+          ui.notifications?.warn(messages[result.reason] || 'Macro could not run.');
+        });
+      });
+      button.addEventListener('contextmenu', event => {
+        event.preventDefault(); event.stopPropagation();
+        this._openSlotColorMenu(button.closest('[data-hotbar-slot]'), event);
+      });
+      button.addEventListener('dragstart', event => {
+        if (this._settings('hotbarLocked') || !this.actor?.isOwner) { event.preventDefault(); return; }
+        const slot = Number(button.closest('[data-hotbar-slot]')?.dataset.hotbarSlot);
+        this._draggedSlot = slot;
+        const uuid = button.dataset.macroUuid;
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('application/x-zft-hud-action', JSON.stringify({
+          kind:'macro', id:`macro:${uuid}`, uuid, actor:this.actor.uuid, source:'hotbar', slot
+        }));
+      });
+      button.addEventListener('dragend', () => { this._draggedSlot = null; this._suppressUntil = performance.now() + 250; });
+    }
     for (const slot of [ ...(root.matches?.('[data-hotbar-slot]') ? [root] : []), ...root.querySelectorAll('[data-hotbar-slot]') ]) {
       slot.addEventListener('dragover', event => {
         if (this._settings('hotbarLocked') || !this.actor?.isOwner) return;
-        event.preventDefault(); event.dataTransfer.dropEffect = 'move';
+        event.preventDefault();
+        // Library and Foundry Directory macros are copied into an Actor's slots.
+        // Their drag sources use effectAllowed='copy'. Asking for 'move' cancels
+        // the native HTML5 drop entirely in Chromium (and other browsers).
+        // Only a drag originating in this hotbar is a rearrangement/move.
+        event.dataTransfer.dropEffect = Number.isInteger(this._draggedSlot) ? 'move' : 'copy';
         slot.classList.add('is-drop-target');
       });
       slot.addEventListener('dragleave', () => slot.classList.remove('is-drop-target'));
@@ -1159,12 +1221,23 @@ export class ZFTCustomHotbar {
 
   async _drop(event, index) {
     if (this._settings('hotbarLocked') || this._settings('hotbarCollapsed')) return;
-    const info = readDrop(event, this.actor);
-    if (!info || !this.actor?.isOwner) return;
+    const actor = this.actor;
+    const info = readDrop(event, actor);
+    if (!info || !actor?.isOwner) return;
+    const from = info.from !== null && Number.isInteger(info.from) ? info.from : this._draggedSlot;
+    if (info.macroUuid) {
+      const macro = await macroDocument(info.macroUuid);
+      if (!macro || (macro.documentName !== 'Macro' && macro.constructor?.documentName !== 'Macro')) {
+        ui.notifications?.warn('This Foundry Macro could not be resolved.');
+        return;
+      }
+      if (this.actor !== actor) return; // Token changed while resolving a Compendium Macro.
+      await this._assign(index, makeMacroReference(info.macroUuid, macro), from);
+      return;
+    }
     const adapter = getSystemAdapter();
     const id = adapter?.resolveActionId?.(this.actor, info.id) ?? info.id;
     if (!adapter?.hasAction?.(this.actor, id)) return;
-    const from = info.from !== null && Number.isInteger(info.from) ? info.from : this._draggedSlot;
     await this._assign(index, actionReference(this.actor, id, adapter), from);
   }
 

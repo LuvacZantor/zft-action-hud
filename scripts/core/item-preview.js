@@ -271,20 +271,35 @@ export class ItemPreview {
 
   _place(button) {
     if (!this.node) return;
-    const rect = button.getBoundingClientRect();
+    const itemRect = button.getBoundingClientRect();
+    // Use the complete action browser (or hotbar), not the hovered item's
+    // bounds. Previews must never cover the next favorite/equipment entry.
+    const surface = button.closest('[data-hud-browser], #zft-action-hud-hotbar') || button;
+    const bounds = surface.getBoundingClientRect();
     const card = this.node.getBoundingClientRect();
     const margin = 10;
     const gap = 12;
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-    // Prefer the side with room, rather than covering the browsed action list.
-    const rightSpace = viewportWidth - rect.right - margin;
-    const leftSpace = rect.left - margin;
-    const x = rightSpace >= card.width + gap || rightSpace >= leftSpace
-      ? rect.right + gap : rect.left - card.width - gap;
-    let y = rect.top;
-    if (y + card.height > viewportHeight - margin) y = viewportHeight - margin - card.height;
+    const rightX = bounds.right + gap;
+    const leftX = bounds.left - card.width - gap;
+    const roomRight = viewportWidth - margin - rightX;
+    const roomLeft = leftX - margin;
+    let x, y;
+    if (roomRight >= card.width || (roomRight >= roomLeft && roomRight >= 0)) {
+      x = rightX;
+      y = itemRect.top;
+    } else if (roomLeft >= 0) {
+      x = leftX;
+      y = itemRect.top;
+    } else {
+      // Extremely narrow screens: put the preview outside the menu vertically.
+      // Its normal hover state is pointer-transparent so browsing remains easy.
+      x = bounds.left;
+      y = bounds.bottom + gap;
+      if (y + card.height > viewportHeight - margin) y = bounds.top - card.height - gap;
+    }
     this.node.style.left = `${Math.round(Math.max(margin, Math.min(viewportWidth - margin - card.width, x)))}px`;
-    this.node.style.top = `${Math.round(Math.max(margin, y))}px`;
+    this.node.style.top = `${Math.round(Math.max(margin, Math.min(viewportHeight - margin - card.height, y)))}px`;
   }
 }

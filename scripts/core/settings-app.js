@@ -4,6 +4,7 @@ import { debugLog } from './debug.js';
 import { activeHotbarProfile, saveHotbarDimensions, resetAllHotbarColors } from './actor-quick-access.js';
 import { getSystemAdapter } from '../adapters/registry.js';
 import { performHotbarMaintenance } from './hotbar-maintenance.js';
+import { macroFolders } from './shared-macro-library.js';
 
 const Base = foundry.applications.api.ApplicationV2;
 const Mixin = foundry.applications.api.HandlebarsApplicationMixin;
@@ -59,6 +60,15 @@ export class ZFTActionHudSettings extends Mixin(Base) {
       hotbarColumns: profile.columns,
       hotbarUiScale: get('hotbarUiScale'),
       hotbarScalePercent: Math.round(get('hotbarUiScale') * 100),
+      sharedMacroFolderId:get('sharedMacroFolderId'),
+      gmMacroFolderId:get('gmMacroFolderId'),
+      sharedMacroSort:get('sharedMacroSort'),
+      sharedSortAlpha:get('sharedMacroSort')==='alpha',
+      sharedSortDirectory:get('sharedMacroSort')==='directory',
+      gmMacroSort:get('gmMacroSort'),
+      gmSortAlpha:get('gmMacroSort')==='alpha',
+      gmSortDirectory:get('gmMacroSort')==='directory',
+      macroFolders: macroFolders().map(f=>({ id:f.id,name:f.name,selectedShared:f.id===get('sharedMacroFolderId'),selectedGm:f.id===get('gmMacroFolderId') })),
       showHud: get('enabled'),
       hudFloatingLocked: get('hudFloatingLocked'),
       supportsInventoryFilters: Boolean(getSystemAdapter()?.capabilities?.inventoryFilters && getSystemAdapter()?.inventoryFilterOptions?.length),
@@ -80,6 +90,7 @@ export class ZFTActionHudSettings extends Mixin(Base) {
         clientThemeIsZftDefault: clientTheme === 'zft-default',
         clientThemeIsGothicArcane: clientTheme === 'gothic-arcane',
         clientThemeOptions: themeOptions(clientTheme),
+        showThemeTextures: get('showThemeTextures'),
         categoryButtonSizeIsTiny: size === 'tiny',
         categoryButtonSizeIsSmall: size === 'small',
         categoryButtonSizeIsMedium: size === 'medium',
@@ -203,6 +214,7 @@ export class ZFTActionHudSettings extends Mixin(Base) {
           }
           await game.settings.set(MODULE_ID, key, value);
           // Hiding the HUD closes this window too. Re-enable from Module Settings.
+          if (['sharedMacroFolderId','gmMacroFolderId','sharedMacroSort','gmMacroSort'].includes(key)) return;
           if (key === 'enabled' || key === 'hudFloatingLocked' || key.startsWith('hotbar') || ['showCustomHotbar','showHotbarLabels'].includes(key)) return;
           // These settings already invoke HUD.refresh via their registered
           // onChange callback; don't queue a second full render.

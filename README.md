@@ -1,4 +1,54 @@
-# ZFT Action HUD v0.1.0-dev.58
+# ZFT Action HUD v0.1.0-dev.67
+
+## dev.67 local testing changes
+
+- Fix hotbar drop target compatibility with macro-library and Foundry Directory drag-copy gestures; only slot rearrangement requests move. Layout lock and Actor permissions continue to apply.
+- HUD title bar buttons for two floating Macro Directory libraries: Shared (GM-configured world folder) and GM (GM's personal folder). Buttons are hidden if the folder is unconfigured; the GM button is GM-only.
+- Read-only, theme-matched macro grids with personal position memory, closed by default, sortable alphabetically or by Foundry Macro sort order, refreshed on Macro/Folder changes. Theme texture checkbox and hotbar scale apply.
+- Click permitted macros to execute natively or drag a Macro reference into an unlocked Actor hotbar. No macro copies, no auto-population of Actor slots. Macro permissions remain authoritative.
+- Configure source folders in HUD Settings > Hotbar (GM only). Only macros directly in the selected folder are included; nested folder support is deferred.
+- IMPORTANT: This code-only merge archive intentionally does not include the six user-uploaded WebP textures. Preserve assets/textures/*.webp from dev.58+ when installing.
+
+## dev.65 local testing changes
+
+- Removed the unnecessary assigned-character fallback toggle: the HUD continues to use the assigned Foundry Player Character when no token is controlled and permission permits. Legacy saved setting is retained but hidden and ignored.
+- Item previews now position outside the whole action browser or hotbar, not on top of adjacent action buttons. Side placement is preferred; small screens fall back above/below.
+- Foundry Macro documents (world and accessible compendium macros) can be dropped onto an unlocked, Actor-owned hotbar slot, saved in existing profiles, executed natively with permission checks, rearranged and removed. Existing Item slots and their behavior remain unchanged.
+- V13 live GM/player verification required.
+
+## dev.64 historical testing changes (dev.65 supersedes the fallback toggle)
+
+- New personal setting **Use Assigned Player Character as Default**: when no token is controlled, show `game.user.character` if the user has access. Default enabled for players, disabled for GMs. Clicking/toggling follows the native current client setting; selecting a token takes priority, and controlling multiple tokens keeps the HUD empty rather than picking an arbitrary Actor. This fallback does **not** select any canvas token.
+- Refresh the active HUD when the current Foundry User changes assigned character. Existing Actor ownership rules remain in effect.
+- The HUD frame now uses the widest of the primary or lower button rows to determine Action area width. The lower row remains horizontal on normal screen sizes, with a small-screen wrap safety fallback. This dynamically accommodates character categories and the Show Recent toggle without hardcoding a single HUD width.
+- No changes to Foundry UI scene navigation layering, custom hotbar profiles, theme assets or native rolls. Live Foundry V13 player/GM tests required, V14 not verified. GitHub unchanged.
+
+## dev.63 native Foundry scene navigation layering
+
+- Foundry V13 native vertical scene navigation stays above the docked HUD when expanded or keyboard focused, independent of Carolingian UI. User confirmed working in live V13. No hotbar geometry changes.
+
+## dev.61 local testing changes
+
+- Replace status-effect native Foundry tooltip with an interactive, body-level read-only popup. Moving from the icon into the popup preserves it, with a short 350ms grace period to cross any border gap. The popup is scrollable and its text/links can be accessed; leaving both the icon and popup closes it. Escape also dismisses it.
+- Preserve all seven themes, sanitized HTML, labels and effect removal behavior. Update popup theme without HUD rerender. No new settings or changes to Actor data.
+- Does not modify unrelated HUD action/item hover previews. GM/player Foundry V13 tests still required; V14 not live verified. No GitHub writes.
+- The dev.61 test ZIP contains source files but not the six user-uploaded WebP textures. Merge onto your existing module folder; do not replace/delete that folder.
+
+## dev.60 local testing changes
+
+- Repair the dev.59 installed-file mismatch that caused `showThemeTextures` to be unregistered: ship a coherent versioned set of module code, including `scripts/core/settings.js`. The setting stays a personal checkbox enabled by default, and existing saved overrides are preserved.
+- Newly configured clients start with the custom hotbar visible, docked bottom-center, layout locked and position locked. This prevents accidental editing/dragging; existing preferences are NOT overwritten.
+- Move the docked Action HUD down an additional 10px (dock offset now +30px relative to earlier baseline). Floating positions are untouched.
+- Current named-theme WebP assets are unchanged; they must remain in `assets/textures/`. No Github writes or production V14 claims.
+
+
+
+## dev.59 local testing changes
+
+- HUD palette control cycles to the next personal theme on left-click and previous theme on right-click, wrapping across the seven existing choices (ZFT Default plus six named themes).
+- New personal **Show Theme Background Textures** setting (enabled by default) in both Foundry Module Settings and the HUD Appearance tab. When disabled, it suppresses WebP artwork and CSS-generated patterns in the HUD frame, Action Browser and Hotbar without removing theme colors, gradients, or opacity.
+- Lower HUD category order is now **Saves, Abilities, Skills, Tools**, followed by Favs, Recent and Hotbar, as requested.
+- Uploaded theme artwork is unchanged. Live Foundry V13 test required. GitHub unchanged.
 
 ## dev.58 local texture integration
 
@@ -509,3 +559,8 @@ Roadmap: https://github.com/LuvacZantor/zft-action-hud/blob/develop/ROADMAP.md
 - Only custom overrides are persisted. All unmodified buttons follow the selected theme. Main category colors are client-specific; hotbar slot colors are Actor/profile-specific and travel with exported Actors. Slot colors travel with actions when swapping, and are cleared on replacement.
 - Settings → Appearance → **Reset All Button Colors** asks for confirmation, then clears category color overrides for this client and all slot overrides across the selected owned Actor's profiles.
 - These changes require live Foundry V13 testing before acceptance, particularly migrated profiles and right-click color selection.
+
+### dev.63 scene navigation stacking fix
+
+- Replaced the Carolingian-only dev.62 selector with a Foundry V13 native `#scene-navigation` selector. Native navigation and its enclosing interface stacking context receive priority above the docked HUD while expanded or keyboard-focused. No HUD offsets, hotbar behavior, or saved settings change.
+- Live Foundry V13 verification pending.

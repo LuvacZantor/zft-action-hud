@@ -35,6 +35,8 @@
             {{/each}}
           </select>
         </label>
+        <label class="zft-hud-setting-check"><input type="checkbox" data-hud-setting="showThemeTextures" {{#if settings.showThemeTextures}}checked{{/if}} /><span>Show Theme Background Textures</span></label>
+        <p class="zft-hud-settings-note">Decorative WebP and CSS textures only. Theme colors and frame styling stay the same.</p>
         <label class="zft-hud-setting-line"><span>Category Button Size</span>
           <select data-hud-setting="categoryButtonSize">
             <option value="tiny" {{#if settings.categoryButtonSizeIsTiny}}selected{{/if}}>Tiny</option>
@@ -100,6 +102,36 @@
           <input type="range" data-hud-setting="hotbarUiScale" min="0.5" max="1.5" step="0.05" value="{{hotbarUiScale}}" />
         </label>
         <p class="zft-hud-settings-note">Hotbar scaling is independent of HUD UI Scale and previews while dragging.</p>
+        {{#if settings.isGM}}
+        <fieldset class="zft-hud-settings-group"><legend>Macro Libraries (GM Configuration)</legend>
+          <label class="zft-hud-setting-line"><span>Shared Macro Folder (World)</span>
+            <select data-hud-setting="sharedMacroFolderId" data-world-setting="true">
+              <option value="" {{#unless sharedMacroFolderId}}selected{{/unless}}>Disabled</option>
+              {{#each macroFolders}}<option value="{{id}}" {{#if selectedShared}}selected{{/if}}>{{name}}</option>{{/each}}
+            </select>
+          </label>
+          <label class="zft-hud-setting-line"><span>Shared Sorting</span>
+            <select data-hud-setting="sharedMacroSort" data-world-setting="true">
+              <option value="alpha" {{#if sharedSortAlpha}}selected{{/if}}>Alphabetical (A–Z)</option>
+              <option value="directory" {{#if sharedSortDirectory}}selected{{/if}}>Foundry Directory Order</option>
+            </select>
+          </label>
+          <label class="zft-hud-setting-line"><span>GM Personal Macro Folder</span>
+            <select data-hud-setting="gmMacroFolderId">
+              <option value="" {{#unless gmMacroFolderId}}selected{{/unless}}>Disabled</option>
+              {{#each macroFolders}}<option value="{{id}}" {{#if selectedGm}}selected{{/if}}>{{name}}</option>{{/each}}
+            </select>
+          </label>
+          <label class="zft-hud-setting-line"><span>GM Sorting</span>
+            <select data-hud-setting="gmMacroSort">
+              <option value="alpha" {{#if gmSortAlpha}}selected{{/if}}>Alphabetical (A–Z)</option>
+              <option value="directory" {{#if gmSortDirectory}}selected{{/if}}>Foundry Directory Order</option>
+            </select>
+          </label>
+          <p class="zft-hud-settings-note">Folder contents are read-only. The Shared library is visible to players with permission to access its Macros. Use the HUD title bar buttons to open either library, then drag a permitted Macro into an unlocked character hotbar slot.</p>
+        </fieldset>
+        {{/if}}
+
         <label class="zft-hud-setting-line"><span>Rows (1–20)</span><input type="number" min="1" max="20" step="1" data-hud-setting="hotbarRows" value="{{hotbarRows}}" {{#unless hotbarWritable}}disabled{{/unless}} /></label>
         <label class="zft-hud-setting-line"><span>Columns (1–20)</span><input type="number" min="1" max="20" step="1" data-hud-setting="hotbarColumns" value="{{hotbarColumns}}" {{#unless hotbarWritable}}disabled{{/unless}} /></label>
         <p class="zft-hud-settings-note">Grid dimensions now belong to the active Actor profile. Switch profiles using the hotbar tabs; unlock Layout and use Profiles to create, duplicate, rename, or delete them.</p>

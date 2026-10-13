@@ -1,4 +1,4 @@
-/* ZFT Action HUD v0.1.0-dev.58. Shared geometry, theme-specific color tokens. */
+/* ZFT Action HUD v0.1.0-dev.67. Shared geometry, theme-specific color tokens. */
 #zft-action-hud {
   --zft-scale:1;
   --zft-hud-opacity:90%;
@@ -54,7 +54,7 @@
 
 /* Shared theme tokens apply consistently to the HUD, the draggable settings window,
    and the independent hover-preview window. Only the appearance changes, not geometry. */
-:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar)[data-theme='gothic-arcane'] {
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-shared-macros,#zft-gm-macros)[data-theme='gothic-arcane'] {
   --zft-accent:#aa82d6;--zft-accent-bright:#e9cbff;
   --zft-text:#efdefe;--zft-muted:#ab99bd;--zft-bg:#160f22;
   --zft-panel:#22172f;--zft-panel2:#34233c;--zft-panel3:#422b4e;
@@ -64,7 +64,7 @@
   --zft-surface-texture:url('../assets/textures/gothic_arcane.webp');
   --zft-surface-fallback:radial-gradient(circle at 20% 22%, rgba(233,203,255,.06) 0 1px, transparent 1.5px 100%), repeating-linear-gradient(135deg, rgba(233,203,255,.035) 0 2px, transparent 2px 10px);
 }
-:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar)[data-theme='midnight-steel'] {
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-shared-macros,#zft-gm-macros)[data-theme='midnight-steel'] {
   --zft-accent:#739cae;--zft-accent-bright:#c2ebf5;
   --zft-text:#e6edf2;--zft-muted:#a4b3be;--zft-bg:#0b131b;
   --zft-panel:#192733;--zft-panel2:#243744;--zft-panel3:#304956;
@@ -74,7 +74,7 @@
   --zft-surface-texture:url('../assets/textures/midnight_steel.webp');
   --zft-surface-fallback:repeating-linear-gradient(108deg, rgba(194,235,245,.03) 0 2px, transparent 2px 8px), repeating-linear-gradient(168deg, rgba(255,255,255,.018) 0 1px, transparent 1px 12px);
 }
-:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar)[data-theme='emerald-grove'] {
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-shared-macros,#zft-gm-macros)[data-theme='emerald-grove'] {
   --zft-accent:#81bb74;--zft-accent-bright:#d0f4b9;
   --zft-text:#e9f4e0;--zft-muted:#b4c4a7;--zft-bg:#101c16;
   --zft-panel:#1d3126;--zft-panel2:#294130;--zft-panel3:#34573a;
@@ -84,7 +84,7 @@
   --zft-surface-texture:url('../assets/textures/emerald_grove.webp');
   --zft-surface-fallback:radial-gradient(circle at 18% 30%, rgba(208,244,185,.045) 0 1px, transparent 1.6px 100%), repeating-linear-gradient(150deg, rgba(160,214,138,.03) 0 3px, transparent 3px 12px);
 }
-:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar)[data-theme='royal-sapphire'] {
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-shared-macros,#zft-gm-macros)[data-theme='royal-sapphire'] {
   --zft-accent:#779de9;--zft-accent-bright:#d2e4ff;
   --zft-text:#edf1ff;--zft-muted:#aebbd8;--zft-bg:#0a102c;
   --zft-panel:#182348;--zft-panel2:#233461;--zft-panel3:#304578;
@@ -94,7 +94,7 @@
   --zft-surface-texture:url('../assets/textures/royal_saphire.webp');
   --zft-surface-fallback:repeating-linear-gradient(0deg, rgba(210,228,255,.028) 0 1px, transparent 1px 7px), repeating-linear-gradient(90deg, rgba(210,228,255,.02) 0 1px, transparent 1px 7px);
 }
-:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar)[data-theme='crimson-ember'] {
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-shared-macros,#zft-gm-macros)[data-theme='crimson-ember'] {
   --zft-accent:#dd8b60;--zft-accent-bright:#ffd1a4;
   --zft-text:#f6e5db;--zft-muted:#c6a99a;--zft-bg:#211114;
   --zft-panel:#371c21;--zft-panel2:#48262a;--zft-panel3:#603336;
@@ -104,7 +104,7 @@
   --zft-surface-texture:url('../assets/textures/crimson_ember.webp');
   --zft-surface-fallback:radial-gradient(circle at 24% 24%, rgba(255,209,164,.04) 0 1.5px, transparent 2px 100%), radial-gradient(circle at 72% 68%, rgba(221,139,96,.035) 0 1px, transparent 1.5px 100%), repeating-linear-gradient(140deg, rgba(255,209,164,.018) 0 2px, transparent 2px 9px);
 }
-:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar)[data-theme='sunlit-parchment'] {
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-shared-macros,#zft-gm-macros)[data-theme='sunlit-parchment'] {
   --zft-accent:#8a5925;--zft-accent-bright:#724113;
   --zft-text:#2e241c;--zft-muted:#655546;--zft-bg:#e5d5b5;
   --zft-panel:#f6ead2;--zft-panel2:#ebd9b8;--zft-panel3:#ddc59d;
@@ -133,7 +133,10 @@
 #zft-action-hud button {font:inherit;cursor:pointer;box-shadow:none;}
 #zft-action-hud button:focus-visible {outline:2px solid var(--zft-accent-bright);outline-offset:2px;}
 #zft-action-hud .zft-hud-content {
-  --zft-action-area-width:min(calc(var(--zft-primary-count,1) * var(--zft-button-width) + (var(--zft-primary-count,1) - 1) * 3px),560px,max(95px,calc(100vw - 230px)));
+  /* Fit whichever control row is widest, without a fixed Actor-specific size. */
+  --zft-primary-row-width:calc(var(--zft-primary-count,1) * var(--zft-button-width) + (var(--zft-primary-count,1) - 1) * 3px);
+  --zft-secondary-row-width:calc(var(--zft-secondary-count,3) * var(--zft-button-width) + (var(--zft-secondary-count,3) - 1) * 3px);
+  --zft-action-area-width:min(max(var(--zft-primary-row-width),var(--zft-secondary-row-width)),560px,max(95px,calc(100vw - 230px)));
   position:relative;width:100%;pointer-events:none;
 }
 #zft-action-hud .zft-hud-frame {
@@ -474,19 +477,20 @@
 #zft-action-hud .zft-hud-effects-empty {color:var(--zft-muted);font-size:10px;}
 #zft-action-hud .zft-hud-frame.is-collapsed .zft-hud-effects-strip {display:none;}
 
-/* Native Foundry rich tooltip for Active Effects. The tooltip is owned by
-   Foundry's TooltipManager, not the HUD, so it needs its own theme palette. */
-#tooltip.zft-hud-effect-tooltip {
+/* Interactive Active Effect popup, mounted under body so it can be hovered,
+   scrolled, and clicked independently of the Action HUD. */
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip {
  --zft-accent-bright:#f2d8a2;--zft-text:#f0e9d9;--zft-muted:#ada69b;
  --zft-panel:#24272c;--zft-panel2:#2c3035;--zft-border:rgba(204,175,125,.55);
  --zft-shadow:rgba(0,0,0,.67);
- box-sizing:border-box;min-width:min(310px,calc(100vw - 24px));
+ position:fixed;z-index:100000;pointer-events:auto;user-select:text;overscroll-behavior:contain;
+ box-sizing:border-box;width:min(390px,calc(100vw - 24px));min-width:min(310px,calc(100vw - 24px));
  max-width:min(425px,calc(100vw - 24px));max-height:min(75vh,650px);
  overflow:auto;padding:0;border:1px solid var(--zft-border);border-radius:8px;
  background:var(--zft-panel);box-shadow:0 10px 30px var(--zft-shadow);
  color:var(--zft-text);font:12px/1.45 'Signika',system-ui,sans-serif;
 }
-#tooltip.zft-hud-effect-tooltip.theme-gothic-arcane {
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip.theme-gothic-arcane {
   --zft-accent:#aa82d6;--zft-accent-bright:#e9cbff;
   --zft-text:#efdefe;--zft-muted:#ab99bd;--zft-bg:#160f22;
   --zft-panel:#22172f;--zft-panel2:#34233c;--zft-panel3:#422b4e;
@@ -494,7 +498,7 @@
   --zft-shadow:rgba(7,0,14,.84);--zft-hp:#ad4384;
   --zft-emboss:rgba(139,69,182,.15);
 }
-#tooltip.zft-hud-effect-tooltip.theme-midnight-steel {
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip.theme-midnight-steel {
   --zft-accent:#739cae;--zft-accent-bright:#c2ebf5;
   --zft-text:#e6edf2;--zft-muted:#a4b3be;--zft-bg:#0b131b;
   --zft-panel:#192733;--zft-panel2:#243744;--zft-panel3:#304956;
@@ -502,7 +506,7 @@
   --zft-shadow:rgba(0,9,17,.84);--zft-hp:#bd5562;
   --zft-emboss:rgba(62,123,159,.14);
 }
-#tooltip.zft-hud-effect-tooltip.theme-emerald-grove {
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip.theme-emerald-grove {
   --zft-accent:#81bb74;--zft-accent-bright:#d0f4b9;
   --zft-text:#e9f4e0;--zft-muted:#b4c4a7;--zft-bg:#101c16;
   --zft-panel:#1d3126;--zft-panel2:#294130;--zft-panel3:#34573a;
@@ -510,7 +514,7 @@
   --zft-shadow:rgba(5,17,8,.82);--zft-hp:#b84e4b;
   --zft-emboss:rgba(101,154,77,.15);
 }
-#tooltip.zft-hud-effect-tooltip.theme-royal-sapphire {
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip.theme-royal-sapphire {
   --zft-accent:#779de9;--zft-accent-bright:#d2e4ff;
   --zft-text:#edf1ff;--zft-muted:#aebbd8;--zft-bg:#0a102c;
   --zft-panel:#182348;--zft-panel2:#233461;--zft-panel3:#304578;
@@ -518,7 +522,7 @@
   --zft-shadow:rgba(3,5,29,.87);--zft-hp:#c94d6f;
   --zft-emboss:rgba(78,105,208,.17);
 }
-#tooltip.zft-hud-effect-tooltip.theme-crimson-ember {
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip.theme-crimson-ember {
   --zft-accent:#dd8b60;--zft-accent-bright:#ffd1a4;
   --zft-text:#f6e5db;--zft-muted:#c6a99a;--zft-bg:#211114;
   --zft-panel:#371c21;--zft-panel2:#48262a;--zft-panel3:#603336;
@@ -526,7 +530,7 @@
   --zft-shadow:rgba(20,4,6,.85);--zft-hp:#d44b4b;
   --zft-emboss:rgba(172,69,50,.16);
 }
-#tooltip.zft-hud-effect-tooltip.theme-sunlit-parchment {
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip.theme-sunlit-parchment {
   --zft-accent:#8a5925;--zft-accent-bright:#724113;
   --zft-text:#2e241c;--zft-muted:#655546;--zft-bg:#e5d5b5;
   --zft-panel:#f6ead2;--zft-panel2:#ebd9b8;--zft-panel3:#ddc59d;
@@ -535,24 +539,24 @@
   --zft-emboss:rgba(151,108,53,.08);
 }
 
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip {color:var(--zft-text);text-align:left;min-width:0;}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-heading {padding:10px 12px 7px;color:var(--zft-accent-bright);font-size:14px;border-bottom:1px solid var(--zft-border);overflow-wrap:anywhere;}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-tags {display:flex;flex-wrap:wrap;gap:5px;padding:8px 12px;}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-badge {padding:4px 7px;border:1px solid var(--zft-border);border-radius:5px;background:var(--zft-panel2);font-size:10px;overflow-wrap:anywhere;}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-badge i {margin-right:4px;color:var(--zft-accent-bright);}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description {padding:0 12px 10px;overflow-wrap:anywhere;line-height:1.45;}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-no-description {padding:4px 12px 10px;color:var(--zft-muted);}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-footer {padding:7px 12px;border-top:1px solid var(--zft-border);color:var(--zft-muted);font-size:10px;}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description p {margin:.45em 0;}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description :is(h1,h2,h3,h4,h5,h6) {font-size:inherit;color:var(--zft-accent-bright);font-weight:700;margin:.75em 0 .35em;}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description :is(ul,ol) {margin:.35em 0 .7em;padding-left:1.7em;}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description li {margin:.2em 0;}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description table {display:table;border-collapse:collapse;width:100%;table-layout:auto;margin:8px 0;font-size:11px;}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description tr {display:table-row;}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description :is(td,th) {display:table-cell;border:1px solid var(--zft-border);padding:4px 6px;vertical-align:top;text-align:left;}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description th {background:var(--zft-panel2);color:var(--zft-accent-bright);}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description img {max-width:100%;height:auto;}
-#tooltip.zft-hud-effect-tooltip .zft-effect-tip-description a {color:var(--zft-accent-bright);text-decoration:underline;}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip {color:var(--zft-text);text-align:left;min-width:0;}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-heading {padding:10px 12px 7px;color:var(--zft-accent-bright);font-size:14px;border-bottom:1px solid var(--zft-border);overflow-wrap:anywhere;}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-tags {display:flex;flex-wrap:wrap;gap:5px;padding:8px 12px;}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-badge {padding:4px 7px;border:1px solid var(--zft-border);border-radius:5px;background:var(--zft-panel2);font-size:10px;overflow-wrap:anywhere;}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-badge i {margin-right:4px;color:var(--zft-accent-bright);}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-description {padding:0 12px 10px;overflow-wrap:anywhere;line-height:1.45;}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-no-description {padding:4px 12px 10px;color:var(--zft-muted);}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-footer {padding:7px 12px;border-top:1px solid var(--zft-border);color:var(--zft-muted);font-size:10px;}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-description p {margin:.45em 0;}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-description :is(h1,h2,h3,h4,h5,h6) {font-size:inherit;color:var(--zft-accent-bright);font-weight:700;margin:.75em 0 .35em;}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-description :is(ul,ol) {margin:.35em 0 .7em;padding-left:1.7em;}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-description li {margin:.2em 0;}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-description table {display:table;border-collapse:collapse;width:100%;table-layout:auto;margin:8px 0;font-size:11px;}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-description tr {display:table-row;}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-description :is(td,th) {display:table-cell;border:1px solid var(--zft-border);padding:4px 6px;vertical-align:top;text-align:left;}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-description th {background:var(--zft-panel2);color:var(--zft-accent-bright);}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-description img {max-width:100%;height:auto;}
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-description a {color:var(--zft-accent-bright);text-decoration:underline;}
 
 /* dev.17: compact Active Effects dock above the HUD, not an entire row inside it. */
 #zft-action-hud .zft-hud-content[data-collapsed='true'] .zft-hud-effects-strip {display:none;}
@@ -1317,16 +1321,18 @@
 @media(max-width:900px) {#zft-action-hud .zft-hud-secondary-categories {max-width:440px;}}
 @media(max-width:570px) {#zft-action-hud .zft-hud-secondary-categories {max-width:225px;}}
 
-/* dev.56: Primary icon buttons alone determine HUD width. Secondary controls
-   are contained inside that width; the quick-access trio stays together when
-   it fits, otherwise wraps to its own secondary line. */
+/* dev.64: The widest category row sets Action HUD width. A narrow viewport
+   may still wrap controls to avoid pushing UI off screen. */
 #zft-action-hud .zft-hud-action-area {
   width:var(--zft-action-area-width);
   max-width:100%;min-width:0;flex:0 1 auto;
 }
 #zft-action-hud .zft-hud-categories,
 #zft-action-hud .zft-hud-secondary-categories {width:100%;max-width:100%;min-width:0;}
-#zft-action-hud .zft-hud-secondary-quick {display:flex;flex:0 0 auto;align-items:stretch;flex-wrap:wrap;gap:3px;max-width:100%;}
+#zft-action-hud .zft-hud-secondary-quick {display:flex;flex:0 0 auto;align-items:stretch;flex-wrap:nowrap;gap:3px;max-width:100%;}
+@media (max-width:540px) {
+  #zft-action-hud .zft-hud-secondary-quick {flex-wrap:wrap;}
+}
 #zft-action-hud .zft-hud-hotbar-toggle.zft-hud-slim-button {
   display:flex;justify-content:center;align-items:center;
   width:var(--zft-button-width);min-width:var(--zft-button-width);max-width:var(--zft-button-width);
@@ -1410,3 +1416,76 @@
 #zft-action-hud .zft-hud-frame::after {opacity:calc(var(--zft-hud-opacity) * .18);}
 #zft-action-hud .zft-hud-popup::after {opacity:calc(var(--zft-browser-opacity) * .18);}
 #zft-action-hud-hotbar::after {opacity:.16;}
+
+/* dev.59: personal switch hides ONLY decorative WebP art and CSS patterns.
+   Leave solid backgrounds, theme color tokens, opacity and geometry untouched. */
+#zft-action-hud[data-textures='false'] .zft-hud-frame::after,
+#zft-action-hud[data-textures='false'] .zft-hud-popup::after,
+#zft-action-hud-hotbar[data-textures='false']::after { display:none; }
+
+#zft-action-hud-effect-tooltip[hidden] {display:none!important;}
+
+
+/* dev.63: Foundry V13's native scene navigation is a vertical menu.
+   Raise its UI-left stacking context above the docked ZFT HUD only while
+   the scene navigation is expanded. No Carolingian dependency or position
+   changes. :focus-within allows keyboard interaction with an open menu. */
+body:has(#zft-action-hud[data-mode='docked']) #interface:has(#scene-navigation.expanded),
+body:has(#zft-action-hud[data-mode='docked']) #interface:has(#scene-navigation:focus-within) {
+  /* #interface is itself a stacking context in V13. Its children cannot rise
+     above a sibling HUD unless the interface context also comes forward. */
+  z-index: 101 !important;
+}
+body:has(#zft-action-hud[data-mode='docked']) #interface #ui-left:has(#scene-navigation.expanded),
+body:has(#zft-action-hud[data-mode='docked']) #interface #ui-left:has(#scene-navigation:focus-within) {
+  z-index: 101 !important;
+}
+
+/* dev.67: The two Macro Directory-backed libraries share the same theme tokens. */
+.zft-macro-library {
+  --zft-scale:1;--zft-accent:#c9aa72;--zft-accent-bright:#f2d8a2;
+  --zft-text:#f0e9d9;--zft-muted:#ada69b;--zft-bg:#17191c;
+  --zft-panel:#24272c;--zft-panel2:#2c3035;--zft-panel3:#343941;
+  --zft-border:rgba(204,175,125,.55);--zft-shadow:rgba(0,0,0,.67);
+  --zft-surface-texture:none;--zft-surface-fallback:none;
+  position:fixed;left:230px;top:160px;z-index:180;
+  width:max-content;max-width:calc(100vw - 16px);max-height:calc(100vh - 16px);
+  min-width:220px;overflow:hidden;box-sizing:border-box;
+  zoom:var(--zft-scale);color:var(--zft-text);
+  background:linear-gradient(150deg,var(--zft-panel),var(--zft-bg));
+  border:1px solid var(--zft-border);border-radius:9px;
+  box-shadow:0 12px 30px var(--zft-shadow),inset 0 0 0 1px rgba(255,255,255,.05);
+  font:12px 'Signika',system-ui,sans-serif;isolation:isolate;
+}
+.zft-macro-library::before {
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:var(--zft-surface-texture),var(--zft-surface-fallback);
+  background-repeat:repeat;background-size:512px 512px,auto;
+  opacity:.17;
+}
+.zft-macro-library[data-textures='false']::before {display:none;}
+.zft-macro-library > * {position:relative;z-index:1;}
+.zft-macro-library-header {
+  display:flex;align-items:center;gap:8px;padding:6px 9px;min-height:30px;
+  cursor:move;user-select:none;touch-action:none;
+  border-bottom:1px solid var(--zft-border);background:rgba(0,0,0,.24);
+}
+.zft-macro-library-title {font-weight:800;color:var(--zft-accent-bright);white-space:nowrap;}
+.zft-macro-library-folder {font-size:10px;color:var(--zft-muted);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.zft-macro-library-close {margin-left:auto;background:var(--zft-panel2);border:1px solid var(--zft-border);border-radius:4px;color:var(--zft-text);width:22px;height:22px;cursor:pointer;}
+.zft-macro-library-close:hover {background:var(--zft-panel3);}
+.zft-macro-library-body {overflow:auto;max-height:min(400px,calc(100vh - 100px));padding:8px;}
+.zft-macro-library-grid {display:grid;grid-template-columns:repeat(5,55px);gap:5px;width:max-content;}
+.zft-macro-library-item {
+  box-sizing:border-box;display:flex;flex-direction:column;gap:3px;align-items:center;
+  border:1px solid var(--zft-border);border-radius:5px;background:color-mix(in srgb,var(--zft-panel2) 88%,transparent);
+  width:55px;min-height:61px;padding:4px 2px;cursor:grab;color:var(--zft-text);font:inherit;
+}
+.zft-macro-library-item:hover {background:var(--zft-panel3);border-color:var(--zft-accent-bright);}
+.zft-macro-library-item:disabled {cursor:not-allowed;opacity:.5;}
+.zft-macro-library-item img {height:34px;width:34px;object-fit:cover;border-radius:4px;}
+.zft-macro-library-name {font-size:9px;line-height:1.1;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.zft-macro-library-empty {font-size:11px;color:var(--zft-muted);line-height:1.5;margin:3px;}
+#zft-action-hud .zft-hud-heading-actions [data-hud-control$='-macros'].is-active {
+  color:var(--zft-accent-bright);border-color:var(--zft-border);background:var(--zft-panel3);
+}

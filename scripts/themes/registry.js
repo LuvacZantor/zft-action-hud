@@ -26,8 +26,10 @@ export function resolveTheme({ clientTheme } = {}) {
   return Object.hasOwn(THEMES, clientTheme) ? clientTheme : 'zft-default';
 }
 
-export function nextClientTheme(current) {
+/** Cycle the same stable list in either direction, wrapping at both ends. */
+export function nextClientTheme(current, direction = 1) {
   const choices = Object.keys(THEMES);
   const i = choices.indexOf(current);
-  return choices[(i + 1) % choices.length];
+  if (i < 0) return 'zft-default';
+  return choices[(i + (direction < 0 ? -1 : 1) + choices.length) % choices.length];
 }

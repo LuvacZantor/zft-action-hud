@@ -8,11 +8,12 @@ import { currentPositionState, nextPositionState, positionControlPresentation } 
 import { toggleId, placeFavorite, pushRecent, uniqueIds } from './quick-access.js';
 import { ZFTActionHudSettings } from './settings-app.js';
 import { ZFTCustomHotbar } from './custom-hotbar.js';
+import { ZFTMacroLibraries } from './shared-macro-library.js';
 import { ZFTScalePopover } from './scale-popover.js';
 import { ZFTButtonColors, applyButtonColor, DEFAULT_CATEGORY_COLORS } from './button-colors.js';
 import { resolveFavoriteIds, saveFavorites, migrateFavorites } from './actor-quick-access.js';
 import { ItemPreview } from './item-preview.js';
-import { wireEffectTooltips } from './effect-tooltip.js';
+import { EffectTooltip } from './effect-tooltip.js';
 import { debugLog } from './debug.js';
 
 const AppV2 = foundry.applications.api.ApplicationV2;
@@ -48,6 +49,7 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
     this._hpPanelOpen = false;
     this._settingsWindow = null;
     this._customHotbar = new ZFTCustomHotbar(this);
+    this._macroLibraries = new ZFTMacroLibraries(this);
     this._colorUI = new ZFTButtonColors();
     this._hudScaleControl = new ZFTScalePopover({
       id:'zft-action-hud-scale',label:'Action HUD Scale',setting:'uiScale',min:0.75,max:1.25,
@@ -60,6 +62,7 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
     this._itemDrag = null;
     this._dragSuppressUntil = 0;
     this._activeUses = new Set();
+    this._effectTooltips = new EffectTooltip();
     this._itemPreview = new ItemPreview({
       getAdapter: () => getSystemAdapter(),
       getActor: () => this._actor,
@@ -145,10 +148,16 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
       actionHelpText: adapter?.actionHelpText || 'Click to use · Right-click to inspect · Drag to Favorites or Custom Hotbar.',
       categories,
       primaryCategoryCount:Math.max(1,categories.filter(category => !category.secondary).length),
+      // Include every lower-row control in the width calculation (including
+      // optional Recent) so Actors with few Items don't squash the HUD.
+      secondaryCategoryCount:categories.filter(category => category.secondary).length
+        + 2 + Number(showRecentButton),
       hotbarVisible:Boolean(game.settings.get(MODULE_ID, 'showCustomHotbar')),
+      sharedMacroConfigured:this._macroLibraries.configured('shared'),
+      gmMacroConfigured:this._macroLibraries.configured('gm'),
       primaryCategories:categories.filter(category => !category.secondary),
       secondaryCategories:categories.filter(category => category.secondary).sort((a,b) =>
-        ["abilities","saves","skills","tools"].indexOf(a.id) - ["abilities","saves","skills","tools"].indexOf(b.id)),
+        ["saves","abilities","skills","tools"].indexOf(a.id) - ["saves","abilities","skills","tools"].indexOf(b.id)),
       activeEffects: showActiveEffects ? effectsData.effects : [],
       showActiveEffects: showActiveEffects && Boolean(actor) && effectsData.effects.length > 0,
       canEditHP: Boolean(actor?.isOwner && adapter?.capabilities?.health && adapter?.adjustHp),
@@ -193,6 +202,7 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
     await super._onRender(context, options);
     if (!this.element) return;
     const root = this.element;
+    this._effectTooltips.hide(true); // A render replaces the effect icons.
     this._itemPreview.hide(true); // A render replaces the action buttons; avoid stale preview state.
     this._colorUI.close();
     root.classList.add('zft-hud-root');
@@ -203,6 +213,7 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
     root.dataset.theme = resolveTheme({
       clientTheme: game.settings.get(MODULE_ID, 'clientTheme')
     });
+    root.dataset.textures = String(Boolean(game.settings.get(MODULE_ID, 'showThemeTextures')));
     root.dataset.hasActor = String(Boolean(this._actor));
     root.dataset.buttonSize = game.settings.get(MODULE_ID, 'categoryButtonSize') || 'small';
     root.style.setProperty('--zft-scale', String(game.settings.get(MODULE_ID, 'uiScale') || 1));
@@ -214,13 +225,14 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
     this._wireControls();
     this.applyCategoryButtonColors();
     const effects = getSystemAdapter()?.getActiveEffects?.(this._actor)?.effects ?? [];
-    void wireEffectTooltips(root, effects, root.dataset.theme).catch(error =>
+    void this._effectTooltips.wire(root, effects, root.dataset.theme).catch(error =>
       console.warn(`${LOG} | Could not render enriched effect tooltips`, error));
     this._setBrowserOpen(this._browserOpen, { resetSearch: false });
     this._restoreBrowserState();
     this._placeEffectDock();
     this._setHpPanelOpen(this._hpPanelOpen);
     this._customHotbar.render(this._actor);
+    this._macroLibraries.refresh();
     this._hudScaleControl.sync();
     this._syncPositionControl();
     this._settingsWindow?.syncTheme();
@@ -294,6 +306,8 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
             case 'collapse': await this._toggleCollapsed(); break;
             case 'favorites': await this._toggleQuickAccess('favorites'); break;
             case 'recent': await this._toggleQuickAccess('recent'); break;
+            case 'shared-macros': this._macroLibraries.toggle('shared'); break;
+            case 'gm-macros': this._macroLibraries.toggle('gm'); break;
             case 'hotbar': await game.settings.set(MODULE_ID, 'showCustomHotbar', !game.settings.get(MODULE_ID, 'showCustomHotbar')); break;
             case 'close-browser': this._setBrowserOpen(false); break;
             case 'hp': this._setHpPanelOpen(!this._hpPanelOpen); break;
@@ -304,6 +318,17 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
           ui.notifications?.warn('ZFT Action HUD control failed; see console.');
         }
       });
+      if (button.dataset.hudControl === 'theme') {
+        button.addEventListener('contextmenu', async event => {
+          event.preventDefault();
+          event.stopPropagation();
+          try { await this._cycleTheme(-1); }
+          catch (error) {
+            console.error(`${LOG} | ❌ Reverse theme control failed`, error);
+            ui.notifications?.warn('Could not change HUD theme; see console.');
+          }
+        });
+      }
       if (button.dataset.hudControl === 'move') {
         button.addEventListener('contextmenu', async event => {
           event.preventDefault();
@@ -625,6 +650,16 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
       : state === 'locked' ? 'Floating HUD position is locked' : 'Drag to move HUD';
   }
 
+  syncMacroLibraryButtons() {
+    for (const kind of ['shared','gm']) {
+      const button=this.element?.querySelector(`[data-hud-control="${kind}-macros"]`);
+      if(!button)continue;
+      const active=this._macroLibraries.windows.has(kind);
+      button.setAttribute('aria-pressed',String(active));
+      button.classList.toggle('is-active',active);
+    }
+  }
+
   /** Apply visual settings without replacing the browser, preserving search, groups and scroll. */
   applyAppearance({ previewKey = null, previewValue = null } = {}) {
     if (!this.element) return;
@@ -633,6 +668,8 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
     root.dataset.theme = resolveTheme({
       clientTheme: get('clientTheme')
     });
+    root.dataset.textures = String(Boolean(get('showThemeTextures')));
+    this._effectTooltips.setTheme(root.dataset.theme);
     root.dataset.buttonSize = get('categoryButtonSize') || 'small';
     root.style.setProperty('--zft-scale', String(get('uiScale') || 1));
     const opacity = key => `${Math.max(0, Math.min(100, Number(get(key))))}%`;
@@ -642,7 +679,9 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
     this._placeEffectDock();
     this._placeBrowser();
     this._settingsWindow?.syncTheme();
+    this._settingsWindow?.syncPreferences();
     if (previewKey !== 'uiScale') this._customHotbar?.render(this._actor);
+    this._macroLibraries.refresh();
   }
 
   _selectCategory(id) {
@@ -950,7 +989,7 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
       if ((icon.dataset.zftDurationLabel || '') !== (effect.durationLabel || ''))
         changedTooltips.add(effect.id);
     }
-    if (changedTooltips.size) void wireEffectTooltips(this.element, effects, this.element.dataset.theme, changedTooltips).catch(error =>
+    if (changedTooltips.size) void this._effectTooltips.wire(this.element, effects, this.element.dataset.theme, changedTooltips).catch(error =>
       console.warn(`${LOG} | Could not refresh effect tooltips`, error));
   }
 
@@ -1078,6 +1117,7 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
 
   _escape(event) {
     if (event.key !== 'Escape') return;
+    if (this._effectTooltips.isVisible) { this._effectTooltips.hide(true); return; }
     if (this._hpPanelOpen) { this._setHpPanelOpen(false); return; }
     if (this._itemPreview.isVisible) {
       this._itemPreview.hide(true);
@@ -1208,9 +1248,9 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
     });
   }
 
-  async _cycleTheme() {
+  async _cycleTheme(direction = 1) {
     const current = game.settings.get(MODULE_ID, 'clientTheme');
-    await game.settings.set(MODULE_ID, 'clientTheme', nextClientTheme(current));
+    await game.settings.set(MODULE_ID, 'clientTheme', nextClientTheme(current, direction));
   }
 
   /** Root CSS zoom scales fixed-position coordinates. Store screen pixels in settings. */
@@ -1414,6 +1454,7 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
   }
 
   async _onClose(options) {
+    this._effectTooltips.destroy();
     this._itemPreview.destroy();
     this._sidebarResizeObserver?.disconnect();
     this._sidebarResizeObserver = null;
@@ -1425,6 +1466,7 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
     document.removeEventListener('pointercancel', this._boundDragEnd);
     this._drag = null;
     this._itemDrag = null;
+    this._macroLibraries.destroy();
     this._customHotbar.destroy();
     this._hudScaleControl.close();
     if (this._settingsWindow?.rendered) await this._settingsWindow.close();

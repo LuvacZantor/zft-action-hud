@@ -1,6 +1,6 @@
 import { THEME_CHOICES } from '../themes/registry.js';
 export const MODULE_ID = 'zft-action-hud';
-export const VERSION = '0.1.0-dev.58';
+export const VERSION = '0.1.0-dev.67';
 export const DEFAULT_POSITION = Object.freeze({ mode: 'docked', x: null, y: null }); // New clients anchor beside Foundry controls.
 
 export function registerSettings() {
@@ -10,6 +10,26 @@ export function registerSettings() {
     scope: 'client', config: true, type: Boolean, default: true,
     onChange: () => window.ZFTActionHud?.refresh?.()
   });
+  game.settings.register(MODULE_ID, 'sharedMacroFolderId', {
+    name: 'Shared Macro Library Folder', hint: 'GM-selected Macro Directory folder visible in the Shared Macros library. Players still need native Macro permissions.',
+    scope: 'world', config: false, type: String, default: '',
+    onChange: () => window.ZFTActionHud?.refreshMacroLibraries?.()
+  });
+  game.settings.register(MODULE_ID, 'gmMacroFolderId', {
+    name: 'Personal GM Macro Folder', hint: 'Your private selection of Macro Directory folder for the GM utility library.',
+    scope: 'client', config: false, type: String, default: '',
+    onChange: () => window.ZFTActionHud?.refreshMacroLibraries?.()
+  });
+  for (const [key, scope] of [['sharedMacroSort','world'],['gmMacroSort','client']]) {
+    game.settings.register(MODULE_ID, key, {
+      scope, config: false, type: String, default: 'alpha',
+      choices: { alpha: 'Alphabetical', directory: 'Directory order' },
+      onChange: () => window.ZFTActionHud?.refreshMacroLibraries?.()
+    });
+  }
+  for (const key of ['sharedMacroPosition', 'gmMacroPosition']) {
+    game.settings.register(MODULE_ID, key, {scope:'client',config:false,type:Object,default:{x:null,y:null}});
+  }
   game.settings.register(MODULE_ID, 'worldTheme', {
     name: 'Legacy Campaign HUD Theme (unused)',
     hint: 'Retained only to preserve old saved settings. Theme selection is personal-only.',
@@ -28,6 +48,17 @@ export function registerSettings() {
     hint: 'Choose a personal appearance. ZFT Default has no WebP texture overlay.',
     scope: 'client', config: true, type: String, default: 'zft-default',
     choices: THEME_CHOICES,
+    onChange: () => window.ZFTActionHud?.applyAppearance?.()
+  });
+  // Legacy value retained to avoid destroying existing client preferences.
+  // The HUD always uses the assigned character when no token is controlled.
+  game.settings.register(MODULE_ID, 'useAssignedCharacterFallback', {
+    scope: 'client', config: false, type: Boolean, default: true
+  });
+  game.settings.register(MODULE_ID, 'showThemeTextures', {
+    name: 'Show Theme Background Textures',
+    hint: 'Show or hide decorative artwork and patterns on both the Action HUD and Custom Hotbar. Theme colors and panel opacity are unchanged.',
+    scope: 'client', config: true, type: Boolean, default: true,
     onChange: () => window.ZFTActionHud?.applyAppearance?.()
   });
   // Expose the existing lock/unlock behavior in Foundry Module Settings too.
@@ -69,10 +100,10 @@ export function registerSettings() {
   // Recent actions share the collapsible quick-access area with Favorites.
   // Hotbar layout belongs to the Actor. Only presentation remains client-specific.
   for (const [key, name, hint, defaultValue] of [
-    ['showCustomHotbar', 'Show Custom Hotbar', 'Display the independent, movable grid of Actor actions.', false],
+    ['showCustomHotbar', 'Show Custom Hotbar', 'Display the independent, movable grid of Actor actions.', true],
     ['showHotbarLabels', 'Show Hotbar Item Labels', 'Show small white names on dark backgrounds over Item artwork.', true],
-    ['hotbarLocked', 'Lock Hotbar Layout', 'Prevent action rearrangement and grid resizing. Position lock is separate.', false],
-    ['hotbarPositionLocked', 'Lock Hotbar Position', 'Prevent hotbar movement without locking slot assignments. Both locks remain accessible on the hotbar.', false]
+    ['hotbarLocked', 'Lock Hotbar Layout', 'Prevent action rearrangement and grid resizing. Position lock is separate.', true],
+    ['hotbarPositionLocked', 'Lock Hotbar Position', 'Prevent hotbar movement without locking slot assignments. Both locks remain accessible on the hotbar.', true]
   ]) {
     game.settings.register(MODULE_ID, key, { name, hint, scope: 'client', config: true, type: Boolean,
       default: defaultValue, onChange: () => window.ZFTActionHud?.refreshHotbar?.() });

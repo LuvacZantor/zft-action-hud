@@ -45,7 +45,7 @@ export function actionReference(actor, id, adapter) {
 export function resolveActionReference(actor, ref, adapter) {
   if (!actor || !ref) return null;
   if (typeof ref === 'string') ref = { id: ref };
-  if (typeof ref !== 'object') return null;
+  if (typeof ref !== 'object' || ref.kind === 'macro') return null;
   const name = String(ref.name ?? '').trim();
   const image = String(ref.img ?? '').trim();
   const id = typeof ref.id === 'string' ? ref.id : '';

@@ -4,7 +4,9 @@ export function getActiveActor() {
   const controlled = canvas?.tokens?.controlled ?? [];
   if (controlled.length > 1) return null;
   if (controlled.length === 1) return controlled[0]?.actor ?? null;
-  return game.user?.character ?? null;
+  const assigned = game.user?.character ?? null;
+  if (assigned?.testUserPermission?.(game.user, 'OBSERVER') === false) return null;
+  return assigned;
 }
 
 export function getActorHealth(actor) {

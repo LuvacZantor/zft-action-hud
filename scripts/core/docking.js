@@ -73,9 +73,9 @@ export function upperLeftDockPosition({
   const x = Math.max(96, railRight + Math.max(12, finite(horizontalGap)));
   // Dock geometry belongs to the HUD, never to transient popover dimensions.
   // The HP manager chooses its own above/below side after the HUD is placed.
-  // User-confirmed docking height (dev.51); HP popovers choose their own side.
+  // Additional 10px lower dock requested for dev.60; HP popovers choose their own side.
   // Keep horizontal toolbar alignment unchanged.
-  const y = Math.max(66, navigationBottom + Math.max(12, finite(verticalGap))) + 20;
+  const y = Math.max(66, navigationBottom + Math.max(12, finite(verticalGap))) + 30;
   const maxLeft = Math.max(8, vw - Math.max(0, finite(hudWidth)) - 8);
   const maxTop = Math.max(8, vh - Math.max(0, finite(hudHeight)) - 8);
   return {

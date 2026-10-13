@@ -25,6 +25,7 @@ Hooks.once('ready', async () => {
     refresh: () => app?.refresh(),
     refreshHotbar: () => { app?._customHotbar?.render(app?._actor); app?.syncHotbarToggle?.(); app?._settingsWindow?.syncPreferences?.(); },
     syncCombatProfile: () => app?._customHotbar?.syncCombatProfile(),
+    refreshMacroLibraries: () => { app?._macroLibraries?.refresh(); app?.refresh(); },
     applyAppearance: () => app?.applyAppearance(),
     applyCategoryButtonColors: () => app?.applyCategoryButtonColors?.(),
     setPositionMode: mode => app?._setPositionMode(mode),
@@ -96,7 +97,16 @@ Hooks.once('ready', async () => {
   Hooks.on('updateWorldTime', () => {
     if (app?._actor && game.settings.get(MODULE_ID, 'showActiveEffects')) app?._refreshEffectsDurations();
   });
+  // Foundry Macro Directory edits reflect in open floating libraries immediately.
+  for (const hook of ['createMacro','updateMacro','deleteMacro','createFolder','updateFolder','deleteFolder']) {
+    Hooks.on(hook, () => app?._macroLibraries?.refresh());
+  }
   Hooks.on('canvasReady', update);
+  // Foundry's Configure Player Character assignment can change while the HUD
+  // remains open. Only refresh the current client's HUD for their own User.
+  Hooks.on('updateUser', user => {
+    if (user?.id === game.user?.id) update();
+  });
 
   try {
     if (game.settings.get(MODULE_ID, 'enabled')) {
