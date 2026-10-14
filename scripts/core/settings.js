@@ -1,6 +1,6 @@
 import { THEME_CHOICES } from '../themes/registry.js';
 export const MODULE_ID = 'zft-action-hud';
-export const VERSION = '0.1.0-dev.70';
+export const VERSION = '0.1.0-dev.75';
 export const DEFAULT_POSITION = Object.freeze({ mode: 'docked', x: null, y: null }); // New clients anchor beside Foundry controls.
 
 export function registerSettings() {

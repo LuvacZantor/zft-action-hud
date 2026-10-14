@@ -1,4 +1,51 @@
-# ZFT Action HUD v0.1.0-dev.70
+# ZFT Action HUD v0.1.0-dev.75
+
+## dev.75 local test: theme textures for Item previews and Active Effect tooltips
+
+- Body-mounted Item hover/pinned previews now show the current named theme's background texture (with the existing CSS fallback pattern), matching the HUD's surface treatment. ZFT Default remains untextured.
+- Active Effect tooltips use the same texture, theme, and texture visibility switch. Both update when the personal theme changes or **Show Theme Background Textures** is toggled, including while a pinned preview or Effect popup is already visible.
+- Activity stats and read-only Item/Effect descriptions retain subtle, theme-colored backing for text legibility, including the light Sunlit Parchment theme.
+- This is a display-only update. No changes to preview geometry, hover/pin timing, scrolling, interactions, sanitized content, resource use, rolls, hotbar, or Macro functionality.
+- Full module ZIP intentionally excludes `assets/`; preserve your existing six theme WebP textures. JavaScript syntax and isolated texture-sync checks are local only; Foundry V13/V14 live tests remain required.
+
+
+
+## dev.74 local test: correct Activity Cost presentation (D&D5e 5.2.x)
+
+- Fixed a dev.73 regression where Unarmed Strike, Grapple, Shove, and other non-spell Activities could incorrectly show "spell slot (level chosen on use)". D&D5e consumes a spell slot only when the Activity actually requires one **and** its slot consumption is enabled.
+- Aligned the static Activity Cost formatter with native D&D5e 5.2.x target kinds: Item Uses, Activity Uses, Materials, Hit Dice, Spell Slots, and Attributes. The previously assumed `ammunition` target type is not native to this system version; actual ammunition/material references remain generic unless the source establishes the specific item.
+- Do not guess dynamic/conditional amounts, linked item identities, or consumption beyond what the source explicitly defines. All labels are read-only; Activity execution and resource spending are unchanged.
+- Limited-use generic equipment displays **Uses**, not automatically **Charges**; recognizable wand, rod, and staff types retain Charges.
+- Preserves dev.73 submenu sizing/offset, detailed Activity statistics, readable resource badges, existing hotbar features and Macro folder order. Full module ZIP excludes `assets/`; preserve installed theme textures.
+- Local source/fixture tests cannot verify Foundry V13/V14 live behavior. Primary test target V13 Build 351/D&D5e 5.2.5; V14/D&D5e 6.x remains separately unverified.
+
+## dev.73 local test: staggered, consistently sized submenu frames and readable resources
+
+- Every category browser uses the same outer panel width for a given HUD: **HUD frame width + 30 CSS pixels**, with a **12 CSS pixel rightward offset**, bounded by the viewport. Positioning respects the existing UI scale and menu-up/menu-down placement. Only the outer browser frame is affected; the dev.72 container-query grid changes were removed to restore the original internal category columns/spacing.
+- Item cards use compact, explicit **Uses**, **Charges**, **Activity Uses**, **Quantity**, and **Ammunition** labels instead of unlabeled numeric badges. Values are read directly from native D&D5e Items/Activities. Consumable stacks show quantity even at 1; ordinary non-consumable stacks show quantity only when greater than one. Item and Activity uses are shown separately where both exist, avoiding silent replacement of one pool by the other.
+- Assigned character hotbar Item shortcuts retain tiny numeric badges to fit their slots and include labeled resource details in their accessible descriptions/tooltips.
+- Item hover previews show the same source-backed resource labels and retain the previous Activity attack, damage, range and casting details. Recognized static Activity consumption costs (Item Uses, Activity Uses, ammunition, hit dice, material units, and explicit spell-slot requirements) appear in the Activity detail. Conditional/scaled/formula-dependent costs are not guessed.
+- No new resource counters, consumption hooks, resource-spending operations, Actor/Token flags, or menu category mechanics. Existing native D&D5e and Midi-QOL/CPR execution is unchanged.
+- Full module archive excludes assets/. Preserve existing theme texture files during installation. Test against V13 Build 351/D&D5e 5.2.5; V14/D&D5e 6.x remains unverified.
+
+
+## dev.72 local test: matching submenu widths and native resource visibility
+
+- Every category browser submenu uses the current outer HUD frame width at its current UI scale, without resizing the main HUD. Grid columns narrow as required; menu height remains viewport-aware and scrollable.
+- Read-only D&D5e native resource badges now appear on applicable menu Items and assigned character hotbar Item shortcuts: limited-use charges/uses and consumable/ammunition quantities where supplied by the Actor's live Item data. Both are shown independently when relevant.
+- The Features browser can also display named, current/max Actor resource pools when they are present in the native D&D5e resource schema.
+- Existing spell-slot shields, Item/Activity use execution, check shortcuts, Macro folder sorting, hotbar profiles and drag/drop remain unchanged. ZFT adds no consumption logic, new Actor flags, or duplicated resource counters.
+- Resource changes made by native D&D5e or supported automation should trigger the existing updateItem/updateActor refresh hooks. Verify GM/player behavior live in V13; V14 / D&D5e 6.x remains unverified.
+- Complete module ZIP omits the entire assets/ directory. Preserve installed theme WebP textures when updating.
+
+
+## dev.71 local testing changes: native check shortcuts on character hotbars
+
+- Skills, Saving Throws, Ability Checks and Actor Tool Checks now drag from their existing HUD rows into an unlocked, writable character hotbar slot.
+- Character hotbar stores a portable reference to the check kind and ID; current labels, icon, accent and modifier come from the existing D&D5e adapter every render. No generated Macro, duplicated bonus or extra resource state.
+- Clicking a shortcut invokes the same native D&D5e roll used in the HUD check menus, with Actor ownership validation. Existing slots can be moved/swapped, removed and saved across character profiles.
+- Existing Item/Macro hotbar assignments, Macro libraries, Shared/GM folder sorting, module settings and Actor profiles are unchanged.
+- Test build targets Foundry V13 / D&D5e 5.2.5. V14 / D&D5e 6.x is not live verified. The archive intentionally excludes the complete `assets/` directory; keep existing theme WebP assets in your installed module directory.
 
 ## dev.67 local testing changes
 

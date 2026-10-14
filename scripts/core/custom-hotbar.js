@@ -5,6 +5,7 @@ import { CombatProfileCoordinator } from './combat-profile.js';
 import { ZFTButtonColors, applyButtonColor } from './button-colors.js';
 import { getSystemAdapter } from '../adapters/registry.js';
 import { macroUuidFromDrop, macroDocumentSync, macroDocument, makeMacroReference, isMacroReference, executeHotbarMacro } from './macro-hotbar.js';
+import { validCheckShortcut, makeCheckReference, isCheckReference } from './check-hotbar.js';
 import { actionReference, resolveActionReference, storedHotbarSlots, saveHotbarSlots, assignHotbarSlot, storedHotbarDividers, saveHotbarDividers, hotbarColumnTracks, storedHotbarRowDividers, saveHotbarRowDividers, hotbarRowTracks, hotbarDividerLabels, setHotbarDividerLabel, hotbarProfiles, activeHotbarProfile, ensureHotbarProfiles, saveHotbarDimensions, createHotbarProfile, renameHotbarProfile, deleteHotbarProfile, selectHotbarProfile, switchHotbarProfileFast, isBuiltinHotbarProfile, hotbarProfileAccent, setHotbarProfileAccent, reorderHotbarProfile, hotbarSlotColor, setHotbarSlotColor, MAX_HOTBAR_PROFILES } from './actor-quick-access.js';
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, Number(value) || min));
@@ -35,6 +36,13 @@ function readDrop(event, actor) {
       if (json.kind === 'macro') {
         const uuid = macroUuidFromDrop({type:'Macro',uuid:json.uuid});
         return uuid ? { macroUuid: uuid, from: json.source === 'hotbar' ? Number(json.slot) : null } : null;
+      }
+      if (json.kind === 'check') {
+        if (!validCheckShortcut(json.checkKind, json.checkId) ||
+            json.id !== `check:${json.checkKind}:${json.checkId}`) return null;
+        const from = json.source === 'hotbar' ? Number(json.slot) : null;
+        return {checkKind: json.checkKind, checkId: json.checkId,
+          from: Number.isInteger(from) && from >= 0 ? from : null};
       }
       return { id: json.id, from: json.source === 'hotbar' ? Number(json.slot) : null };
     }
@@ -281,8 +289,11 @@ export class ZFTCustomHotbar {
     }
     const refs = storedHotbarSlots(actor);
     const adapter = getSystemAdapter();
+    // Derive native check modifiers once per hotbar render, not per slot.
+    const checkShortcuts = new Map((adapter?.getCheckShortcuts?.(actor) || [])
+      .map(check => [`${check.kind}:${check.id}`, check]));
     for (let index = 0; index < rows * columns; index++)
-      grid.append(this._createSlot(index, refs, adapter, locked, actorWritable));
+      grid.append(this._createSlot(index, refs, adapter, locked, actorWritable, checkShortcuts));
     wrap.append(grid);
     const overlay = element('div', 'zft-hotbar-divider-overlay');
     overlay.setAttribute('aria-hidden', 'true');
@@ -591,16 +602,45 @@ export class ZFTCustomHotbar {
   }
 
   /** Render one fixed-index slot. Used at startup and on live resize. */
-  _createSlot(index, refs, adapter, locked, actorWritable) {
+  _createSlot(index, refs, adapter, locked, actorWritable, checkShortcuts = new Map()) {
     const actor = this.actor;
     const slot = element('div', 'zft-hotbar-slot');
     slot.dataset.hotbarSlot = String(index);
     const ref = refs[index];
     const macroRef = isMacroReference(ref) ? ref : null;
+    const checkRef = isCheckReference(ref) ? ref : null;
+    const check = checkRef ? checkShortcuts.get(`${checkRef.checkKind}:${checkRef.checkId}`) : null;
     const macro = macroRef ? macroDocumentSync(macroRef.uuid) : null;
-    const id = macroRef ? null : resolveActionReference(actor, ref, adapter);
+    const id = macroRef || checkRef || ref?.kind === 'check' ? null : resolveActionReference(actor, ref, adapter);
     const preview = id ? adapter?.getItemPreview?.(actor, id) : null;
-    if (macroRef) {
+    if (checkRef && check) {
+      const name = check.name;
+      const action = element('button', 'zft-hotbar-action zft-hotbar-check-action',
+        `Roll ${name} (${check.modifier}); drag to rearrange`);
+      action.type = 'button';
+      action.dataset.hotbarCheck = checkRef.checkKind;
+      action.dataset.checkId = checkRef.checkId;
+      action.draggable = !locked && actorWritable;
+      action.setAttribute('aria-label', `Roll ${name}, current modifier ${check.modifier}`);
+      action.style.setProperty('--zft-check-color', check.color || 'var(--zft-accent-bright)');
+      const icon = element('i', check.icon || 'fa-solid fa-dice-d20');
+      icon.classList.add('zft-hotbar-check-icon');
+      icon.setAttribute('aria-hidden', 'true');
+      action.append(icon);
+      const bonus = element('span', 'zft-hotbar-check-bonus');
+      bonus.textContent = check.modifier;
+      action.append(bonus);
+      if (this._settings('showHotbarLabels')) {
+        const label = element('span', 'zft-hotbar-name'); label.textContent = name;
+        action.append(label);
+      }
+      slot.append(action);
+      if (!locked && actorWritable) {
+        const remove = element('button', 'zft-hotbar-remove', `Clear ${name} from slot ${index + 1}`);
+        remove.type = 'button'; remove.dataset.hotbarRemove = String(index);
+        remove.append(fa('xmark')); slot.append(remove);
+      }
+    } else if (macroRef) {
       const name = macro?.name || macroRef.name || 'Macro';
       const action = element('button', 'zft-hotbar-action', `Execute ${name}; drag to rearrange`);
       action.type = 'button'; action.dataset.macroUuid = macroRef.uuid;
@@ -619,12 +659,24 @@ export class ZFTCustomHotbar {
         remove.append(fa('xmark')); slot.append(remove);
       }
     } else if (id && preview) {
-      const action = element('button', 'zft-hotbar-action', `Use ${preview.name}; right-click for Item sheet; drag to rearrange`);
+      const resources = preview.resourceBadges || [];
+      const description = resources.length ? `; ${resources.map(entry => entry.detail).join('; ')}` : '';
+      const action = element('button', 'zft-hotbar-action', `Use ${preview.name}${description}; right-click for Item sheet; drag to rearrange`);
       action.type = 'button'; action.dataset.useItem = id;
       action.draggable = !locked && actorWritable;
-      action.setAttribute('aria-label', `Use ${preview.name}`);
+      action.setAttribute('aria-label', `Use ${preview.name}${description}`);
       const image = element('img'); image.src = preview.img || 'icons/svg/item-bag.svg'; image.alt = '';
       action.append(image);
+      if (resources.length) {
+        const badges = element('span', 'zft-hotbar-resource-badges');
+        for (const resource of resources) {
+          const badge = element('span', `zft-hotbar-resource-badge ${resource.depleted ? 'is-depleted' : ''}`);
+          badge.textContent = resource.compact ?? resource.display;
+          badge.title = resource.detail;
+          badges.append(badge);
+        }
+        action.append(badges);
+      }
       if (this._settings('showHotbarLabels')) {
         const label = element('span', 'zft-hotbar-name'); label.textContent = preview.name;
         action.append(label);
@@ -721,6 +773,43 @@ export class ZFTCustomHotbar {
         }));
       });
       button.addEventListener('dragend', () => { this._draggedSlot = null; this._suppressUntil = performance.now() + 250; });
+    }
+    for (const button of root.querySelectorAll('[data-hotbar-check]')) {
+      button.addEventListener('click', event => {
+        event.preventDefault(); event.stopPropagation();
+        if (performance.now() < this._suppressUntil) return;
+        const actor = this.actor;
+        if (!actor) return;
+        void Promise.resolve().then(() => getSystemAdapter()?.rollCheck?.(
+          actor, button.dataset.hotbarCheck, button.dataset.checkId)).then(outcome => {
+          if (outcome?.status === 'denied') ui.notifications?.warn('You do not own this Actor.');
+          else if (outcome?.status === 'unsupported' || !outcome)
+            ui.notifications?.warn('This check is unavailable for the character.');
+        }).catch(error => {
+          console.error('[ZFT] Native hotbar check failed', error);
+          ui.notifications?.error('Check roll failed; see console.');
+        });
+      });
+      button.addEventListener('contextmenu', event => {
+        event.preventDefault(); event.stopPropagation();
+        this._openSlotColorMenu(button.closest('[data-hotbar-slot]'), event);
+      });
+      button.addEventListener('dragstart', event => {
+        if (this._settings('hotbarLocked') || !this.actor?.isOwner) { event.preventDefault(); return; }
+        const slot = Number(button.closest('[data-hotbar-slot]')?.dataset.hotbarSlot);
+        if (!Number.isInteger(slot)) { event.preventDefault(); return; }
+        this._draggedSlot = slot;
+        const kind = button.dataset.hotbarCheck, id = button.dataset.checkId;
+        const payload = JSON.stringify({kind:'check', id:`check:${kind}:${id}`,
+          checkKind:kind,checkId:id,actor:this.actor.uuid,source:'hotbar',slot});
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('application/x-zft-hud-action', payload);
+        event.dataTransfer.setData('text/plain', payload);
+      });
+      button.addEventListener('dragend', () => {
+        this._draggedSlot = null;
+        this._suppressUntil = performance.now() + 250;
+      });
     }
     for (const slot of [ ...(root.matches?.('[data-hotbar-slot]') ? [root] : []), ...root.querySelectorAll('[data-hotbar-slot]') ]) {
       slot.addEventListener('dragover', event => {
@@ -1225,6 +1314,16 @@ export class ZFTCustomHotbar {
     const info = readDrop(event, actor);
     if (!info || !actor?.isOwner) return;
     const from = info.from !== null && Number.isInteger(info.from) ? info.from : this._draggedSlot;
+    if (info.checkKind) {
+      const adapter = getSystemAdapter();
+      const check = adapter?.getCheckShortcut?.(actor, info.checkKind, info.checkId);
+      if (!check || this.actor !== actor) {
+        ui.notifications?.warn('This check is not available for the selected character.');
+        return;
+      }
+      await this._assign(index, makeCheckReference(info.checkKind, info.checkId, check), from);
+      return;
+    }
     if (info.macroUuid) {
       const macro = await macroDocument(info.macroUuid);
       if (!macro || (macro.documentName !== 'Macro' && macro.constructor?.documentName !== 'Macro')) {

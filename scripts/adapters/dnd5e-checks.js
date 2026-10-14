@@ -127,6 +127,20 @@ export function getDnd5eToolPresentation(actor, item) {
   };
 }
 
+/** Adapter presentation of shortcuts for the general-purpose character hotbar.
+ * Reuse the exact menu values so new features never recalculate check bonuses. */
+export function getDnd5eCheckShortcuts(actor) {
+  if (!actor?.system) return [];
+  const categories = getDnd5eRollCategories(actor);
+  const entries = categories.flatMap(category => (category.groups || []).flatMap(group =>
+    (group.checks || []).map(check => ({...check, kind: group.rollKind}))));
+  return [...entries, ...getDnd5eToolChecks(actor).map(check => ({...check, kind: 'tool'}))];
+}
+
+export function getDnd5eCheckShortcut(actor, kind, id) {
+  return getDnd5eCheckShortcuts(actor).find(check => check.kind === kind && check.id === id) || null;
+}
+
 /** Invoke the native D&D5e roll API, including its dialogs, hooks and permissions. */
 export async function rollDnd5eCheck(actor, kind, id) {
   if (!actor?.isOwner) return { status:'denied' };

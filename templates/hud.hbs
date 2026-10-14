@@ -133,6 +133,18 @@
         {{/if}}
         <button type="button" class="zft-hud-close-browser" data-hud-control="close-browser" title="Close action browser" aria-label="Close action browser"><i class="fa-solid fa-xmark"></i></button>
       </div>
+      {{#if resourceSection.readOnly}}
+      <div class="zft-hud-resources zft-hud-resource-summary" aria-label="{{resourceSection.label}}">
+        <div class="zft-hud-resources-title"><i class="{{resourceSection.icon}}" aria-hidden="true"></i> {{resourceSection.label}}</div>
+        <div class="zft-hud-resource-list">
+          {{#each resourceSection.items}}
+          <span class="zft-hud-resource {{#if depleted}}is-depleted{{/if}}" title="{{title}}" aria-label="{{title}}">
+            <span class="zft-hud-resource-name">{{label}}</span><span class="zft-hud-resource-value">{{current}}/{{max}}</span>
+          </span>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
       <div class="zft-hud-browser-filters">
         {{#if equippedFilter}}
         <label class="zft-hud-filter-check" title="Filter only this category; does not change the Actor inventory"><input type="checkbox" data-hud-filter-setting="{{equippedFilter.setting}}" {{#if equippedFilter.checked}}checked{{/if}} /> <span>Show Unequipped</span></label>
@@ -149,7 +161,7 @@
           {{#if checkGroup}}
           <div class="zft-hud-group-items zft-hud-checks-items" role="group" aria-label="{{label}}">
             {{#each checks}}
-            <button type="button" class="zft-hud-check-row" data-hud-roll-check="{{../rollKind}}" data-check-id="{{id}}" data-filter-name="{{name}} {{ability}}" style="--zft-check-color:{{color}}" title="Roll {{name}} ({{abilityName}}). {{modifier}}{{#if proficiency}}; {{proficiency}}{{/if}}{{#if ../showPassive}}; Passive {{passive}}{{/if}}" aria-label="Roll {{name}} {{../rollLabel}}, {{abilityName}}, modifier {{modifier}}{{#if proficiency}}, {{proficiency}}{{/if}}{{#if ../showPassive}}, passive {{passive}}{{/if}}">
+            <button type="button" class="zft-hud-check-row" draggable="true" data-hud-roll-check="{{../rollKind}}" data-check-id="{{id}}" data-filter-name="{{name}} {{ability}}" style="--zft-check-color:{{color}}" title="Roll {{name}} ({{abilityName}}). {{modifier}}{{#if proficiency}}; {{proficiency}}{{/if}}{{#if ../showPassive}}; Passive {{passive}}{{/if}}" aria-label="Roll {{name}} {{../rollLabel}}, {{abilityName}}, modifier {{modifier}}{{#if proficiency}}, {{proficiency}}{{/if}}{{#if ../showPassive}}, passive {{passive}}{{/if}}">
               <i class="{{icon}} zft-hud-check-icon" aria-hidden="true"></i>
               <span class="zft-hud-check-ability">{{ability}}</span>
               <span class="zft-hud-check-name">{{name}}</span>
@@ -163,7 +175,7 @@
           {{#each items}}
             <div class="zft-hud-browser-item" data-hud-action-card="{{id}}" data-filter-name="{{name}}" data-category-drag-item="{{id}}" draggable="true" aria-label="Drag action to Favorites">
               <button type="button" class="zft-hud-group-item {{#if active}}is-effect-active{{/if}}" data-use-item="{{id}}" aria-label="Use {{name}}; right-click to inspect; hover to preview">
-                <img src="{{img}}" alt="" loading="lazy" /><span class="zft-hud-item-text"><span class="zft-hud-item-name">{{name}}{{#if active}} <i class="fa-solid fa-circle-check zft-hud-active-indicator" title="Associated effect is active" aria-label="Active effect"></i>{{/if}}</span>{{#if sourceLabel}}<small class="zft-hud-item-source">{{sourceLabel}}</small>{{/if}}{{#if hasUses}}<small>{{uses}}/{{maxUses}}</small>{{/if}}{{#if toolCheck}}<span class="zft-hud-tool-meta" style="--zft-check-color:{{toolCheck.color}}" title="{{toolCheck.proficiency}}. {{toolCheck.hint}}"><i class="{{toolCheck.icon}}" aria-hidden="true"></i><b>{{toolCheck.ability}}</b><span>{{toolCheck.modifier}}</span><em>{{toolCheck.proficiency}}</em></span>{{/if}}</span>
+                <img src="{{img}}" alt="" loading="lazy" /><span class="zft-hud-item-text"><span class="zft-hud-item-name">{{name}}{{#if active}} <i class="fa-solid fa-circle-check zft-hud-active-indicator" title="Associated effect is active" aria-label="Active effect"></i>{{/if}}</span>{{#if sourceLabel}}<small class="zft-hud-item-source">{{sourceLabel}}</small>{{/if}}{{#if hasResourceBadges}}<span class="zft-hud-item-resources" aria-label="Remaining resources">{{#each resourceBadges}}<span class="zft-hud-resource-line {{#if depleted}}is-depleted{{/if}}" title="{{detail}}" aria-label="{{detail}}"><span class="zft-hud-resource-label">{{label}}:</span><span class="zft-hud-resource-value">{{display}}</span></span>{{/each}}</span>{{/if}}{{#if toolCheck}}<span class="zft-hud-tool-meta" style="--zft-check-color:{{toolCheck.color}}" title="{{toolCheck.proficiency}}. {{toolCheck.hint}}"><i class="{{toolCheck.icon}}" aria-hidden="true"></i><b>{{toolCheck.ability}}</b><span>{{toolCheck.modifier}}</span><em>{{toolCheck.proficiency}}</em></span>{{/if}}</span>
               </button>
               {{#if itemState.equip}}<button type="button" class="zft-hud-item-state {{#if itemState.equip.state}}is-active{{/if}}" data-hud-item-state="equip" data-item-id="{{itemStateId}}" title="{{itemState.equip.title}}" aria-label="{{itemState.equip.title}}: {{name}}" aria-pressed="{{itemState.equip.state}}" {{#unless itemState.equip.editable}}disabled{{/unless}}><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></button>{{/if}}
               {{#if itemState.attune}}<button type="button" class="zft-hud-item-state {{#if itemState.attune.state}}is-active{{/if}}" data-hud-item-state="attune" data-item-id="{{itemStateId}}" title="{{itemState.attune.title}}" aria-label="{{itemState.attune.title}}: {{name}}" aria-pressed="{{itemState.attune.state}}" {{#unless itemState.attune.editable}}disabled{{/unless}}><i class="fa-solid fa-sun" aria-hidden="true"></i></button>{{/if}}

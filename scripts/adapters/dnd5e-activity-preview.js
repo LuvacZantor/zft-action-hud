@@ -1,3 +1,5 @@
+import { remainingUses } from './dnd5e-visibility.js';
+
 /**
  * D&D5e 5.x Activity presentation only. It never rolls, consumes, or estimates
  * conditional automation results. Display stored dice/formulae and native labels.
@@ -176,15 +178,33 @@ export function summarizeActivity(activity, item, data = {}) {
     const label = spell?.level != null && spell.level !== '' ? `Level ${spell.level}` : '';
     add('Spell', label);
   }
-  const usages = values(activity.consumption?.targets)
-    .filter(target => target?.type === 'itemUses' && Number(target.value) > 0)
-    .map(target => `${target.value} use${Number(target.value) === 1 ? '' : 's'}`);
-  if (usages.length) add('Cost', usages.join(', '));
-  const uses = activity.uses;
-  if (uses?.max != null && String(uses.max).trim() && Number.isFinite(Number(uses.max))) {
-    const remaining = Math.max(0, Number(uses.max) - Number(uses.spent ?? 0));
-    add('Activity uses', `${remaining}/${uses.max}`);
-  }
+  // D&D5e 5.2.x native consumption target types. Each target's amount is
+  // potentially optional/conditional at use time; show only static positive
+  // quantities and never infer item identities, scaling, or automatic spending.
+  const consumptionLabels = {
+    itemUses: ['item use', 'item uses'],
+    activityUses: ['activity use', 'activity uses'],
+    material: ['material', 'materials'],
+    hitDice: ['hit die', 'hit dice'],
+    spellSlots: ['spell slot', 'spell slots'],
+    attribute: ['attribute point', 'attribute points']
+  };
+  const costs = values(activity.consumption?.targets).flatMap(target => {
+    const raw = String(target?.value ?? '').trim();
+    if (!/^(?:\d+)(?:\.\d+)?$/.test(raw)) return [];
+    const amount = Number(raw), labels = consumptionLabels[target?.type];
+    if (!labels || !(amount > 0)) return [];
+    return [`${amount} ${amount === 1 ? labels[0] : labels[1]}`];
+  });
+  // A spellSlot flag alone is insufficient: D&D5e also requires the Activity
+  // to actually consume a spell slot (e.g. not Unarmed Strike or cantrips).
+  // Mirrors 5.2.x ActivityMixin consumption handling rather than guessing
+  // from the Activity type or the mere presence of a default-valued flag.
+  if (activity.requiresSpellSlot === true && activity.consumption?.spellSlot === true)
+    costs.push('spell slot (level selected on use)');
+  if (costs.length) add('Cost', costs.join(', '));
+  const uses = remainingUses(activity.uses);
+  if (uses) add('Activity uses', `${uses.remaining}/${uses.maximum}`);
   return {
     id: activity.id ?? activity._id ?? '',
     name: String(activity.name ?? '').trim() || typeName(type),

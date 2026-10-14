@@ -1,11 +1,12 @@
 import { adjustDnd5eHp } from './dnd5e-hp.js';
-import { getDnd5eRollCategories, rollDnd5eCheck, getDnd5eToolPresentation, getDnd5eToolChecks } from './dnd5e-checks.js';
+import { getDnd5eRollCategories, rollDnd5eCheck, getDnd5eToolPresentation, getDnd5eToolChecks, getDnd5eCheckShortcuts, getDnd5eCheckShortcut } from './dnd5e-checks.js';
 import { dnd5eItemControls, toggleDnd5eItemState } from './dnd5e-item-state.js';
 import { getDnd5eSpellSlots, adjustDnd5eSpellSlot } from './dnd5e-spell-slots.js';
 import { getDnd5eInspiration, setDnd5eInspiration } from './dnd5e-inspiration.js';
 import { collectSpellActions, findActivity, parseCastActionId, cachedForActivity, isFeatureSpellSource } from './dnd5e-spells.js';
 import { EQUIPPABLE_CATEGORY_SETTINGS, shouldShowInventoryItem, remainingUses } from './dnd5e-visibility.js';
 import { getActiveEffects } from './dnd5e-effects.js';
+import { getDnd5eItemResources, getDnd5eActorResources } from './dnd5e-resource-indicators.js';
 import { collectActivitySummaries, formatDnd5eRange } from './dnd5e-activity-preview.js';
 
 /**
@@ -73,6 +74,7 @@ function resourceUses(uses) {
 
 function previewItem(item, favorites, activeItemIds, action = null, actor = null) {
   const id = action?.id ?? item.id;
+  const resourceBadges = getDnd5eItemResources(item, action?.activity ?? null);
   const uses = resourceUses(action?.activity?.uses) ?? resourceUses(item.system?.uses);
   return {
     id,
@@ -87,7 +89,9 @@ function previewItem(item, favorites, activeItemIds, action = null, actor = null
     active: activeItemIds.has(item.id),
     hasUses: Boolean(uses),
     uses: uses?.remaining ?? null,
-    maxUses: uses?.maximum ?? null
+    maxUses: uses?.maximum ?? null,
+    resourceBadges,
+    hasResourceBadges: resourceBadges.length > 0
   };
 }
 
@@ -130,6 +134,10 @@ export const dnd5eAdapter = Object.freeze({
   adjustHp: adjustDnd5eHp,
   /** Generic category-resource section contract implemented by this RPG adapter. */
   getCategoryResourceSection(actor, categoryId) {
+    if (categoryId === 'features') {
+      const items = getDnd5eActorResources(actor);
+      return items.length ? {label:'Character Resources',icon:'fa-solid fa-gauge-high',items,readOnly:true} : null;
+    }
     if (categoryId !== 'spells') return null;
     const items = getDnd5eSpellSlots(actor);
     return items.length ? { label: 'Spell Slots', icon: 'fa-solid fa-wand-magic-sparkles', items } : null;
@@ -161,6 +169,8 @@ export const dnd5eAdapter = Object.freeze({
     return Boolean(resolved) || Boolean(actor?.items?.get(id));
   },
   rollCheck: rollDnd5eCheck,
+  getCheckShortcuts: getDnd5eCheckShortcuts,
+  getCheckShortcut: getDnd5eCheckShortcut,
   getCategories(actor, favoriteIds = []) {
     if (!actor?.items) return [];
     const favorites = new Set(favoriteIds);
@@ -227,7 +237,8 @@ export const dnd5eAdapter = Object.freeze({
       groups.forEach(group => group.items.sort((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id)));
       return { id: def.id, label: def.label, shortLabel: def.shortLabel ?? null, icon: def.icon, count: matches.length + (def.id === 'tools' ? getDnd5eToolChecks(actor).length : 0), groups, equippedFilter, secondary: def.id === 'tools' };
     }).filter(category => category.count > 0 || category.id === 'tools' || category.equippedFilter ||
-      (category.id === 'spells' && getDnd5eSpellSlots(actor).length > 0));
+      (category.id === 'spells' && getDnd5eSpellSlots(actor).length > 0) ||
+      (category.id === 'features' && getDnd5eActorResources(actor).length > 0));
     return [...itemCategories, ...getDnd5eRollCategories(actor)];
   },
   async inspectItem(actor, id) {
@@ -265,6 +276,7 @@ export const dnd5eAdapter = Object.freeze({
       activation: activation.type ? `${activation.cost || 1} ${activation.type}` : '',
       range: formatDnd5eRange(range),
       uses: amount ? `${amount.remaining} / ${amount.maximum}` : '',
+      resourceBadges:getDnd5eItemResources(item, cast ? activity : null),
       activities: collectActivitySummaries(item, cast ? activity : null,
         { ...(actor.getRollData?.() ?? {}), ...((cache ?? item).getRollData?.() ?? {}) }),
       description: String(system.description?.value ?? ''),

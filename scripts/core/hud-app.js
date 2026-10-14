@@ -435,12 +435,31 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
         await this._executeItem(primary.dataset.useItem);
       });
     });
-    // Checks are not Items: keep them out of Favorites and hotbar dragging.
-    // The D&D5e adapter owns the roll API and all game-specific rules.
+    // Check shortcut drags target Actor-owned hotbar slots only, not Favorites.
+    // Game-system adapters continue to own labels, modifiers and native rolls.
     root.querySelectorAll('[data-hud-roll-check]').forEach(button => {
+      button.addEventListener('dragstart', event => {
+        const actor = this._actor;
+        const kind = button.dataset.hudRollCheck;
+        const id = button.dataset.checkId;
+        if (!actor?.isOwner || !getSystemAdapter()?.getCheckShortcut?.(actor, kind, id)) {
+          event.preventDefault();
+          return;
+        }
+        const payload = JSON.stringify({kind:'check', checkKind:kind, checkId:id,
+          id:`check:${kind}:${id}`, actor:actor.uuid, source:'browser'});
+        event.dataTransfer.effectAllowed = 'copy';
+        event.dataTransfer.setData('application/x-zft-hud-action', payload);
+        event.dataTransfer.setData('text/plain', payload);
+        button.classList.add('is-dragging');
+      });
+      button.addEventListener('dragend', () => {
+        button.classList.remove('is-dragging');
+        this._dragSuppressUntil = performance.now() + 250;
+      });
       button.addEventListener('click', async event => {
         event.preventDefault(); event.stopPropagation();
-        if (!this._actor) return;
+        if (performance.now() < this._dragSuppressUntil || !this._actor) return;
         try {
           const outcome = await getSystemAdapter()?.rollCheck?.(this._actor, button.dataset.hudRollCheck, button.dataset.checkId);
           if (outcome?.status === 'denied') ui.notifications?.warn('You do not own this Actor.');
@@ -669,7 +688,8 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
       clientTheme: get('clientTheme')
     });
     root.dataset.textures = String(Boolean(get('showThemeTextures')));
-    this._effectTooltips.setTheme(root.dataset.theme);
+    this._effectTooltips.setTheme(root.dataset.theme, root.dataset.textures !== 'false');
+    this._itemPreview.syncAppearance();
     root.dataset.buttonSize = get('categoryButtonSize') || 'small';
     root.style.setProperty('--zft-scale', String(get('uiScale') || 1));
     const opacity = key => `${Math.max(0, Math.min(100, Number(get(key))))}%`;
@@ -1001,7 +1021,7 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
     if (!this._browserOpen || !hud || !popup) return;
 
     const bounds = root.getBoundingClientRect();
-    const scale = Math.max(.5, Number(game.settings.get(MODULE_ID, 'uiScale')) || 1);
+    const scale = this._scale();
     const placement = choosePanelPlacement({
       hudTop: bounds.top,
       hudBottom: bounds.bottom,
@@ -1013,19 +1033,20 @@ export class ZFTActionHud extends HandlebarsMixin(AppV2) {
     // The root is zoomed for UI scaling, but available space is measured in viewport pixels.
     popup.style.maxHeight = `${Math.floor(placement.maxHeight / scale)}px`;
 
-    // Keep floating HUD popups horizontally inside the viewport too.
-    // Read the rendered width after limiting it for users with increased HUD scaling.
-    popup.style.width = '';
-    let popupWidth = popup.getBoundingClientRect().width;
-    const maxWidth = Math.max(100, window.innerWidth - 16);
-    if (popupWidth > maxWidth) {
-      popup.style.width = `${Math.floor(maxWidth / scale)}px`;
-      popupWidth = popup.getBoundingClientRect().width;
-    }
+    // dev.73: every category shares one outer frame width, staggered from the
+    // displayed HUD. No content measurement or resizing of category grids.
+    // Layout dimensions are physical viewport pixels until converted for zoom.
+    const frame = hud.getBoundingClientRect();
+    const panelExtra = 30 * scale;
+    const panelOffset = 12 * scale;
+    const viewportWidth = Math.max(0, window.innerWidth - 16);
+    const desiredWidth = Math.min(frame.width + panelExtra, viewportWidth);
+    popup.style.width = `${Math.max(1, desiredWidth / scale)}px`;
+    const popupWidth = popup.getBoundingClientRect().width;
     const rootBounds = root.getBoundingClientRect();
     const constrainedLeft = choosePanelHorizontalPlacement({
-      hudLeft: bounds.left,
-      hudRight: bounds.right,
+      hudLeft: frame.left + panelOffset,
+      hudRight: frame.right,
       popupWidth,
       viewportWidth: window.innerWidth
     });

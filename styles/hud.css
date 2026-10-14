@@ -54,7 +54,7 @@
 
 /* Shared theme tokens apply consistently to the HUD, the draggable settings window,
    and the independent hover-preview window. Only the appearance changes, not geometry. */
-:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-shared-macros,#zft-gm-macros)[data-theme='gothic-arcane'] {
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-action-hud-effect-tooltip,#zft-shared-macros,#zft-gm-macros)[data-theme='gothic-arcane'] {
   --zft-accent:#aa82d6;--zft-accent-bright:#e9cbff;
   --zft-text:#efdefe;--zft-muted:#ab99bd;--zft-bg:#160f22;
   --zft-panel:#22172f;--zft-panel2:#34233c;--zft-panel3:#422b4e;
@@ -64,7 +64,7 @@
   --zft-surface-texture:url('../assets/textures/gothic_arcane.webp');
   --zft-surface-fallback:radial-gradient(circle at 20% 22%, rgba(233,203,255,.06) 0 1px, transparent 1.5px 100%), repeating-linear-gradient(135deg, rgba(233,203,255,.035) 0 2px, transparent 2px 10px);
 }
-:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-shared-macros,#zft-gm-macros)[data-theme='midnight-steel'] {
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-action-hud-effect-tooltip,#zft-shared-macros,#zft-gm-macros)[data-theme='midnight-steel'] {
   --zft-accent:#739cae;--zft-accent-bright:#c2ebf5;
   --zft-text:#e6edf2;--zft-muted:#a4b3be;--zft-bg:#0b131b;
   --zft-panel:#192733;--zft-panel2:#243744;--zft-panel3:#304956;
@@ -74,7 +74,7 @@
   --zft-surface-texture:url('../assets/textures/midnight_steel.webp');
   --zft-surface-fallback:repeating-linear-gradient(108deg, rgba(194,235,245,.03) 0 2px, transparent 2px 8px), repeating-linear-gradient(168deg, rgba(255,255,255,.018) 0 1px, transparent 1px 12px);
 }
-:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-shared-macros,#zft-gm-macros)[data-theme='emerald-grove'] {
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-action-hud-effect-tooltip,#zft-shared-macros,#zft-gm-macros)[data-theme='emerald-grove'] {
   --zft-accent:#81bb74;--zft-accent-bright:#d0f4b9;
   --zft-text:#e9f4e0;--zft-muted:#b4c4a7;--zft-bg:#101c16;
   --zft-panel:#1d3126;--zft-panel2:#294130;--zft-panel3:#34573a;
@@ -84,7 +84,7 @@
   --zft-surface-texture:url('../assets/textures/emerald_grove.webp');
   --zft-surface-fallback:radial-gradient(circle at 18% 30%, rgba(208,244,185,.045) 0 1px, transparent 1.6px 100%), repeating-linear-gradient(150deg, rgba(160,214,138,.03) 0 3px, transparent 3px 12px);
 }
-:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-shared-macros,#zft-gm-macros)[data-theme='royal-sapphire'] {
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-action-hud-effect-tooltip,#zft-shared-macros,#zft-gm-macros)[data-theme='royal-sapphire'] {
   --zft-accent:#779de9;--zft-accent-bright:#d2e4ff;
   --zft-text:#edf1ff;--zft-muted:#aebbd8;--zft-bg:#0a102c;
   --zft-panel:#182348;--zft-panel2:#233461;--zft-panel3:#304578;
@@ -94,7 +94,7 @@
   --zft-surface-texture:url('../assets/textures/royal_saphire.webp');
   --zft-surface-fallback:repeating-linear-gradient(0deg, rgba(210,228,255,.028) 0 1px, transparent 1px 7px), repeating-linear-gradient(90deg, rgba(210,228,255,.02) 0 1px, transparent 1px 7px);
 }
-:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-shared-macros,#zft-gm-macros)[data-theme='crimson-ember'] {
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-action-hud-effect-tooltip,#zft-shared-macros,#zft-gm-macros)[data-theme='crimson-ember'] {
   --zft-accent:#dd8b60;--zft-accent-bright:#ffd1a4;
   --zft-text:#f6e5db;--zft-muted:#c6a99a;--zft-bg:#211114;
   --zft-panel:#371c21;--zft-panel2:#48262a;--zft-panel3:#603336;
@@ -104,7 +104,7 @@
   --zft-surface-texture:url('../assets/textures/crimson_ember.webp');
   --zft-surface-fallback:radial-gradient(circle at 24% 24%, rgba(255,209,164,.04) 0 1.5px, transparent 2px 100%), radial-gradient(circle at 72% 68%, rgba(221,139,96,.035) 0 1px, transparent 1.5px 100%), repeating-linear-gradient(140deg, rgba(255,209,164,.018) 0 2px, transparent 2px 9px);
 }
-:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-shared-macros,#zft-gm-macros)[data-theme='sunlit-parchment'] {
+:is(#zft-action-hud,#zft-action-hud-settings,#zft-action-hud-preview,#zft-action-hud-hotbar,#zft-action-hud-effect-tooltip,#zft-shared-macros,#zft-gm-macros)[data-theme='sunlit-parchment'] {
   --zft-accent:#8a5925;--zft-accent-bright:#724113;
   --zft-text:#2e241c;--zft-muted:#655546;--zft-bg:#e5d5b5;
   --zft-panel:#f6ead2;--zft-panel2:#ebd9b8;--zft-panel3:#ddc59d;
@@ -238,7 +238,9 @@
 #zft-action-hud .zft-hud-frame.is-collapsed [data-hud-control='collapse'] i {transform:rotate(180deg);}
 #zft-action-hud .zft-hud-popup {
   position:absolute;right:0;bottom:calc(100% + 8px);
-  width:min(520px,calc(100vw - 24px));max-height:480px;
+  /* _placeBrowser applies one shared outer frame width and subtle right offset.
+     Inner menus retain their established CSS grid and spacing rules. */
+  width:100%;max-height:480px;
   display:flex;flex-direction:column;overflow:hidden;
   border:1px solid var(--zft-border);border-radius:8px;
   background:linear-gradient(155deg,
@@ -1490,7 +1492,103 @@ body:has(#zft-action-hud[data-mode='docked']) #interface #ui-left:has(#scene-nav
   color:var(--zft-accent-bright);border-color:var(--zft-border);background:var(--zft-panel3);
 }
 
+/* dev.71: Check actions use the system adapter's native icon, accent and live modifier. */
+#zft-action-hud-hotbar .zft-hotbar-check-action {
+  display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at center,
+    color-mix(in srgb,var(--zft-check-color) 25%,transparent),transparent 78%);
+}
+#zft-action-hud-hotbar .zft-hotbar-check-icon {
+  font-size:calc(var(--zft-button-icon-size,26px) * .76);
+  line-height:1;color:var(--zft-check-color);
+  text-shadow:0 1px 3px #000;pointer-events:none;
+}
+#zft-action-hud-hotbar .zft-hotbar-check-bonus {
+  position:absolute;top:1px;right:2px;padding:1px 2px;border-radius:3px;
+  background:rgba(0,0,0,.75);color:#fff;font-size:9px;font-weight:700;
+  line-height:1.2;font-variant-numeric:tabular-nums;pointer-events:none;
+}
+#zft-action-hud .zft-hud-check-row[draggable='true'] {cursor:grab;}
+#zft-action-hud .zft-hud-check-row.is-dragging {opacity:.6;}
+
 /* dev.70: Native Macro Directory manual sort drop-position feedback. */
 .zft-macro-library-item.is-dragging {opacity:.55;}
 .zft-macro-library-item.is-drop-before {box-shadow:inset 3px 0 0 var(--zft-accent-bright);}
 .zft-macro-library-item.is-drop-after {box-shadow:inset -3px 0 0 var(--zft-accent-bright);}
+
+/* dev.73: all category menus keep the pre-dev.72 internal grid rules.
+   The shared staggered frame sizing is applied in _placeBrowser only. */
+#zft-action-hud .zft-hud-item-resources {
+  display:flex;flex-direction:column;align-items:flex-start;gap:2px;
+  max-width:100%;min-width:0;padding-top:1px;
+}
+#zft-action-hud .zft-hud-item-resources .zft-hud-resource-line {
+  display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:3px;
+  min-width:0;max-width:100%;padding:1px 4px;
+  border:1px solid var(--zft-border);border-radius:3px;
+  background:rgba(0,0,0,.25);font-size:9px;line-height:1.3;
+  font-variant-numeric:tabular-nums;white-space:normal;
+}
+#zft-action-hud .zft-hud-item-resources .zft-hud-resource-label {
+  font-size:9px;font-weight:500;color:var(--zft-muted);
+}
+#zft-action-hud .zft-hud-item-resources .zft-hud-resource-value {
+  font-size:9px;font-weight:700;color:var(--zft-accent-bright);
+}
+#zft-action-hud .zft-hud-item-resources .is-depleted,
+#zft-action-hud .zft-hud-resource-summary .is-depleted {opacity:.55;}
+#zft-action-hud .zft-hud-resource-summary {max-width:100%;min-width:0;}
+#zft-action-hud-hotbar .zft-hotbar-resource-badges {
+  position:absolute;top:2px;left:2px;right:2px;display:flex;gap:2px;
+  justify-content:flex-start;align-items:start;flex-wrap:wrap;
+  pointer-events:none;z-index:1;
+}
+#zft-action-hud-hotbar .zft-hotbar-resource-badge {
+  padding:1px 2px;border-radius:2px;background:rgba(0,0,0,.81);
+  color:#fff;font:700 8px/1.15 var(--zft-font);white-space:nowrap;
+  font-variant-numeric:tabular-nums;text-shadow:0 1px 1px #000;
+}
+#zft-action-hud-hotbar .zft-hotbar-resource-badge.is-depleted {background:rgba(102,22,29,.9);}
+
+
+/* dev.75: Texture-skinned, body-level Item and Effect previews. Both surfaces
+   use the *same* theme asset/fallback as HUD panels and obey the personal
+   Show Theme Background Textures switch. Overlay is decorative and never
+   changes dimensions, scroll handling, focus or hit-testing. */
+#zft-action-hud-preview,
+#zft-action-hud-effect-tooltip {
+  --zft-surface-texture:none;
+  --zft-surface-fallback:none;
+  isolation:isolate;
+}
+#zft-action-hud-preview::before,
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  border-radius:inherit;
+  pointer-events:none;
+  background-image:var(--zft-surface-texture),var(--zft-surface-fallback);
+  background-repeat:repeat,repeat;
+  background-size:512px 512px,auto;
+  opacity:.18;
+}
+#zft-action-hud-preview[data-textures='false']::before,
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip[data-textures='false']::before {display:none;}
+#zft-action-hud-preview > *,
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip > .zft-effect-tip {
+  position:relative;
+  z-index:1;
+}
+/* Description/stats surfaces stay readable in dark *and* parchment themes.
+   No padding/margin/size changes; existing child borders remain authoritative. */
+#zft-action-hud-preview .zft-preview-heading,
+#zft-action-hud-preview .zft-preview-activities,
+#zft-action-hud-preview .zft-preview-description,
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-heading,
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-tags,
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-description,
+#zft-action-hud-effect-tooltip.zft-hud-effect-tooltip .zft-effect-tip-footer {
+  background:color-mix(in srgb,var(--zft-panel) 78%,transparent);
+}

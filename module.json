@@ -2,7 +2,7 @@
   "id": "zft-action-hud",
   "title": "ZFT Action HUD",
   "description": "V13-first category HUD with stateful browsers, right-aligned effect icons, HP and Inspiration controls, Actor-stored Favorites, custom hotbar and themed tooltips. V14 not live-verified.",
-  "version": "0.1.0-dev.70",
+  "version": "0.1.0-dev.75",
   "authors": [
     {
       "name": "Luvac Zantor"

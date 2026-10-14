@@ -32,6 +32,7 @@ export class EffectTooltip {
     this.root = null;
     this.node = null;
     this.theme = 'zft-default';
+    this.textures = true;
     this.html = new Map();
     this.activeIcon = null;
     this.openTimer = null;
@@ -40,9 +41,14 @@ export class EffectTooltip {
 
   get isVisible() { return Boolean(this.node && !this.node.hidden); }
 
-  setTheme(theme) {
+  setTheme(theme, textures = true) {
     this.theme = theme || 'zft-default';
-    if (this.node) this.node.className = `zft-hud-effect-tooltip theme-${this.theme}`;
+    this.textures = Boolean(textures);
+    if (this.node) {
+      this.node.className = `zft-hud-effect-tooltip theme-${this.theme}`;
+      this.node.dataset.theme = this.theme;
+      this.node.dataset.textures = String(this.textures);
+    }
   }
 
   async wire(root, effects, theme, changedIds = null) {
@@ -51,7 +57,7 @@ export class EffectTooltip {
       this.root = root;
       this.html.clear();
     }
-    this.setTheme(theme);
+    this.setTheme(theme, root.dataset.textures !== 'false');
     const entries = new Map(effects.map(entry => [entry.id, entry]));
     const promises = [];
     for (const icon of root.querySelectorAll('[data-hud-effect]')) {
@@ -105,7 +111,7 @@ export class EffectTooltip {
     this.ensureNode();
     this.node.innerHTML = html;
     icon.setAttribute('aria-describedby', POPUP_ID);
-    this.setTheme(this.theme);
+    this.setTheme(this.theme, this.textures);
     this.node.hidden = false;
     this.place(icon);
   }
@@ -115,6 +121,8 @@ export class EffectTooltip {
     const node = document.createElement('div');
     node.id = POPUP_ID;
     node.className = `zft-hud-effect-tooltip theme-${this.theme}`;
+    node.dataset.theme = this.theme;
+    node.dataset.textures = String(this.textures);
     node.setAttribute('role', 'tooltip');
     node.hidden = true;
     node.addEventListener('pointerenter', () => this.cancelClose());

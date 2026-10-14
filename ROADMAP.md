@@ -1,160 +1,82 @@
 # ZFT Action HUD: Development Roadmap
 
 Updated: 2026-10-13  
-Active branch: [dev](https://github.com/LuvacZantor/zft-action-hud/tree/dev)  
-Current development build: **0.1.0-dev.70** (from `module.json`)  
-Status: **Active development. No stable release approved or published.**  
-Primary live target: **Foundry V13 Build 351 / D&D5e 5.2.5**  
-Additional target: **Foundry V14 / D&D5e 6.x, to be tested separately**
+Project: https://github.com/LuvacZantor/zft-action-hud  
+Branches: `dev` for development and `main` for stable releases  
+Current development build on `dev`: `0.1.0-dev.75`  
+Primary release target: **Foundry V13 Build 351, D&D5e 5.2.5**  
+Separate later target: Foundry V14, D&D5e 6.x  
+Release status: **Preparation in progress. No stable release approved or published.**
 
-> This roadmap tracks current source capabilities, remaining requirements, testing, and deferred decisions. The older planning checklist is superseded by the status below. An implemented feature is **not** automatically considered live-verified or release-ready.
+## Scope and principles
 
-## Vision and boundaries
+- Deliver a D&D5e Action HUD and character hotbar that work with native Foundry/D&D5e actions and existing automation, rather than a new rules engine.
+- Keep Item/Activity actions, permissions, hotbar profiles, settings, and native Actor data intact.
+- Treat code implemented, local automated checks, and live Foundry testing as different levels of evidence.
+- Publish a V13-targeted release independently of V14. V14 compatibility work is **not** a V13 release blocker.
+- The complete first-release package must include the six approved theme WebP textures. Local testing ZIPs `dev.71` through `dev.75` intentionally omitted `assets/` and are not self-contained release packages.
+- Never update `dev`, `main`, tags, releases, or other GitHub state without task-specific approval.
 
-Build a single, themeable hybrid action HUD with an expandable D&D5e action menu and an independent configurable character hotbar, using the native Foundry/D&D5e actions and existing Midi-QOL / Chris's Premades workflows rather than introducing a competing rules engine.
+## Feature status through local dev.75
 
-- The HUD core owns layout, category presentation, drag/drop, hotbar profiles, positioning, and accessibility.
-- RPG adapters own system-specific action data, resource calculations, and native execution paths.
-- Themes restyle existing interfaces without changing action semantics or character data.
-- Foundry ownership and native document permissions remain authoritative.
-- Player HUD appearance and positions are personal; character hotbar profiles/assignments are Actor-owned where appropriate; shared macro folder selection is GM/world configured.
-- ZFT Tools is optional; no mandatory dependency or second RPG-specific module is planned.
-- Keep `main` stable. Use the `dev` branch for authorized development commits. Never promote, tag, or publish without separate owner approval.
+| Capability | Status | Notes |
+| --- | --- | --- |
+| Expandable D&D5e action menus | Implemented in local test code | Weapons, Spells, Features, Consumables, Equipment, Inventory, Skills, Saves, Abilities, Tools, Favorites, Recent |
+| Character hotbar and Actor-owned profiles | Implemented | Slot references, drag/drop, lock controls, profile switching, colors, dividers, scaling, docking |
+| Item and Macro hotbar shortcuts | Implemented | Native Item/Activity execution and authorized Macro execution |
+| Skills, Saves, Ability and Tool check shortcuts | Implemented in `dev.71+` | Native D&D5e roll methods; pending focused live acceptance |
+| Shared and GM Macro floating libraries | Implemented | Native Macro Directory folder ordering; Shared drag/reorder confirmed live in `dev.70` |
+| Persistent GM utility controls | **Requirement satisfied by the Shared and GM Macro libraries** | No additional controls planned unless a specific future GM need is identified |
+| HP, Inspiration, Active Effects, spell slots | Implemented | Native D&D5e/Foundry information and controls; normal permission checks apply |
+| Resource visibility | Implemented / refining in `dev.72-74` | Read-only uses, charges, quantity, resource labels and Activity consumption details; live data verification needed |
+| Activity cost display correction | Implemented in `dev.74` | Avoids false spell-slot consumption on Unarmed Strike and other non-spell activities; broader consumption rules need focused live testing |
+| Submenu framing | Implemented in `dev.73` | Consistent outer width and subtle offset; internal grids unchanged |
+| Hover / effect tooltip background textures | Implemented in `dev.75` | Uses selected theme and Show Theme Background Textures setting; live visual test pending |
+| Personal themes and textures | Implemented | ZFT Default plus six named themes; full release must include texture assets |
+| Combat-profile auto-switch | Implemented | Session/multi-user transition testing is still incomplete |
+| Assigned-character fallback | Implemented | Not the deferred pinned-character feature |
 
-## Status legend
+## V13 first stable release: active work
 
-| State | Meaning |
+1. **Focused dev.75 acceptance in live V13:** Verify major known changes and no blocking regression in the GM test world. Full group testing is **not feasible solo**; record any untested multiplayer flows transparently instead of asserting they passed.
+2. **Keep GitHub development branch synchronized:** `dev` contains the `dev.75` source and preserves the approved theme assets and Git history. New builds still require explicit authorization for further writes.
+3. **Prepare a complete standalone V13 release package:** Include all six theme textures; set the stable version consistently in `module.json`, code and release notes; set and verify accurate V13 compatibility metadata after V13 acceptance. Do not use a ZIP missing assets as the complete public release.
+4. **Approve and promote to `main` separately:** Commit/merge only the accepted release code with explicit authorization. Create a matching tag and publish the GitHub Release only with separate authorization.
+5. **Post-release, test naturally with a live group:** Track real GM/player behavior and resolve any defects as ordinary patch releases instead of demanding exhaustive solo pre-release regression testing.
+
+### Focused V13 acceptance checklist (pending live verification)
+
+- [ ] `dev.75` is installed and starts in Foundry V13 Build 351, D&D5e 5.2.5 without a ZFT startup exception.
+- [ ] Weapons, Spells, Features, and Consumables open and invoke native D&D5e actions as expected; Midi-QOL/CPR behavior is not bypassed.
+- [ ] Unarmed Strike (Punch/Grapple/Shove), one spell, and one limited-use item show plausible resource Cost details; no invented spell slots.
+- [ ] Skills, Saves, Ability Checks, and Tool Checks can be assigned to an unlocked character hotbar, rolled, and retained after refresh.
+- [ ] Shared and GM Macro libraries open and use their selected folders; GM ordering and hotbar Macro-copy behavior are intact.
+- [ ] Hotbar slots, profile switching, locking, and stored Actor preferences survive a browser refresh.
+- [ ] Submenu frames keep the same outer width and subtle offset without changing the internal button/grid layout.
+- [ ] Item and Active Effect popouts use the selected theme/texture setting, with readable text.
+- [ ] Known blocking issues are documented and resolved or deliberately accepted by the owner before release.
+
+*No full multiplayer regression or V14 verification is asserted by these checks.*
+
+## Separate follow-ups (not blockers for the first V13 release)
+
+| Area | Decision |
 | --- | --- |
-| Implemented | Feature exists in the current development source; additional testing may still be required |
-| Live confirmed | A specifically described scenario was verified in Foundry |
-| Partial | Some agreed behavior exists, but capability or acceptance criteria remain unfinished |
-| Planned | An accepted or proposed task remains unimplemented, with scope noted below |
-| Review | Design or priority has not been finalized |
-| Deferred / removed | Not part of the current development queue |
-| Release gate | Must be checked before stable promotion |
+| Foundry V14 / D&D5e 6.x | Separate compatibility milestone; verify and ship after V13 as warranted |
+| Multiplayer regression | Exercise during normal sessions and collect specific issues; no artificial solo sign-off |
+| Pinned character | Low-priority backlog; no assigned build |
+| Nested Macro Directory folders | Deferred |
+| Cleanup/reset restore or import | Separate unresolved maintenance/data recovery workstream; do not assume the existing backup attempt is a verified restore |
+| Other RPG adapters and external theme packs | Future enhancements only if needed |
+| Action, Bonus Action, Reaction economy | Removed from active plan |
+| GM-enforced campaign theming | Superseded by personal theme selection |
+| Additional GM utility buttons | No feature gap identified; reopen only for a concrete use case |
 
-## Current feature inventory
+## Roadmap maintenance
 
-| Area | Current status | Notes |
-| --- | --- | --- |
-| Expandable action browser | Implemented | Weapons, Spells, Features, Consumables, Equipment, Inventory, Tools, Abilities, Saves, Skills, Favorites and Recent as applicable to the Actor |
-| Native D&D5e execution | Implemented; regression testing needed | Item/Activity, check, save, skill, and applicable tool workflows use native system paths; Midi-QOL/CPR interaction needs live coverage |
-| Action browsers and previews | Implemented | Search controls, remembered category/group expansion, Item inspection, scrollable effect information, position-aware hover panels |
-| HP, Inspiration, effects | Implemented | Native Actor-backed controls and status presentation; verify permissions and changes on GM/player clients |
-| Spell-slot management | Implemented | Native level and Pact slot values, including adjustment controls; no duplicate ZFT slot pool |
-| Character hotbar | Implemented | Configurable grid, Item and Macro references, drag/drop, independent layout and position locks, floating/docked positioning, scale |
-| Character hotbar profiles | Implemented | Combat, Exploration, Support, and custom profiles; colors, reordering, duplication, optional named row/column dividers |
-| Automatic Combat profile | Implemented; test needed | Per-client preference and manual override/restore logic; actual multi-client combat transitions remain a release test |
-| Assigned Player Character fallback | Implemented | When no token is controlled, the assigned Foundry character may be used if permitted; this is **not** a pinned-character feature |
-| Personal appearance | Implemented | ZFT Default plus six named themes with texture options, per-user theme choice, accent customization, scale/transparency |
-| Shared Macro library | Implemented | GM-selected Folder; player visibility remains subject to native Macro permissions; includes direct folder members, not nested folders |
-| GM Macro library | Implemented | GM-only floating library backed by a configured Macro Directory folder |
-| Native Macro folder sorting | Implemented; one live scenario confirmed | `dev.70` writes Macro document `sort` in a native manually sorted Folder; floating grids follow native manual/alphabetical folder sorting |
-| Macro drag-to-character-hotbar | Implemented | Copies a Macro reference to a permitted unlocked character slot; does not clone the Macro |
-| Skills, Saves, Abilities, and Tool Checks in character hotbar | **Not implemented; queued for dev.71** | These check-style actions are available through the HUD menus but are not yet assignable to character hotbar slots |
-| Optional pinned character | **Backlog, lower priority** | Not currently scheduled; separate from assigned-character fallback and selected token |
-| Non-spell resources | **Partial; queued for dev.72** | Audit existing D&D5e uses/availability first, then surface useful ammunition, charges, consumable/item uses and supported resource pools without duplicating counters |
-| Persistent GM utility controls | **Partial / review** | Existing GM/Shared Macro libraries are implemented; decide if anything beyond them is actually needed |
-| V14 compatibility | **Unverified** | Manifest compatibility is not proof that V14 / D&D5e 6.x works |
+- Keep `ROADMAP.md` on `dev` up to date when GitHub writes are approved. Current source checkpoint: `dev.75`.
+- `module.json` remains authoritative for the code version on each branch; local ZIP versions are not proof of remote updates.
+- Do not treat simulated checks as live acceptance or GitHub branch changes as publication.
+- The first stable version is expected to be `0.1.0` only **if the owner accepts the corresponding tested source and release scope**.
 
-### Live confirmations to date
-
-- **2026-10-13, dev.70:** Owner confirmed working drag/drop rearrangement for the Shared Macro floating library in the live Foundry environment after the dev.68 and dev.69 attempts failed.
-- This does **not** by itself certify GM-library reordering, player-client synchronization, refresh persistence, or V14. Those tests remain listed below.
-- Historical README entries describe other individual test results, but unconfirmed end-to-end workflows are not marked as fully accepted here.
-
-## Prioritized active backlog
-
-The owner has queued hotbar check shortcuts for dev.71 and resource tracking for the following development build, dev.72. Other work stays proposed or deferred. A roadmap entry does not authorize module code changes or GitHub commits.
-
-| Priority | Candidate build | Work | Completion criteria |
-| --- | --- | --- | --- |
-| 1 | dev.71 | Add Skills, Saving Throws, Ability Checks, and Tool Checks to character hotbars | Drag permitted check shortcuts into unlocked slots; run native D&D5e rolls; show current labels/modifiers; persist per Actor/profile; honor locks and permissions |
-| 2 | dev.72 | Resource tracking and clearer remaining-use indicators | Audit existing resource displays first; prioritize useful ammo, charges and Item/Activity uses from native D&D5e data; respect system consumption, permissions and Midi-QOL/CPR |
-| Backlog | Unscheduled | Optional pinned-character selection | Lower priority; only revisit if table use demonstrates a need; no code planned |
-| 4 | Scope review | Remaining GM utility needs | Decide whether Shared/GM Macro libraries cover the original GM-controls goal; avoid building controls without a concrete use case |
-| 5 | Testing | Complete Foundry V13 GM/player regression pass | Verify critical HUD, hotbar, Macro, theme, storage, and permission workflows below |
-| 6 | Compatibility | Validate Foundry V14 / D&D5e 6.x separately | Adapt only incompatible APIs and verify native workflows in the V14 test world |
-| 7 | Release review | First stable release | Confirm accepted version, remaining defects, release notes, manifest, installation package; request separate approval for `main`, tag, and Release |
-
-### 1. Check shortcuts on character hotbars (queued for dev.71)
-
-- Include **Skills, Saving Throws, Ability Checks, and Tool Checks** as draggable shortcuts from their existing HUD menus to unlocked character hotbar slots.
-- Use existing native D&D5e check/roll adapters, not fake Items, new Macros, or duplicated modifiers.
-- Store stable check identifiers in Actor-owned hotbar profiles; resolve current labels and modifiers from the Actor when rendering.
-- Preserve existing slot copy/move/replace behavior, profile switching, layout lock, and Actor ownership checks. Display or handle invalid and missing references predictably.
-- Clicking a check shortcut must invoke the same native D&D5e roll (including dialog, hooks, and installed compatible automation) as its corresponding HUD menu entry.
-- **Acceptance:** Skill, Save, Ability, and Tool shortcuts work for a permitted player and GM; survive refresh/profile changes; respond to changed character modifiers; and reject unauthorized drops.
-- **Scope:** Queued for implementation and live Foundry testing, not yet built or verified.
-
-### 2. Resource tracking and remaining-use indicators (queued for dev.72)
-
-- Start with an audit of current spell-slot, Item, and Activity use/availability displays; retain working behavior and avoid duplicating existing indicators.
-- Prioritize helpful, compact player-facing visibility for native D&D5e ammunition, charges, consumable quantities, and limited-use features or items **where the underlying data supports it**.
-- Read authoritative Actor, Item, and Activity resource values rather than introducing ZFT-maintained counters or a separate resource-management dashboard.
-- Refresh displayed counts when native D&D5e or supported Midi-QOL/CPR workflows change resources. Do not automatically consume resources independently of those workflows.
-- Preserve GM/player ownership boundaries; only offer adjustment controls when an appropriate native operation and authorization exist.
-- **Acceptance:** In live V13, resource displays agree with character sheets before and after native use/casting/consumption; update on refresh and changes; behave predictably for GM/player clients and missing or unsupported resource data.
-- **Scope:** Queued for implementation after dev.71. Exact resource types and presentation depend on auditing the current code and data; no giant new dashboard.
-
-### Unscheduled backlog: optional pinned character
-
-- Low current table value; no version assigned and no implementation planned in the next builds.
-- If revisited, provide an explicit per-user pin/unpin action that does not change selected canvas tokens, with clear precedence over the existing assigned-character fallback.
-- Revisit only when the table has a specific use case; keep ordinary token following unchanged meanwhile.
-
-## Current testing and release gates
-
-- [ ] Verify **both** Shared and GM floating libraries reorder correctly against their respective Foundry Macro Directory folders.
-- [ ] Verify moving macros **in Foundry's sidebar** updates floating libraries without needing a manual refresh.
-- [ ] Verify GM-defined Shared order is reflected for a logged-in player, including refresh/reconnect.
-- [ ] Verify alphabetic/manual Folder sorting transitions, macro creation/deletion/moves, and restricted Macro permissions.
-- [ ] Verify copying Macro references onto a character hotbar still works and does not execute the Macro during a drag.
-- [ ] Validate hotbar Item/Macro assignments, profile switching, dividers, colors, locks, scaling, and persistence after refresh/reconnect.
-- [ ] Validate native item activities, skills, saves, tool rolls, spell pools, HP, Inspiration, and Active Effects for owned and non-owned actors.
-- [ ] Validate assigned-character fallback and no/multiple-token selection behavior.
-- [ ] Validate automatic Combat profile entry/exit and manual override, including multiple clients.
-- [ ] Validate all themes, texture toggle, category layouts, popover positioning, screen sizes, and reduced-motion/contrast where supported.
-- [ ] Test Foundry V13 Build 351 with the installed D&D5e 5.2.5, Midi-QOL and CPR configuration, including permission-denied and missing-action cases.
-- [ ] Repeat relevant functional and visual verification **independently** on Foundry V14 / D&D5e 6.x; do not infer compatibility from V13.
-- [ ] Validate syntax, packaging, manifest, release notes, and a known-good rollback point before stable release.
-- [ ] Obtain explicit owner approval before merging to `main`, tagging, or publishing a Release.
-
-## Development milestones (current reality)
-
-| Milestone | Status | Remaining consideration |
-| --- | --- | --- |
-| Core and D&D5e adapter architecture | Implemented | Audit V13/V14 API boundaries |
-| Expandable hybrid HUD and independent hotbar | Implemented | GM/player regression testing |
-| Customization, profiles and theme variants | Implemented | User experience, access and persistence testing |
-| Native resources and utility controls | Partial | Additional useful pools; GM utility scope |
-| Macro libraries and folder-backed ordering | Implemented; partial live confirmation | Player/GM and persistence tests |
-| Additional check hotbar actions | Queued | Skills, Saves, Abilities, Tools queued for dev.71 |
-| Resource use visibility | Queued | Native resource tracking and remaining-use indicators prioritized for dev.72 |
-| Optional pinned character | Backlog | Lower priority; no build assigned |
-| Compatibility and stable release | Release gate | V13 acceptance, V14 verification, explicit approval |
-
-## Superseded, separate, or deferred work
-
-- **Action / Bonus Action / Reaction economy tracking:** Removed from the active development plan. Do not reintroduce without a new request.
-- **GM-controlled campaign theme and theme inheritance:** Earlier design proposal was superseded by the personal-theme model in dev.58. Existing legacy settings may remain hidden for compatibility; do not treat old roadmap language as an active requirement.
-- **Nested Macro folders:** Deliberately deferred. Shared and GM libraries currently read direct members of their configured folders.
-- **Maintenance/data recovery:** A separate unresolved workstream, not part of native Macro sorting or the next proposed feature build. Do not assume cleanup/reset provides a verified restore path.
-- **Additional RPG adapters (such as PF2e), external theme packs, community profile import/export, advanced keyboard/touch controls, and extra ZFT Tools integration:** Future enhancements, not first-release commitments.
-- **Edge snapping, optional keyboard controls, action-economy widgets and other older planning ideas:** Reassess explicitly before treating them as required; do not infer they are complete from archived [x] design decisions.
-
-## Roadmap maintenance rules
-
-1. `ROADMAP.md` on `dev` is the authoritative *current backlog*, not an automatically completed checklist.
-2. `module.json` is authoritative for the code version. Documentation-only commits do not require an invented new `-dev.N` build.
-3. At each accepted development milestone, update feature status, live-test evidence, next priorities, and deferrals. Historical build details belong in `README.md` and commits.
-4. Distinguish code implemented from behavior confirmed in a specified live Foundry version.
-5. Use [ZFT Development Workflow](https://github.com/LuvacZantor/zft-tools/blob/main/DEVELOPMENT.md): request explicit authorization for each bounded GitHub write; do not update `main`, create tags, or publish Releases implicitly.
-
-## References
-
-- [Repository](https://github.com/LuvacZantor/zft-action-hud)
-- [Current development branch](https://github.com/LuvacZantor/zft-action-hud/tree/dev)
-- [Development build history](https://github.com/LuvacZantor/zft-action-hud/blob/dev/README.md)
-- [ZFT Development Workflow](https://github.com/LuvacZantor/zft-tools/blob/main/DEVELOPMENT.md)
-- Design references: [BG3 HUD Core](https://github.com/BragginRites/bg3-hud-core), [Token Action HUD Core](https://github.com/Larkinabout/fvtt-token-action-hud-core)
+References: [Repository](https://github.com/LuvacZantor/zft-action-hud) · [ZFT development workflow](https://github.com/LuvacZantor/zft-tools/blob/main/DEVELOPMENT.md)

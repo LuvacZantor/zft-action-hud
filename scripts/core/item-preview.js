@@ -211,10 +211,16 @@ export class ItemPreview {
     this.node = el;
   }
 
+  /** Sync appearance for body-level previews without altering their contents/position. */
+  syncAppearance() {
+    if (this.node?.isConnected) this._applyTheme();
+  }
+
   _applyTheme() {
     const hud = this.getHudRoot?.();
     if (!hud || !this.node) return;
     this.node.dataset.theme = hud.dataset.theme || 'zft-default';
+    this.node.dataset.textures = String(hud.dataset.textures !== 'false');
     const css = getComputedStyle(hud);
     for (const key of THEME_TOKENS) {
       const value = css.getPropertyValue(key).trim();
@@ -229,7 +235,10 @@ export class ItemPreview {
     el.querySelector('.zft-preview-type').textContent = data.kind || 'Item';
     const stats = el.querySelector('.zft-preview-stats');
     stats.replaceChildren();
-    for (const [label, value] of [['Activation', data.activation], ['Range', data.range], ['Uses', data.uses]]) {
+    const itemResourceStats = (data.resourceBadges?.length)
+      ? data.resourceBadges.map(resource => [resource.label, resource.display])
+      : [['Uses', data.uses]];
+    for (const [label, value] of [['Activation', data.activation], ['Range', data.range], ...itemResourceStats]) {
       if (!value) continue;
       stats.append(make('span', 'zft-preview-stat', `${label}: ${value}`));
     }
