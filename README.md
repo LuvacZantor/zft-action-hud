@@ -1,4 +1,18 @@
-# ZFT Action HUD v0.1.0-dev.75
+# ZFT Action HUD v0.1.0
+
+First Foundry V13-targeted release candidate, packaged from the `0.1.0-dev.75` development source.
+
+- **Target:** Foundry V13 Build 351 with the D&D5e 5.2.5 system.
+- **V14:** Not verified or advertised as supported by this package.
+- **Package:** Complete standalone module, including all six theme background WebP assets in `assets/textures/`.
+- **Installation:** Extract the ZIP's single `zft-action-hud/` directory into Foundry's user-data `Data/modules/` directory and enable ZFT Action HUD in the world.
+- **Execution:** Uses native D&D5e Item/Activity and check rolls, with Foundry permissions and installed automation handling consumption and outcomes.
+- **Acceptance:** Full live multiplayer regression testing continues during normal sessions. Packaging tests do not certify all features in live Foundry.
+
+See `RELEASE_NOTES.md` for feature highlights, compatibility, and remaining test scope.
+
+## Development history (dev.75 and earlier)
+
 
 ## dev.75 local test: theme textures for Item previews and Active Effect tooltips
 

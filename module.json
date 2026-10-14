@@ -1,8 +1,8 @@
 {
   "id": "zft-action-hud",
   "title": "ZFT Action HUD",
-  "description": "V13-first category HUD with stateful browsers, right-aligned effect icons, HP and Inspiration controls, Actor-stored Favorites, custom hotbar and themed tooltips. V14 not live-verified.",
-  "version": "0.1.0-dev.75",
+  "description": "V13-targeted D&D5e action HUD with native action menus, configurable character hotbar, macro libraries, resource displays, and themes. V14 support is not yet verified.",
+  "version": "0.1.0",
   "authors": [
     {
       "name": "Luvac Zantor"
@@ -10,7 +10,8 @@
   ],
   "compatibility": {
     "minimum": "13",
-    "maximum": "14"
+    "verified": "13.351",
+    "maximum": "13"
   },
   "esmodules": [
     "scripts/main.js"
@@ -22,8 +23,16 @@
     "systems": [
       {
         "id": "dnd5e",
-        "type": "system"
+        "type": "system",
+        "compatibility": {
+          "minimum": "5.2.5",
+          "verified": "5.2.5"
+        }
       }
     ]
-  }
+  },
+  "url": "https://github.com/LuvacZantor/zft-action-hud",
+  "bugs": "https://github.com/LuvacZantor/zft-action-hud/issues",
+  "license": "LICENSE",
+  "readme": "README.md"
 }

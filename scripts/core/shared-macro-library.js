@@ -254,10 +254,10 @@ export class ZFTMacroLibraries {
       this._macroDrag=null;
       this._suppressClickUntil=performance.now()+250;
       if (!sourceId || !targetId) {
-        console.warn('[ZFT] ⚠️ v0.1.0-dev.70 | Macro drop has no valid source/target', {kind,sourceId,targetId});
+        console.warn('[ZFT] ⚠️ v0.1.0 | Macro drop has no valid source/target', {kind,sourceId,targetId});
         return;
       }
-      console.log('[ZFT] 🔍 v0.1.0-dev.70 | Native Macro folder drop', {kind,sourceId,targetId,before,boundary});
+      console.log('[ZFT] 🔍 v0.1.0 | Native Macro folder drop', {kind,sourceId,targetId,before,boundary});
       void this._reorder(folderId,sourceId,targetId,before);
     });
   }
@@ -267,7 +267,7 @@ export class ZFTMacroLibraries {
     this._sortBusy=true;
     try {
       const changed = await reorderFolderMacro(folderId,sourceId,targetId,before);
-      console.log(`[ZFT] ${changed ? '✅' : '🔍'} v0.1.0-dev.70 | ${changed ? 'Macro folder order saved' : 'Macro folder drop left order unchanged'}`, {folderId,sourceId,targetId,before});
+      console.log(`[ZFT] ${changed ? '✅' : '🔍'} v0.1.0 | ${changed ? 'Macro folder order saved' : 'Macro folder drop left order unchanged'}`, {folderId,sourceId,targetId,before});
       // updateMacro hooks refresh all clients; also repaint locally.
       this.refresh();
     } catch(error) {

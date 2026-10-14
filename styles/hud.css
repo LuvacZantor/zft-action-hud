@@ -1,4 +1,4 @@
-/* ZFT Action HUD v0.1.0-dev.67. Shared geometry, theme-specific color tokens. */
+/* ZFT Action HUD v0.1.0. Shared geometry, theme-specific color tokens. */
 #zft-action-hud {
   --zft-scale:1;
   --zft-hud-opacity:90%;
