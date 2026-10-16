@@ -2,7 +2,7 @@
   "id": "zft-action-hud",
   "title": "ZFT Action HUD",
   "description": "V13-targeted D&D5e action HUD with native action menus, configurable character hotbar, macro libraries, resource displays, and themes. V14 support is not yet verified.",
-  "version": "0.1.0",
+  "version": "0.1.0-hotfix.1",
   "authors": [
     {
       "name": "Luvac Zantor"
