@@ -1,4 +1,4 @@
-/* ZFT Action HUD v0.1.0. Shared geometry, theme-specific color tokens. */
+/* ZFT Action HUD v0.1.1. Shared geometry, theme-specific color tokens. */
 #zft-action-hud {
   --zft-scale:1;
   --zft-hud-opacity:90%;
@@ -1427,21 +1427,6 @@
 
 #zft-action-hud-effect-tooltip[hidden] {display:none!important;}
 
-
-/* dev.63: Foundry V13's native scene navigation is a vertical menu.
-   Raise its UI-left stacking context above the docked ZFT HUD only while
-   the scene navigation is expanded. No Carolingian dependency or position
-   changes. :focus-within allows keyboard interaction with an open menu. */
-body:has(#zft-action-hud[data-mode='docked']) #interface:has(#scene-navigation.expanded),
-body:has(#zft-action-hud[data-mode='docked']) #interface:has(#scene-navigation:focus-within) {
-  /* #interface is itself a stacking context in V13. Its children cannot rise
-     above a sibling HUD unless the interface context also comes forward. */
-  z-index: 101 !important;
-}
-body:has(#zft-action-hud[data-mode='docked']) #interface #ui-left:has(#scene-navigation.expanded),
-body:has(#zft-action-hud[data-mode='docked']) #interface #ui-left:has(#scene-navigation:focus-within) {
-  z-index: 101 !important;
-}
 
 /* dev.67: The two Macro Directory-backed libraries share the same theme tokens. */
 .zft-macro-library {
