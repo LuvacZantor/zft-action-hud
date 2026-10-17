@@ -1,12 +1,21 @@
 # ZFT Action HUD: Development Roadmap
 
-Updated: 2026-10-13  
+Updated: 2026-10-17  
 Project: https://github.com/LuvacZantor/zft-action-hud  
 Branches: `dev` for development and `main` for stable releases  
 Current development build on `dev`: `0.1.0-dev.75`  
 Primary release target: **Foundry V13 Build 351, D&D5e 5.2.5**  
 Separate later target: Foundry V14, D&D5e 6.x  
-Release status: **Preparation in progress. No stable release approved or published.**
+Release status: **Stable `v0.1.0` released; tested `v0.1.1` patch promoted to `main`. The `v0.1.1` tag and published GitHub Release are pending separate owner approval.**
+
+## v0.1.1 patch status
+
+- `0.1.0-hotfix.1` resolved the Foundry V13 player click interception issue during the October 16, 2026 live session.
+- `v0.1.1` carries that tested CSS change forward without reverting work from dev.64 through dev.75.
+- Removed the dev.63 `#interface`/`#ui-left` `z-index: 101` scene-navigation selectors. Native scene-navigation overlap is a known accepted tradeoff pending a safer targeted fix.
+- Full standalone package includes all scripts, templates and six theme textures.
+- Further work: separately approve/publish tag and release, then collect focused regression results for the remaining feature areas.
+
 
 ## Scope and principles
 
@@ -36,7 +45,7 @@ Release status: **Preparation in progress. No stable release approved or publish
 | Combat-profile auto-switch | Implemented | Session/multi-user transition testing is still incomplete |
 | Assigned-character fallback | Implemented | Not the deferred pinned-character feature |
 
-## V13 first stable release: active work
+## Historical V13 first-release plan (dev.75 snapshot)
 
 1. **Focused dev.75 acceptance in live V13:** Verify major known changes and no blocking regression in the GM test world. Full group testing is **not feasible solo**; record any untested multiplayer flows transparently instead of asserting they passed.
 2. **Keep GitHub development branch synchronized:** `dev` contains the `dev.75` source and preserves the approved theme assets and Git history. New builds still require explicit authorization for further writes.
@@ -44,7 +53,7 @@ Release status: **Preparation in progress. No stable release approved or publish
 4. **Approve and promote to `main` separately:** Commit/merge only the accepted release code with explicit authorization. Create a matching tag and publish the GitHub Release only with separate authorization.
 5. **Post-release, test naturally with a live group:** Track real GM/player behavior and resolve any defects as ordinary patch releases instead of demanding exhaustive solo pre-release regression testing.
 
-### Focused V13 acceptance checklist (pending live verification)
+### Historical focused V13 acceptance checklist (still useful for remaining regression tests)
 
 - [ ] `dev.75` is installed and starts in Foundry V13 Build 351, D&D5e 5.2.5 without a ZFT startup exception.
 - [ ] Weapons, Spells, Features, and Consumables open and invoke native D&D5e actions as expected; Midi-QOL/CPR behavior is not bypassed.
@@ -74,9 +83,9 @@ Release status: **Preparation in progress. No stable release approved or publish
 
 ## Roadmap maintenance
 
-- Keep `ROADMAP.md` on `dev` up to date when GitHub writes are approved. Current source checkpoint: `dev.75`.
+- Keep roadmap documentation current on whichever branch receives an owner-approved documentation update. The `dev` branch remains at the historical `dev.75` checkpoint; `main` is the stable `0.1.1` source.
 - `module.json` remains authoritative for the code version on each branch; local ZIP versions are not proof of remote updates.
 - Do not treat simulated checks as live acceptance or GitHub branch changes as publication.
-- The first stable version is expected to be `0.1.0` only **if the owner accepts the corresponding tested source and release scope**.
+- The first stable release, `v0.1.0`, was published; the `0.1.1` patch is merged to `main` with its tag/Release pending.
 
 References: [Repository](https://github.com/LuvacZantor/zft-action-hud) · [ZFT development workflow](https://github.com/LuvacZantor/zft-tools/blob/main/DEVELOPMENT.md)

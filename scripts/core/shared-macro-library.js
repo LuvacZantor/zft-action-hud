@@ -1,4 +1,4 @@
-import { MODULE_ID } from './settings.js';
+import { MODULE_ID, VERSION } from './settings.js';
 import { resolveTheme } from '../themes/registry.js';
 import { executeHotbarMacro, makeMacroReference } from './macro-hotbar.js';
 
@@ -254,10 +254,10 @@ export class ZFTMacroLibraries {
       this._macroDrag=null;
       this._suppressClickUntil=performance.now()+250;
       if (!sourceId || !targetId) {
-        console.warn('[ZFT] ⚠️ v0.1.0 | Macro drop has no valid source/target', {kind,sourceId,targetId});
+        console.warn(`[ZFT] ⚠️ v${VERSION} | Macro drop has no valid source/target`, {kind,sourceId,targetId});
         return;
       }
-      console.log('[ZFT] 🔍 v0.1.0 | Native Macro folder drop', {kind,sourceId,targetId,before,boundary});
+      console.log(`[ZFT] 🔍 v${VERSION} | Native Macro folder drop`, {kind,sourceId,targetId,before,boundary});
       void this._reorder(folderId,sourceId,targetId,before);
     });
   }
@@ -267,7 +267,7 @@ export class ZFTMacroLibraries {
     this._sortBusy=true;
     try {
       const changed = await reorderFolderMacro(folderId,sourceId,targetId,before);
-      console.log(`[ZFT] ${changed ? '✅' : '🔍'} v0.1.0 | ${changed ? 'Macro folder order saved' : 'Macro folder drop left order unchanged'}`, {folderId,sourceId,targetId,before});
+      console.log(`[ZFT] ${changed ? '✅' : '🔍'} v${VERSION} | ${changed ? 'Macro folder order saved' : 'Macro folder drop left order unchanged'}`, {folderId,sourceId,targetId,before});
       // updateMacro hooks refresh all clients; also repaint locally.
       this.refresh();
     } catch(error) {

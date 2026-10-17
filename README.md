@@ -1,6 +1,14 @@
-# ZFT Action HUD v0.1.0
+# ZFT Action HUD v0.1.1
 
-First Foundry V13-targeted release candidate, packaged from the `0.1.0-dev.75` development source.
+Stable Foundry V13 patch release. Version `0.1.1` retains the full `0.1.0` feature set (developed through `0.1.0-dev.75`) and removes the `dev.63` scene-navigation stacking override that blocked HUD clicks for player clients.
+
+## What's new in v0.1.1
+
+- **Fixed:** Foundry V13 `#interface` no longer receives the `z-index: 101 !important` elevation from ZFT when scene navigation is expanded or focused. This restores clicks on the docked player Action HUD and its related interface without requiring browser-console commands.
+- **Preserved:** Original HUD (`90`), custom hotbar (`92`), and settings window (`95`) stacking order; all previous action menus, hotbar profiles, Macro libraries, resource indicators, themes, scripts and six WebP theme textures.
+- **Known tradeoff:** The native Foundry scene-navigation menu can appear behind the docked Action HUD. This is intentional until a better menu-only solution is tested.
+- **Validation:** The `0.1.0-hotfix.1` implementation was confirmed working in a live V13 session on October 16, 2026. `0.1.1` promotes that tested fix with updated stable-version references; wider multiplayer regression and V14 verification are still outstanding.
+- **GitHub:** `main` contains `0.1.1`. Creating tag `v0.1.1` and publishing its official GitHub Release are separate, owner-approved steps; this ZIP is a local distribution build until those steps are completed.
 
 - **Target:** Foundry V13 Build 351 with the D&D5e 5.2.5 system.
 - **V14:** Not verified or advertised as supported by this package.
@@ -9,9 +17,11 @@ First Foundry V13-targeted release candidate, packaged from the `0.1.0-dev.75` d
 - **Execution:** Uses native D&D5e Item/Activity and check rolls, with Foundry permissions and installed automation handling consumption and outcomes.
 - **Acceptance:** Full live multiplayer regression testing continues during normal sessions. Packaging tests do not certify all features in live Foundry.
 
-See `RELEASE_NOTES.md` for feature highlights, compatibility, and remaining test scope.
+See `RELEASE_NOTES.md` for the current patch details, packaging, compatibility, and remaining test scope.
 
-## Development history (dev.75 and earlier)
+## Historical development notes (dev.75 and earlier)
+
+The following sections describe old test builds and historical state. Old dev-version numbers, test ZIP installation instructions, and asset-exclusion warnings below **do not apply to v0.1.1**, which is a complete standalone module package.
 
 
 ## dev.75 local test: theme textures for Item previews and Active Effect tooltips
@@ -84,9 +94,10 @@ See `RELEASE_NOTES.md` for feature highlights, compatibility, and remaining test
 - The HUD frame now uses the widest of the primary or lower button rows to determine Action area width. The lower row remains horizontal on normal screen sizes, with a small-screen wrap safety fallback. This dynamically accommodates character categories and the Show Recent toggle without hardcoding a single HUD width.
 - No changes to Foundry UI scene navigation layering, custom hotbar profiles, theme assets or native rolls. Live Foundry V13 player/GM tests required, V14 not verified. GitHub unchanged.
 
-## dev.63 native Foundry scene navigation layering
+## dev.63 native Foundry scene navigation layering (reverted in v0.1.1)
 
-- Foundry V13 native vertical scene navigation stays above the docked HUD when expanded or keyboard focused, independent of Carolingian UI. User confirmed working in live V13. No hotbar geometry changes.
+- Historically, dev.63 placed Foundry V13 native vertical scene navigation above the docked HUD when expanded or keyboard focused, independent of Carolingian UI. It initially appeared to work in live V13.
+- **Reverted in `v0.1.1`:** Its elevated `#interface` stacking context blocked player HUD clicks and affected settings interaction. The normal ZFT stacking order is restored. The navigation overlap is an accepted temporary tradeoff.
 
 ## dev.61 local testing changes
 
@@ -266,7 +277,7 @@ See `RELEASE_NOTES.md` for feature highlights, compatibility, and remaining test
 - **Testing status:** Static validation and adapter unit tests do not establish live Foundry acceptance. Primary target is Foundry V13 Build 351 with D&D5e 5.2.5; V14/D&D5e 6.x requires separate testing. No stable release or GitHub update is included.
 - **Still outstanding:** Skills, saves, Foundry macros, other resource tracking, GM controls, the broader hotbar regression backlog and the existing cleanup/reset recovery concern. See [ROADMAP.md on develop](https://github.com/LuvacZantor/zft-action-hud/blob/develop/ROADMAP.md). Backup/restore was **not** implemented in dev.40.
 
-## Current development status and remaining work
+## Historical development status and remaining work (dev.53 snapshot)
 
 - **Source checkpoint:** `0.1.0-dev.39` remains on GitHub `develop`; this package is the local `0.1.0-dev.53` test build, not an accepted stable release.
 - **Implemented in source, live acceptance pending:** independent floating HUD and 20×20 hotbar, Actor-stored profiles, colored profile tabs and slots, named visual divider labels, drag/drop editing, separate locks and scaling, and optional combat-profile switching. These features still need targeted Foundry V13 GM/player testing.
@@ -395,7 +406,7 @@ Local **V13-first** development build targeting **Foundry V13 Build 351 / D&D5e 
 - Layout Lock protects Item slots from changes; only Position Lock freezes the window position. The HUD Settings panel remains a second way to unlock.
 - If dev.25 left the bar locked, use the main HUD gear > Custom Hotbar > uncheck Lock Hotbar Layout, or use the new padlock directly on the hotbar in dev.26.
 
-## Install into V13 Dev world
+## Historical dev.45 test installation instructions (not for v0.1.1)
 
 1. Extract this ZIP into your V13 `Data/modules/` directory, **replacing** the old `zft-action-hud/` folder; don't nest folders.
 2. Confirm `Data/modules/zft-action-hud/module.json` reports `0.1.0-dev.45`.
@@ -621,10 +632,10 @@ Roadmap: https://github.com/LuvacZantor/zft-action-hud/blob/develop/ROADMAP.md
 - Settings → Appearance → **Reset All Button Colors** asks for confirmation, then clears category color overrides for this client and all slot overrides across the selected owned Actor's profiles.
 - These changes require live Foundry V13 testing before acceptance, particularly migrated profiles and right-click color selection.
 
-### dev.63 scene navigation stacking fix
+### dev.63 scene navigation stacking (reverted in v0.1.1)
 
 - Replaced the Carolingian-only dev.62 selector with a Foundry V13 native `#scene-navigation` selector. Native navigation and its enclosing interface stacking context receive priority above the docked HUD while expanded or keyboard-focused. No HUD offsets, hotbar behavior, or saved settings change.
-- Live Foundry V13 verification pending.
+- These rules were subsequently removed in `v0.1.1` after a player-client click interception regression.
 
 
 ### dev.70: Native Macro Directory sorting
